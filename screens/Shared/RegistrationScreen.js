@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import axios from '../api';
+import axios from '../../api';
 
 export default function RegistrationScreen({ navigation }) {
     const [username, setUsername] = useState('');
@@ -18,6 +17,13 @@ export default function RegistrationScreen({ navigation }) {
         }
         try {
             console.log('Making API request to register user');
+            console.log({
+                username, 
+                email, 
+                password, 
+                phone_number: phoneNumber,
+                user_type: userType,
+            });
             const response = await axios.post('/register/', { 
                 username,
                 email,

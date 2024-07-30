@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import axios from '../api';
+import axios from '../../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function JobDetailsScreen({ route }) {

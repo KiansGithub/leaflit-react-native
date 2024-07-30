@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import axios from '../api';
+import axios from '../../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function JobListingsScreen({ navigation }) {
+export default function LeafleteerHomeScreen({ navigation }) {
     const [jobs, setJobs] = useState([]);
 
     useEffect(() => {
@@ -16,7 +16,7 @@ export default function JobListingsScreen({ navigation }) {
                     },
                 });
                 setJobs(response.data);
-            } catch(error) {
+            } catch (error) {
                 console.error(error);
             }
         };
@@ -26,18 +26,19 @@ export default function JobListingsScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <FlatList
-              data={jobs}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => navigation.navigate('Job Details', { jobId: item.id })}>
-                    <View style={styles.jobItem}>
-                        <Text style={styles.jobTitle}>{item.Title}</Text>
-                        <Text>{item.description}</Text>
-                    </View>
-                </TouchableOpacity>
-              )}
-              />
+            <Text style={styles.header}>Available Jobs</Text>
+            <FlatList 
+                data={jobs}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => navigation.navigate('Job Details', { jobId:item.Id})}>
+                        <View style={styles.jobItem}>
+                            <Text style={styles.jobTitle}>{item.Title}</Text>
+                            <Text>{item.description}</Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
+            />
         </View>
     );
 }
@@ -46,6 +47,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+    },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
     },
     jobItem: {
         padding: 16,
