@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import axios from '../../api';
 
 export default function LeafleteerFindJobsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortOption, setSortOption] = useState('recent');
-    const [filterOption, setFilterOption] = useState('available');
     const [jobs, setJobs] = useState([]);
+    const navigation = useNavigation();
 
     useEffect(() => {
         fetchJobs();
@@ -30,8 +28,9 @@ export default function LeafleteerFindJobsScreen() {
             <Text style={styles.jobDetails}>Leaflets: {item.number_of_leaflets} | Est. Time: (filler) hours</Text>
             <Text style={styles.jobDescription}>Short Description: {item.description}</Text>
             <View style={styles.jobActions}>
-                <Button title="View Details" onPress={() => {}} />
-                <Button title="Bid" onPress={() => {}} />
+                <TouchableOpacity
+                    style={styles.viewDetailsButton}>
+                    onPress={()}
             </View>
         </View>
     );
