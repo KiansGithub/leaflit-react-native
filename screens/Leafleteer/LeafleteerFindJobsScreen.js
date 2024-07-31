@@ -29,8 +29,17 @@ export default function LeafleteerFindJobsScreen() {
             <Text style={styles.jobDescription}>Short Description: {item.description}</Text>
             <View style={styles.jobActions}>
                 <TouchableOpacity
-                    style={styles.viewDetailsButton}>
-                    onPress={()}
+                    style={styles.viewDetailsButton}
+                    onPress={() => navigation.navigate('JobDetails', { jobId: item.id })}
+                >
+                    <Text style={styles.viewDetailsButtonText}>View Details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.bidButton}
+                    onPress={() => navigation.navigate('JobDetails', { jobId: item.id })}
+                >
+                    <Text style={styles.bidButtonText}>Bid</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -109,6 +118,24 @@ const styles = StyleSheet.create({
     jobActions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    viewDetailsButton: {
+        backgroundColor: '#007bff',
+        padding: 10,
+        borderRadius: 5,
+    },
+    viewDetailsButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    bidButton: {
+        backgroundColor: '#28a745',
+        padding: 10,
+        borderRadius: 5,
+    },
+    bidButtonText: {
+        color: '#fff',
+        fontSize: 16,
     },
     loadMoreButton: {
         backgroundColor: '#007bff',
