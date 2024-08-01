@@ -1,32 +1,30 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
 import axios from '../../api';
-import { useFocusEffect } from '@react-navigation/native';
 
-export default function LeafleteerMyJobsScreen() {
+export default function LeafleteerMyBidsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
-    const [jobs, setJobs] = useState([]);
+    const [bids, setBids] = useState([]);
 
-    const fetchJobs = async () => {
+    useEffect(() => {
+        fetchBids();
+    }, []);
+
+    const fetchBids = async () => {
         try {
-            const response = await axios.get('leafleteerjobs/active/');
-            setJobs(response.data);
+            const response = await axios.get('bids/');
+            setBids(response.data);
         } catch (error) {
-            console.error('Error fetching jobs:', error);
+            console.error('Error fetching bids:', error);
         }
     };
 
-    useFocusEffect(
-        useCallback(() => {
-        fetchJobs();
-    }, [])
-    );
-
-    const renderJobItem = ({ item }) => (
-        <View style={styles.jobCard}>
-            <Text style={styles.jobTitle}>{item.title}</Text>
-            <Text style={styles.jobDetails}>Location: {item.location} | Status: {item.status}</Text>
-            <View style={styles.jobOptions}>
+    const renderBidItem = ({ item }) => (
+        <View style={styles.bidCard}>
+            <Text style={styles.jobTitle}>Job: {item.job.title}</Text>
+            <Text style={styles.bidDetails}>Bid Amount: ${item.bid_amount}</Text>
+            <Text style={styles.bidDetails}>Status: {item.bid_status}</Text>
+            <View style={styles.bidOptions}>
                 <Text>Options: </Text>
                 <TouchableOpacity>
                     <Text style={styles.optionText}>Edit</Text>
@@ -42,22 +40,22 @@ export default function LeafleteerMyJobsScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-                <Text style={styles.header}>My Jobs</Text>
+                <Text style={styles.header}>My Bids</Text>
                 <TextInput 
                     style={styles.searchInput}
-                    placeholder="Search for jobs..."
+                    placeholder="Search for bids..."
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
                 <Button title="Filter" onPress={() => {}} />
             </View>
             <FlatList 
-                data={jobs}
-                renderItem={renderJobItem}
+                data={bids}
+                renderItem={renderBidItem}
                 keyExtractor={(item) => item.id.toString()}
-                contentContainerStyle={styles.jobList}
+                contentContainerStyle={styles.bidList}
             />
-            <TouchableOpacity style={styles.loadMoreButton} onPress={fetchJobs}>
+            <TouchableOpacity style={styles.loadMoreButton} onPress={fetchBids}>
                 <Text style={styles.loadMoreText}>Load More</Text>
             </TouchableOpacity>
         </View>
@@ -86,10 +84,10 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         borderRadius: 4,
     },
-    jobList: {
+    bidList: {
         paddingBottom: 16,
     },
-    jobCard: {
+    bidCard: {
         backgroundColor: '#fff',
         padding: 16,
         marginBottom: 16,
@@ -102,11 +100,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 8,
     },
-    jobDetails: {
-        fontSize: 14,
-        marginBottom: 4,
-    },
-    jobOptions: {
+    bidOptions: {
         flexDirection: 'row',
         alignItems: 'center',
     },

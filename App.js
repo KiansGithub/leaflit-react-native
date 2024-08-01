@@ -7,13 +7,15 @@ import LoginScreen from './screens/Shared/LoginScreen';
 import RegistrationScreen from './screens/Shared/RegistrationScreen';
 import BusinessHomeScreen from './screens/Business/BusinessHomeScreen';
 import LeafleteerHomeScreen from './screens/Leafleteer/LeafleteerHomeScreen';
-import JobDetailsScreen from './screens/Shared/JobDetailsScreen';
 import BusinessMenuScreen from './screens/Business/BusinessMenuScreen'; // New screen for the menu 
 import LeafleteerMenuScreen from './screens/Leafleteer/LeafleteerMenuScreen'; // New screen for the menu
 import BusinessAddJobScreen from './screens/Business/BusinessAddJobScreen';
 import BusinessMyJobsScreen from './screens/Business/BusinessMyJobsScreen';
 import LeafleteerMyJobsScreen from './screens/Leafleteer/LeafleteerMyJobsScreen';
 import LeafleteerFindJobsScreen from './screens/Leafleteer/LeafleteerFindJobsScreen';
+import LeafleteerJobDetailsScreen from './screens/Leafleteer/LeafleteerJobDetailsScreen';
+import BusinessJobDetailsScreen from './screens/Business/BusinessJobDetailsScreen';
+import LeafleteerMyBidsScreen from './screens/Leafleteer/LeafleteerMyBidsScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -92,6 +94,15 @@ function LeafleteerTabs() {
         }}
       />
       <Tab.Screen 
+          name="My Bids"
+          component={LeafleteerMyBidsScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="clipboard-outline" color={color} size={size} />
+            ),
+          }}
+      />
+      <Tab.Screen 
         name="Menu"
         component={LeafleteerMenuScreen}
         options={{
@@ -111,7 +122,8 @@ function MainStack() {
       <Stack.Screen name="Register" component={RegistrationScreen} />
       <Stack.Screen name="Business" component={BusinessTabs} />
       <Stack.Screen name="Leafleteer" component={LeafleteerTabs} />
-      <Stack.Screen name="Job Details" component={JobDetailsScreen} />
+      <Stack.Screen name="Leafleteer Job Details" component={LeafleteerJobDetailsScreen} />
+      <Stack.Screen name="Business Job Details" component={BusinessJobDetailsScreen} />
     </Stack.Navigator>
   );
 }

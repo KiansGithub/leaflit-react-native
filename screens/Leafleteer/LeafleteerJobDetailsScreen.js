@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity } from 'react-native';
 import axios from '../../api';
-import { useReoute, useNavgation } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
-export default function JobDetailsScreen() {
+export default function LeafleteerJobDetailsScreen() {
     const [job, setJob] = useState(null);
     const [bidAmount, setBidAmount] = useState('');
-    const route = useRoute9;
+    const route = useRoute();
     const navigation = useNavigation();
     const { jobId } = route.params;
 
@@ -16,7 +16,7 @@ export default function JobDetailsScreen() {
 
     const fetchJobDetails = async () => {
         try {
-            const response = await axios.get('/leafleteerjob/${jobId');
+            const response = await axios.get(`/leafleteer-jobs/${jobId}/`);
             setJob(response.data);
         } catch (error) {
             console.error('Error fetching job details:', error);
@@ -27,11 +27,16 @@ export default function JobDetailsScreen() {
         try {
             const response = await axios.post('/bids/', {
                 job: jobId, 
-                bid_amount: bidAmount
+                bid_amount: bidAmount,
+                bid_status: 'Pending'
             });
-            console.log('Bid placed successfully:', response.data);
+            if (response.status === 201) {
+                alert('Bid placed sccessfully');
+                navigation.navigate('Leafleteer');
+            }
         } catch (error) {
             console.error('Error placing bid:', error);
+            alert('Error placing bid');
         }
     };
 
@@ -44,15 +49,28 @@ export default function JobDetailsScreen() {
     }
 
     return (
-        <View style={StyleSheet.container}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={StyleSheet.backButton}>
-                <Text style={StyleSheet.backButtonText}>Back</Text>
+        <View style={styles.container}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
-            <Text style={StyleSheet.header}>Job Details</Text>
-            <Text style={StyleSheet.jobDescription}>{job.description}</Text>
-          
+            <Text style={styles.header}>Job Details</Text>
+            <Text style={styles.jobDescription}>{job.description}</Text>
+            <Text style={styles.jobDetail}>Average Bid Amount: ${job.average_bid_amount}</Text>
+            <TouchableOpacity style={styles.viewBidsButton} onPress={() => navigation.navigate('Bids', { jobId })}>
+                <Text style={styles.viewBidsButtonText}>View Bids</Text>
+            </TouchableOpacity>
+            <TextInput 
+                style={styles.input}
+                placeholder="Your Bid"
+                value={bidAmount}
+                onChangeText={setBidAmount}
+                keyboardType="numeric"
+            />
+            <TouchableOpacity style={styles.bidButton} onPress={handleBid}>
+                <Text style={styles.bidButtonText}>Bid on Job</Text>
+            </TouchableOpacity>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({

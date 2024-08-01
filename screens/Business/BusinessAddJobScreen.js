@@ -15,6 +15,7 @@ export default function BusinessAddJobScreen({ navigation }) {
                 location,
                 number_of_leaflets: numberOfLeaflets,
                 description,
+                status: 'Open',
             });
             console.log('Job added successfully:', response.data)
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
 import axios from '../../api';
+import { useNavigation } from '@react-navigation/native';
 
 export default function LeafleteerFindJobsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -30,13 +31,13 @@ export default function LeafleteerFindJobsScreen() {
             <View style={styles.jobActions}>
                 <TouchableOpacity
                     style={styles.viewDetailsButton}
-                    onPress={() => navigation.navigate('JobDetails', { jobId: item.id })}
+                    onPress={() => navigation.navigate('Leafleteer Job Details', { jobId: item.id })}
                 >
                     <Text style={styles.viewDetailsButtonText}>View Details</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.bidButton}
-                    onPress={() => navigation.navigate('JobDetails', { jobId: item.id })}
+                    onPress={() => navigation.navigate('Leafleteer Job Details', { jobId: item.id })}
                 >
                     <Text style={styles.bidButtonText}>Bid</Text>
                 </TouchableOpacity>

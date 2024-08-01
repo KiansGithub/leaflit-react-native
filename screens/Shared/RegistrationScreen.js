@@ -30,6 +30,10 @@ export default function RegistrationScreen({ navigation }) {
                 password,
                 phone_number: phoneNumber,
                 user_type: userType
+            }, {
+                headers: {
+                    'No-Auth': true
+                }
             });
             console.log('API response', response.data);
             navigation.navigate('Login');

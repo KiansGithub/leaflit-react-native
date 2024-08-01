@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api'
 
 export default function BusinessMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
     const [search, setSearch] = useState('');
     const navigation = useNavigation();
-
-    useEffect(() => {
-        fetchJobs();
-    }, []);
 
     const fetchJobs = async () => {
         try {
@@ -21,15 +17,22 @@ export default function BusinessMyJobsScreen() {
         }
     };
 
+    useFocusEffect(
+        useCallback(() => {
+            fetchJobs();
+        }, [])
+    );
+
     const renderJob = ({ item }) => (
-        <View style={styles.jobContainer}>
+        <TouchableOpacity style={styles.jobContainer} onPress={() => navigation.navigate('Business Job Details', { jobId: item.id })}>
             <Text>Job Title: {item.title}</Text>
             <Text>Location: {item.location}</Text>
             <Text>Status: {item.status}</Text>
+            <Text>Pending Bids: {item.pending_bid_count}</Text>
             <TouchableOpacity>
-                <Text style={styles.options}>Options: Edit | Cancel</Text>
+                <Text style={styles.options}>View Details</Text>
             </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
     );
 
     return (
