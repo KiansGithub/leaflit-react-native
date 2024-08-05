@@ -22,19 +22,41 @@ export default function LeafleteerMyJobsScreen() {
     }, [])
     );
 
+    const startJob = async (jobId) => {
+        try {
+            const response = await axios.post(`/leafleteerjobs/${jobId}/start/`, { status: 'In Progress'});
+            setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'In Progress'} : job));
+        } catch (error) {
+            console.error('Error starting job:', error);
+            Alert.alert('Error', 'Failed to start the job. Please try again.');
+        }
+    };
+
+    const completeJob = async(jobId) => {
+        try {
+            const response = await axios.post(`/leafleteerjobs/${jobId}/complete/`, { status: 'Completed' });
+            setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'Completed' } : job));
+        } catch (error) {
+            console.error('Error completing job:', error);
+            Alert.alert('Error', 'Failed to complete the job. Please try again.');
+        }
+    };
+
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
             <Text style={styles.jobTitle}>{item.title}</Text>
             <Text style={styles.jobDetails}>Location: {item.location} | Status: {item.status}</Text>
             <View style={styles.jobOptions}>
-                <Text>Options: </Text>
-                <TouchableOpacity>
-                    <Text style={styles.optionText}>Edit</Text>
-                </TouchableOpacity>
-                <Text> | </Text>
-                <TouchableOpacity>
-                    <Text style={styles.optionText}>Cancel</Text>
-                </TouchableOpacity>
+                {item.status === 'Assigned' && (
+                    <TouchableOpacity onPress={() => startJob(item.id)}>
+                        <Text style={styles.startButton}>Start</Text>
+                    </TouchableOpacity>
+                )}
+                {item.status === 'In Progress' && (
+                    <TouchableOpacity onPress={() => completeJob(item.id)}>
+                        <Text style={styles.completeButton}>Complete</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
@@ -109,6 +131,14 @@ const styles = StyleSheet.create({
     jobOptions: {
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    startButton: {
+        color: '#007bff',
+        fontWeight: 'bold',
+    },
+    completeButton: {
+        color: '#28a745',
+        fontWeight: 'bold',
     },
     optionText: {
         color: '#007bff',

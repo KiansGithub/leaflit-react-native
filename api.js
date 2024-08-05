@@ -7,17 +7,21 @@ const instance = axios.create({
 
 instance.interceptors.request.use(async config => {
     const token = await AsyncStorage.getItem('access_token');
+    console.log("Request intercepted. Token:", token);
     if (token && !config.headers['No-Auth']) {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
 }, error => {
+    console.error("Request error", error);
     return Promise.reject(error);
 });
 
 instance.interceptors.response.use(response => {
+    console.log("Response received:", response);
     return response;
 }, async error => {
+    console.error("Response error", error);
     const originalRequest = error.config;
 if (error.response) {
     if (error.response.status === 401 && !originalRequest._retry) {

@@ -10,6 +10,7 @@ export default function LoginScreen({ navigation }) {
     const handleLogin = async() => {
         try {
             console.log("Starting login process");
+            console.log("Username:", email, "Password:", password);
 
             const response = await axios.post('/token/', {
                 username: email, 

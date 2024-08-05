@@ -32,7 +32,7 @@ export default function BusinessAddJobScreen({ navigation }) {
         
         } catch (error) {
             console.error('Error posting job', error);
-            alert('Failed to create job. Please try again');
+            Alert.alert('Failed to create job', 'Please try again');
         }
     };
 
@@ -43,12 +43,14 @@ export default function BusinessAddJobScreen({ navigation }) {
                 style={styles.input}
                 value={title}
                 onChangeText={setTitle}
+                placeholder="Job Title"
             />
             <Text style={styles.label}>Location</Text>
             <TextInput
                 style={styles.input}
                 value={location}
                 onChangeText={setLocation}
+                placeholder="Location"
             />
             <Text style={styles.label}>Number of Leaflets</Text>
             <TextInput 
@@ -56,6 +58,7 @@ export default function BusinessAddJobScreen({ navigation }) {
                 value={numberOfLeaflets}
                 onChangeText={setNumberOfLeaflets}
                 keyboardType="numeric"
+                placeholder="Number of Leaflets"
             />
             <Text style={styles.label}>Description (Optional)</Text>
             <TextInput 
@@ -63,6 +66,7 @@ export default function BusinessAddJobScreen({ navigation }) {
                 value={description}
                 onChangeText={setDescription}
                 multiline 
+                placeholder="Description"
             />
             <Button title="Add Job" onPress={handleAddJob} />
         </ScrollView>

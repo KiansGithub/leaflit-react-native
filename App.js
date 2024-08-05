@@ -16,6 +16,8 @@ import LeafleteerFindJobsScreen from './screens/Leafleteer/LeafleteerFindJobsScr
 import LeafleteerJobDetailsScreen from './screens/Leafleteer/LeafleteerJobDetailsScreen';
 import BusinessJobDetailsScreen from './screens/Business/BusinessJobDetailsScreen';
 import LeafleteerMyBidsScreen from './screens/Leafleteer/LeafleteerMyBidsScreen';
+import PasswordResetConfirmScreen from './screens/Shared/PasswordResetConfirmScreen';
+import PasswordResetRequestScreen from './screens/Shared/PasswordResetRequestScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -124,6 +126,8 @@ function MainStack() {
       <Stack.Screen name="Leafleteer" component={LeafleteerTabs} />
       <Stack.Screen name="Leafleteer Job Details" component={LeafleteerJobDetailsScreen} />
       <Stack.Screen name="Business Job Details" component={BusinessJobDetailsScreen} />
+      <Stack.Screen name="Password Reset Confirm" component={PasswordResetConfirmScreen} />
+      <Stack.Screen name="Password Reset Request" component={PasswordResetRequestScreen} />
     </Stack.Navigator>
   );
 }

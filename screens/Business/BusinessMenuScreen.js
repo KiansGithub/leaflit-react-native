@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-export default function MenuScreen() {
+export default function MenuScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.button}>

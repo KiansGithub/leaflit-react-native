@@ -12,7 +12,9 @@ export default function LeafleteerMyBidsScreen() {
 
     const fetchBids = async () => {
         try {
-            const response = await axios.get('bids/');
+            const response = await axios.get('bids/', {
+                params: { status: 'Pending' }
+            });
             setBids(response.data);
         } catch (error) {
             console.error('Error fetching bids:', error);
