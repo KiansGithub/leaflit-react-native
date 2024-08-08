@@ -3,29 +3,30 @@ import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, Touchable
 import axios from '../../api';
 
 export default function RegistrationScreen({ navigation }) {
-    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [userType, setUserType] = useState('business');
+    const [error, setError] = useState(null);
 
     const handleRegister = async() => {
         if (password !== confirmPassword) {
-            alert('Passwords do not match');
+            setError('Passwords do not match');
             return;
         }
         try {
             console.log('Making API request to register user');
             console.log({
-                username, 
+                first_name: firstName, 
                 email, 
                 password, 
                 phone_number: phoneNumber,
                 user_type: userType,
             });
             const response = await axios.post('/register/', { 
-                username,
+                first_name: firstName,
                 email,
                 password,
                 phone_number: phoneNumber,
@@ -39,13 +40,25 @@ export default function RegistrationScreen({ navigation }) {
             navigation.navigate('Login');
         } catch(error) {
             console.error(error);
+            // Set error message from the API response 
+            if (error.response && error.response.data) {
+                if (error.response && error.response.data) {
+                    setError(error.response.data.username[0]);
+                } else if (error.response.data.email) {
+                    setError(error.response.data.email[0]);
+                } else {
+                    setError('Registration failed. Please try again.');
+                }
+            } else {
+                setError('An error occurred. Please try again.');
+            }
         }
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text>Username:</Text>
-            <TextInput style={styles.input} value={username} onChangeText={setUsername} />
+            <Text>First Name:</Text>
+            <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} />
             <Text>Email:</Text>
             <TextInput style={styles.input} value={email} onChangeText={setEmail} />
             <Text>Password:</Text>
@@ -69,6 +82,8 @@ export default function RegistrationScreen({ navigation }) {
                     <Text style={[styles.toggleButtonText, userType === 'leafleteer' && styles.selectedToggleButtonText]}>Leafleteer</Text>
                 </TouchableOpacity>
             </View>
+
+            {error && <Text style={styles.errorText}>{error}</Text>}
 
             <View style={styles.buttonContainer}>
                 <Button title="Register" onPress={handleRegister} />
@@ -117,5 +132,9 @@ const styles = StyleSheet.create({
    },
     buttonContainer: {
         marginBottom: 20,
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 12,
     }
 });

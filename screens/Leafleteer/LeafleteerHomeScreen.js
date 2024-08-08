@@ -1,25 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api';
 
 export default function LeafleteerHomeScreen() {
     const [recentJobs, setRecentJobs] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
     const [stats, setStats] = useState({
-        totalJobs: 0,
+        totalJobsCompleted: 0,
         totalEarnings: 0,
-        totalLeafletsDelivered: 0
+        totalLeafletsDistributed: 0
     });
+
     const navigation = useNavigation();
 
     useEffect(() => {
-        fetchRecentJobs();
-        fetchStats();
+        fetchInitialData();
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchAllData();
+        }, [])
+    );
+
+    const fetchInitialData = async () => {
+        await Promise.all([fetchRecentJobs(), fetchStats(), fetchUnreadNotifications()]);
+    };
+
+    const fetchAllData = async () => {
+        await Promise.all([fetchRecentJobs(), fetchStats(), fetchUnreadNotifications()]);
+    }
 
     const fetchRecentJobs = async () => {
         try {
-            const response = await axios.get('/leafleteerjobs/active');
+            const response = await axios.get('/leafleteerjobs/active/');
             setRecentJobs(response.data.slice(0, 2));
         } catch (error) {
             console.error('Error fetching recent jobs', error);
@@ -35,18 +50,34 @@ export default function LeafleteerHomeScreen() {
         }
     };
 
+    const fetchUnreadNotifications = async () => {
+        try {
+            const response = await axios.get('/notifications/unread-count/');
+            setUnreadCount(response.data.unread_count);
+        } catch (error) {
+            console.error('Error fetching unread notifications count', error);
+        }
+    };
+
     const renderJobItem = ({ item }) => {
+        return (
         <View style={styles.jobItem}>
-            <Text>{item.title} - {item.location} - {item.status}</Text>
+            <Text>- {item.location} - {item.status} - {item.number_of_leaflets}</Text>
         </View>
-    }
+        );
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.welcomeText}>Welcome, User</Text>
-                <TouchableOpacity style={styles.bellIcon}>
+                <TouchableOpacity style={styles.bellIcon} onPress={() => navigation.navigate('Leafleteer Notifications')}>
                     <Text>🔔</Text>
+                    {unreadCount > 0 && (
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>{unreadCount}</Text>
+                            </View>
+                            )}
                 </TouchableOpacity>
             </View>
             <TouchableOpacity 
@@ -70,9 +101,9 @@ export default function LeafleteerHomeScreen() {
             </TouchableOpacity>
             <Text style={styles.sectionTitle}>Overview</Text>
             <View style={styles.statsContainer}>
-                <Text>Total Jobs Completed: {stats.totalJobs}</Text>
-                <Text>Total Earnings: ${stats.totalEarnings}</Text>
-                <Text>Total Leaflets Delivered: {stats.totalLeafletsDelivered}</Text>
+                <Text>Total Jobs Completed: {stats.totalJobsCompleted}</Text>
+                <Text>Total Earnings: £{stats.totalEarnings}</Text>
+                <Text>Total Leaflets Delivered: {stats.totalLeafletsDistributed}</Text>
             </View>
         </View>
     );
@@ -95,6 +126,21 @@ const styles = StyleSheet.create({
     },
     bellIcon: {
         fontSize: 24,
+    },
+    badge: {
+        position: 'absolute',
+        top: -5,
+        right: -10,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        padding: 3,
+        minWidth: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    badgeText: {
+        color: 'white',
+        fontSize: 12,
     },
     addButton: {
         backgroundColor: '#007BFF',

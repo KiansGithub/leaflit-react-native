@@ -18,6 +18,8 @@ import BusinessJobDetailsScreen from './screens/Business/BusinessJobDetailsScree
 import LeafleteerMyBidsScreen from './screens/Leafleteer/LeafleteerMyBidsScreen';
 import PasswordResetConfirmScreen from './screens/Shared/PasswordResetConfirmScreen';
 import PasswordResetRequestScreen from './screens/Shared/PasswordResetRequestScreen';
+import BusinessNotificationScreen from './screens/Business/BusinessNotificationScreen';
+import LeafleteerNotificationScreen from './screens/Leafleteer/LeafleteerNotificationScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -78,7 +80,7 @@ function LeafleteerTabs() {
         }}
       />
       <Tab.Screen 
-        name="MyJobs"
+        name="My Jobs"
         component={LeafleteerMyJobsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -128,6 +130,8 @@ function MainStack() {
       <Stack.Screen name="Business Job Details" component={BusinessJobDetailsScreen} />
       <Stack.Screen name="Password Reset Confirm" component={PasswordResetConfirmScreen} />
       <Stack.Screen name="Password Reset Request" component={PasswordResetRequestScreen} />
+      <Stack.Screen name="Business Notifications" component={BusinessNotificationScreen} />
+      <Stack.Screen name="Leafleteer Notifications" component={LeafleteerNotificationScreen} />
     </Stack.Navigator>
   );
 }

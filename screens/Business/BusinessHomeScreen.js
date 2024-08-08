@@ -1,21 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api';
 
 export default function BusinessHomeScreen() {
     const [recentJobs, setRecentJobs] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
     const [stats, setStats] = useState({
-        totalJobs: 0,
-        totalLeaflets: 0,
+        totalJobsCompleted: 0,
+        totalLeafletsDistributed: 0,
         totalAmountSpent: 0
     });
     const navigation = useNavigation();
 
     useEffect(() => {
-        fetchRecentJobs();
-        fetchStats();
+        fetchInitialData();
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchAllData();
+        }, [])
+    );
+
+    const fetchInitialData = async () => {
+        await Promise.all([fetchRecentJobs(), fetchStats(), fetchUnreadNotifications()]);
+    };
+
+    const fetchAllData = async () => { 
+        await Promise.all([fetchRecentJobs(), fetchStats(), fetchUnreadNotifications()]);
+    };
 
     const fetchRecentJobs = async () => {
         try {
@@ -35,6 +49,15 @@ export default function BusinessHomeScreen() {
         }
     };
 
+    const fetchUnreadNotifications = async () => {
+        try {
+            const response = await axios.get('/notifications/unread-count/');
+            setUnreadCount(response.data.unread_count);
+        } catch (error) {
+            console.error('Error fetching unread notifications count', error);
+        }
+    };
+
     const renderJobItem = ({ item }) => (
         <View style={styles.jobItem}>
             <Text>{item.title} - {item.location} - {item.status}</Text>
@@ -44,16 +67,17 @@ export default function BusinessHomeScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.welcomeText}>Welcome, User</Text>
-                <TouchableOpacity style={styles.bellIcon}>
+                <Text style={styles.welcomeText}>Welcome</Text>
+                <TouchableOpacity style={styles.bellIcon} onPress={() => navigation.navigate('Business Notifications')}>
                     <Text>🔔</Text>
+                    {unreadCount > 0 && <View style={styles.badge}><Text style={styles.badgeText}>{unreadCount}</Text></View>}
                 </TouchableOpacity>
             </View>
             <TouchableOpacity 
                 style={styles.addButton}
                 onPress={() => navigation.navigate('Add Job')}
             >
-                <Text style={styles.addButtonText}>Post a New Job</Text>
+                <Text style={styles.addButtonText}>Add Job</Text>
             </TouchableOpacity>
             <Text style={styles.sectionTitle}>My Jobs Quick View</Text>
             <FlatList 
@@ -70,9 +94,9 @@ export default function BusinessHomeScreen() {
             </TouchableOpacity>
             <Text style={styles.sectionTitle}>Overview</Text>
             <View style={styles.statsContainer}>
-                <Text>Total Jobs Posted: {stats.totalJobs}</Text>
-                <Text>Total Leaflets Distributed: {stats.totalLeaflets}</Text>
-                <Text>Total Amount Spent: ${stats.totalAmountSpent}</Text>
+                <Text>Total Jobs Completed: {stats.totalJobsCompleted}</Text>
+                <Text>Total Leaflets Distributed: {stats.totalLeafletsDistributed}</Text>
+                <Text>Total Amount Spent: £{stats.totalAmountSpent}</Text>
             </View>
         </View>
     );
@@ -95,6 +119,21 @@ const styles = StyleSheet.create({
     },
     bellIcon: {
         fontSize: 24,
+    },
+    badge: {
+        position: 'absolute',
+        top: -5,
+        right: -5,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        padding: 3,
+        minWidth: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    badgeText: {
+        color: 'white',
+        fontSize: 12,
     },
     addButton: {
         backgroundColor: '#007BFF',

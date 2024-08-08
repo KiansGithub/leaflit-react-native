@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from '../../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,10 +10,10 @@ export default function LoginScreen({ navigation }) {
     const handleLogin = async() => {
         try {
             console.log("Starting login process");
-            console.log("Username:", email, "Password:", password);
+            console.log("Email:", email.toLowerCase(), "Password:", password);
 
             const response = await axios.post('/token/', {
-                username: email, 
+                email: email.toLowerCase(), 
                 password 
             });
 
@@ -53,10 +53,13 @@ export default function LoginScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <Text>Email:</Text>
-            <TextInput style={styles.input} value={email} onChangeText={setEmail} />
+            <TextInput style={styles.input} value={email} onChangeText={setEmail} autoCapitalize='none' />
             <Text>Password:</Text>
             <TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry />
             <Button title="Login" onPress={handleLogin} />
+            <TouchableOpacity onPress={() => navigation.navigate('Password Reset Request')}>
+                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+            </TouchableOpacity>
             <Button title="Register" onPress={() => navigation.navigate('Register')} />
         </View>
     );
@@ -75,4 +78,9 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         paddingHorizontal: 8,
     },
+    forgotPassword: {
+        color: 'blue',
+        marginTop: 10,
+        textAlign: 'center',
+    }
 });

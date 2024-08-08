@@ -3,18 +3,14 @@ import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert } from 're
 import axios from '../../api';
 
 export default function BusinessAddJobScreen({ navigation }) {
-    const [title, setTitle] = useState('');
     const [location, setLocation] = useState('');
     const [numberOfLeaflets, setNumberOfLeaflets] = useState('');
-    const [description, setDescription] = useState('');
 
     const handleAddJob = async () => {
         try {
             const response = await axios.post('/business-jobs/', {
-                title,
                 location,
                 number_of_leaflets: numberOfLeaflets,
-                description,
                 status: 'Open',
             });
             console.log('Job added successfully:', response.data)
@@ -23,8 +19,6 @@ export default function BusinessAddJobScreen({ navigation }) {
             Alert.alert('Success', 'Job added successfully');
 
             // Clear form fields 
-            setTitle('');
-            setDescription('');
             setLocation('');
             setNumberOfLeaflets('');
 
@@ -38,13 +32,6 @@ export default function BusinessAddJobScreen({ navigation }) {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.label}>Job Title</Text>
-            <TextInput 
-                style={styles.input}
-                value={title}
-                onChangeText={setTitle}
-                placeholder="Job Title"
-            />
             <Text style={styles.label}>Location</Text>
             <TextInput
                 style={styles.input}
@@ -59,14 +46,6 @@ export default function BusinessAddJobScreen({ navigation }) {
                 onChangeText={setNumberOfLeaflets}
                 keyboardType="numeric"
                 placeholder="Number of Leaflets"
-            />
-            <Text style={styles.label}>Description (Optional)</Text>
-            <TextInput 
-                style={styles.textarea}
-                value={description}
-                onChangeText={setDescription}
-                multiline 
-                placeholder="Description"
             />
             <Button title="Add Job" onPress={handleAddJob} />
         </ScrollView>
@@ -93,13 +72,4 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         backgroundColor: '#fff',
     },
-    textarea: {
-        height: 80,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 16,
-        paddingHorizontal: 8,
-        borderRadius: 4,
-        backgroundColor: '#fff',
-    }
 });

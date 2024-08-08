@@ -25,7 +25,6 @@ export default function BusinessMyJobsScreen() {
 
     const renderJob = ({ item }) => (
         <TouchableOpacity style={styles.jobContainer} onPress={() => navigation.navigate('Business Job Details', { jobId: item.id })}>
-            <Text>Job Title: {item.title}</Text>
             <Text>Location: {item.location}</Text>
             <Text>Status: {item.status}</Text>
             <Text>Pending Bids: {item.pending_bid_count}</Text>
@@ -38,25 +37,8 @@ export default function BusinessMyJobsScreen() {
     return (
         <View style={styles.container}>
             <Text style={styles.header}>My Jobs</Text>
-            <View style={styles.searchContainer}>
-                <TextInput 
-                    style={styles.searchInput}
-                    placeholder="Search for jobs..."
-                    value = {search}
-                    onChangeText = {setSearch}
-                />
-                <TouchableOpacity
-                 style={styles.addButton}
-                 onPress={() => navigation.navigate('Add Job')}
-                >
-                    <Text style={styles.addButtonText}>+</Text> 
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.filterButton}>
-                    <Text style={styles.filterButtonText}>Filter</Text>
-                </TouchableOpacity>
-            </View>
             <FlatList 
-                data={jobs.filter(job => job.title.includes(search))}
+                data={jobs}
                 renderItem={renderJob}
                 keyExtractor={item => item.id.toString()}
                 contentContainerStyle={styles.listContainer}

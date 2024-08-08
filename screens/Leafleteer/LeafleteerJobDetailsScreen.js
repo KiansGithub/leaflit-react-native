@@ -32,7 +32,7 @@ export default function LeafleteerJobDetailsScreen() {
             });
             if (response.status === 201) {
                 alert('Bid placed sccessfully');
-                navigation.navigate('Leafleteer');
+                navigation.navigate('Leafleteer', { refresh: true });
             }
         } catch (error) {
             console.error('Error placing bid:', error);
@@ -54,11 +54,10 @@ export default function LeafleteerJobDetailsScreen() {
                 <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
             <Text style={styles.header}>Job Details</Text>
-            <Text style={styles.jobDescription}>{job.description}</Text>
-            <Text style={styles.jobDetail}>Average Bid Amount: ${job.average_bid_amount}</Text>
-            <TouchableOpacity style={styles.viewBidsButton} onPress={() => navigation.navigate('Bids', { jobId })}>
-                <Text style={styles.viewBidsButtonText}>View Bids</Text>
-            </TouchableOpacity>
+            <Text style={styles.jobDetail}>Posted by: {job.business_user.first_name}</Text>
+            <Text style={styles.jobDetail}>Location: {job.location}</Text>
+            <Text style={styles.jobDetail}>Number of Leaflets: {job.number_of_leaflets}</Text>
+            <Text style={styles.jobDetail}>Average Bid Amount: £{job.average_bid_amount}</Text>
             <TextInput 
                 style={styles.input}
                 placeholder="Your Bid"
@@ -98,17 +97,6 @@ const styles = StyleSheet.create({
     jobDetail: {
         fontSize: 16,
         marginBottom: 16,
-    },
-    viewBidsButton: {
-        backgroundColor: '#007BFF',
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    viewBidsButtonText: {
-        color: '#fff',
-        fontSize: 16,
     },
     input: {
         height: 40,

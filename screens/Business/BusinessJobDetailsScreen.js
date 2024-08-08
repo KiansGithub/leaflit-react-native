@@ -6,6 +6,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 export default function BusinessJobDetailsScreen() {
     const [job, setJob] = useState(null);
     const [bids, setBids] = useState([]);
+    const [refresh, setRefresh] = useState(false);
     const route = useRoute();
     const navigation = useNavigation();
     const { jobId } = route.params;
@@ -13,7 +14,7 @@ export default function BusinessJobDetailsScreen() {
     useEffect(() => {
         fetchJobDetails();
         fetchJobBids();
-    }, []);
+    }, [refresh]);
 
     const fetchJobDetails = async () => {
         try {
@@ -38,25 +39,35 @@ export default function BusinessJobDetailsScreen() {
     const handleAcceptBid = async (bidId) => {
         try {
             console.log(`Accepting bid with id: ${bidId}`);
-            const response = await axios.put(`/bids/${bidId}/`, { bid_status: 'Accepted' });
+            const response = await axios.post(`/bids/${bidId}/accept/`);
             console.log('Bid accepted:', response.data);
-            fetchJobBids();
-            fetchJobDetails();
+            setRefresh(prev => !prev);
             navigation.navigate('Business')
         } catch (error) {
             console.error('Error accepting bid:', error);
         }
     };
 
+    const handleRejectBid = async (bidId) => {
+        try {
+            console.log(`Rejecting bid with id: ${bidId}`);
+            const response = await axios.post(`/bids/${bidId}/reject/`);
+            console.log('Bid rejected:', response.data);
+            setRefresh(prev => !prev);
+        } catch (error) {
+            console.error('Error rejecting bid:', error);
+        }
+    }
+
     const renderBidItem = ({ item }) => (
         <View style={styles.bidItem}>
-            <Text>Name: {item.leafleteer_user.username}  Bid Amount: ${item.bid_amount}</Text>
+            <Text>Name: {item.leafleteer_user.first_name}  Bid Amount: ${item.bid_amount}</Text>
             <View style={styles.bidActions}>
                 <TouchableOpacity onPress={() => handleAcceptBid(item.id)}>
                     <Text style={styles.acceptButton}>Accept</Text>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text style={styles.viewButton}>View</Text>
+                <TouchableOpacity onPress={() => handleRejectBid(item.id)}>
+                    <Text style={styles.rejectButton}>Reject</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -66,7 +77,6 @@ export default function BusinessJobDetailsScreen() {
         <View style={styles.container}>
             {job ? (
                 <>
-                <Text style={styles.title}>Title: {job.title}</Text>
                 <Text>Location: {job.location}</Text>
                 <Text>Number of Leaflets: {job.number_of_leaflets}</Text>
                 <Text>Job Status: {job.status}</Text>
@@ -118,8 +128,8 @@ const styles = StyleSheet.create({
     acceptButton: {
         color: 'green',
     },
-    viewButton: {
-        color: 'blue',
+   rejectButton: {
+        color: 'red',
     },
     editButton: {
         backgroundColor: '#007BFF',

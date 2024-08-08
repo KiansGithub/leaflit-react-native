@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
 import axios from '../../api';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 export default function LeafleteerMyJobsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [jobs, setJobs] = useState([]);
+    const navigation = useNavigation();
 
     const fetchJobs = async () => {
         try {
@@ -18,9 +19,23 @@ export default function LeafleteerMyJobsScreen() {
 
     useFocusEffect(
         useCallback(() => {
-        fetchJobs();
-    }, [])
+            fetchJobs();
+        }, [])
     );
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchJobs();
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    useEffect(() => {
+        if (navigation.getState().routes.some(route => route.params?.refresh)) {
+            fetchJobs();
+            navigation.setParams({ refresh: false });
+        }
+    }, [navigation]);
 
     const startJob = async (jobId) => {
         try {
@@ -42,15 +57,31 @@ export default function LeafleteerMyJobsScreen() {
         }
     };
 
+    const cancelJob = async (jobId) => {
+        try {
+            const response = await axios.post(`/leafleteerjobs/${jobId}/cancel/`);
+            setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'Cancelled' } : job));
+            Alert.alert('Success', 'Job cancelled successfully.');
+        } catch (error) {
+            console.error('Error cancelling job:', error);
+            Alert.alert('Error', 'Failed to cancel the job. Please try again.');
+        }
+    };
+
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
             <Text style={styles.jobTitle}>{item.title}</Text>
             <Text style={styles.jobDetails}>Location: {item.location} | Status: {item.status}</Text>
             <View style={styles.jobOptions}>
                 {item.status === 'Assigned' && (
+                    <>
                     <TouchableOpacity onPress={() => startJob(item.id)}>
                         <Text style={styles.startButton}>Start</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity onPress={() => cancelJob(item.id)}>
+                        <Text style={styles.cancelButton}>Cancel</Text>
+                    </TouchableOpacity>
+                </>
                 )}
                 {item.status === 'In Progress' && (
                     <TouchableOpacity onPress={() => completeJob(item.id)}>
@@ -65,13 +96,6 @@ export default function LeafleteerMyJobsScreen() {
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>My Jobs</Text>
-                <TextInput 
-                    style={styles.searchInput}
-                    placeholder="Search for jobs..."
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                />
-                <Button title="Filter" onPress={() => {}} />
             </View>
             <FlatList 
                 data={jobs}
@@ -135,9 +159,14 @@ const styles = StyleSheet.create({
     startButton: {
         color: '#007bff',
         fontWeight: 'bold',
+        marginRight: 10,
     },
     completeButton: {
         color: '#28a745',
+        fontWeight: 'bold',
+    },
+    cancelButton: {
+        color: '#dc3545',
         fontWeight: 'bold',
     },
     optionText: {

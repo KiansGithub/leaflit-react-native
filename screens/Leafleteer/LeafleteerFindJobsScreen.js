@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
 import axios from '../../api';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 export default function LeafleteerFindJobsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [jobs, setJobs] = useState([]);
     const navigation = useNavigation();
-
-    useEffect(() => {
-        fetchJobs();
-    }, []);
 
     const fetchJobs = async () => {
         try {
@@ -21,20 +17,35 @@ export default function LeafleteerFindJobsScreen() {
         }
     };
 
+    useFocusEffect(
+        useCallback(() => {
+            fetchJobs();
+        }, [])
+    );
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchJobs();
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    useEffect(() => {
+        const params = navigation.getState().routes.find(route => route.name === 'LeafleteerFindJobsScreen')?.params;
+        if (params?.refresh) {
+            console.log("Refresh parameter detected, fetching jobs...");
+            fetchJobs();
+            navigation.setParams({ refresh: false });
+        }
+    }, [navigation]);
+
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
             <Text style={styles.jobTitle}>{item.title}</Text>
-            <Text style={styles.jobDetails}>Location: {item.location} | Payment: ${item.payment}</Text>
-            <Text style={styles.jobDetails}>Date: {item.date_posted} | Status: {item.status}</Text>
-            <Text style={styles.jobDetails}>Leaflets: {item.number_of_leaflets} | Est. Time: (filler) hours</Text>
-            <Text style={styles.jobDescription}>Short Description: {item.description}</Text>
+            <Text style={styles.jobDetails}>Location: {item.location} </Text>
+            <Text style={styles.jobDetails}>Status: {item.status}</Text>
+            <Text style={styles.jobDetails}>Leaflets: {item.number_of_leaflets}</Text>
             <View style={styles.jobActions}>
-                <TouchableOpacity
-                    style={styles.viewDetailsButton}
-                    onPress={() => navigation.navigate('Leafleteer Job Details', { jobId: item.id })}
-                >
-                    <Text style={styles.viewDetailsButtonText}>View Details</Text>
-                </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.bidButton}
                     onPress={() => navigation.navigate('Leafleteer Job Details', { jobId: item.id })}
@@ -49,12 +60,6 @@ export default function LeafleteerFindJobsScreen() {
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>Find Jobs</Text>
-                <TextInput 
-                    style={styles.searchInput}
-                    placeholder="Search for jobs..."
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                />
             </View>
             <FlatList 
                 data={jobs}
@@ -112,22 +117,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginBottom: 4,
     },
-    jobDescription: {
-        fontSize: 14,
-        marginBottom: 8,
-    },
     jobActions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-    },
-    viewDetailsButton: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
-    },
-    viewDetailsButtonText: {
-        color: '#fff',
-        fontSize: 16,
     },
     bidButton: {
         backgroundColor: '#28a745',
