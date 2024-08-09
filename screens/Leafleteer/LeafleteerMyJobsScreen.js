@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
 import axios from '../../api';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LeafleteerMyJobsScreen() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -70,22 +71,26 @@ export default function LeafleteerMyJobsScreen() {
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
-            <Text style={styles.jobTitle}>{item.title}</Text>
-            <Text style={styles.jobDetails}>Location: {item.location} | Status: {item.status}</Text>
+            <Text style={styles.jobDetails}>Location: {item.location}</Text>
+            <Text style={styles.jobDetails}>Number of Leaflets: {item.number_of_leaflets}</Text>
+            <Text style={styles.jobDetails}>Status: {item.status}</Text>
             <View style={styles.jobOptions}>
                 {item.status === 'Assigned' && (
                     <>
-                    <TouchableOpacity onPress={() => startJob(item.id)}>
-                        <Text style={styles.startButton}>Start</Text>
+                    <TouchableOpacity style={styles.startButton} onPress={() => startJob(item.id)}>
+                        <Ionicons name="play-circle" size={24} color="white" /> 
+                        <Text style={styles.buttonText}>Start</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => cancelJob(item.id)}>
-                        <Text style={styles.cancelButton}>Cancel</Text>
+                    <TouchableOpacity style={styles.cancelButton} onPress={() => cancelJob(item.id)}>
+                        <Ionicons name="close-circle" size={24} color="white" />
+                        <Text style={styles.buttonText}>Cancel</Text>
                     </TouchableOpacity>
                 </>
                 )}
                 {item.status === 'In Progress' && (
-                    <TouchableOpacity onPress={() => completeJob(item.id)}>
-                        <Text style={styles.completeButton}>Complete</Text>
+                    <TouchableOpacity style={styles.completeButton} onPress={() => completeJob(item.id)}>
+                        <Ionicons name="checkmark-circle" size={24} color='white' />
+                        <Text style={styles.buttonText}>Complete</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -124,14 +129,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 16,
     },
-    searchInput: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingHorizontal: 8,
-        marginBottom: 16,
-        borderRadius: 4,
-    },
     jobList: {
         paddingBottom: 16,
     },
@@ -142,6 +139,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderWidth: 1,
         borderColor: '#ddd',
+        elevation: 2,
     },
     jobTitle: {
         fontSize: 18,
@@ -155,19 +153,34 @@ const styles = StyleSheet.create({
     jobOptions: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginTop: 8,
     },
     startButton: {
-        color: '#007bff',
-        fontWeight: 'bold',
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#007bff',
+        padding: 10,
+        borderRadius: 5,
         marginRight: 10,
     },
     completeButton: {
-        color: '#28a745',
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#28a745',
+        padding: 10,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: 'white',
+        marginLeft: 5,
         fontWeight: 'bold',
     },
     cancelButton: {
-        color: '#dc3545',
-        fontWeight: 'bold',
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#dc3545',
+        padding: 10,
+        borderRadius: 5,
     },
     optionText: {
         color: '#007bff',

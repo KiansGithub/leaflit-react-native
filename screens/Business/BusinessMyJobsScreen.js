@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api'
 
@@ -7,6 +7,13 @@ export default function BusinessMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
     const [search, setSearch] = useState('');
     const navigation = useNavigation();
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchJobs();
+        }, [])
+    );
+
 
     const fetchJobs = async () => {
         try {
@@ -17,20 +24,48 @@ export default function BusinessMyJobsScreen() {
         }
     };
 
-    useFocusEffect(
-        useCallback(() => {
+    const cancelJob = async (jobId) => {
+        try {
+            const response = await axios.post(`/business-jobs/${jobId}/cancel/`);
+            Alert.alert('Success', 'Job cancelled successfully.');
             fetchJobs();
-        }, [])
-    );
+        } catch (error) {
+            console.error('Error cancelling job', error);
+            Alert.alert('Error', 'Failed to cancel the job. Please try again.');
+        }
+    };
+
+
+    const removeJob = async (jobId) => {
+        try {
+            const response = await axios.post(`/business-jobs/${jobId}/remove/`);
+            setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+        } catch (error) {
+            console.error('Error removing job:', error);
+        }
+    }
 
     const renderJob = ({ item }) => (
-        <TouchableOpacity style={styles.jobContainer} onPress={() => navigation.navigate('Business Job Details', { jobId: item.id })}>
-            <Text>Location: {item.location}</Text>
+        <TouchableOpacity style={styles.jobContainer}>
+            <Text styles={styles.jobDetails}>Location: {item.location}</Text>
+            <Text style={styles.jobTitle}>Number of Leaflets: {item.number_of_leaflets}</Text>
             <Text>Status: {item.status}</Text>
-            <Text>Pending Bids: {item.pending_bid_count}</Text>
-            <TouchableOpacity>
-                <Text style={styles.options}>View Details</Text>
+            {item.status === 'Open' && (
+                <Text style={styles.jobDetails}>Pending Bids: {item.pending_bid_count}</Text>
+            )}
+            <TouchableOpacity style={styles.viewDetailsButton} onPress={() => navigation.navigate('Business Job Details', { jobId: item.id })}>
+                <Text style={styles.viewDetailsText}>View Job</Text>
             </TouchableOpacity>
+            {item.status === 'Open' && (
+                <TouchableOpacity style={styles.cancelButton} onPress={() => cancelJob(item.id)}>
+                <Text style={styles.cancelButtonText}>Cancel Job</Text>
+            </TouchableOpacity>
+            )}
+            {(item.status === 'Completed' || item.status === 'Cancelled') && (
+                <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
+                    <Text style={styles.removeButtonText}>Remove</Text>
+                </TouchableOpacity>
+            )}
         </TouchableOpacity>
     );
 
@@ -62,37 +97,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 16,
     },
-    searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    searchInput: {
-        flex: 1,
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginRight: 8,
-        paddingHorizontal: 8,
-    },
-    addButton: {
-        padding: 8,
-        backgroundColor: '#007BFF',
-        borderRadius: 4,
-        marginRight: 8,
-    },
-    addButtonText: {
-        color: 'white',
-        fontSize: 18,
-    },
-    filterButton: {
-        padding: 8,
-        backgroundColor: '#28a745',
-        borderRadius: 4,
-    },
-    filterButtonText: {
-        color: 'white',
-    },
     listContainer: {
         paddingBottom: 16,
     },
@@ -103,9 +107,43 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         marginBottom: 8,
     },
-    options: {
-        color: '#007BFF',
+    jobDetails: {
+        fontSize: 14,
+        marginBottom: 4,
+    },
+    cancelButton: {
+        backgroundColor: '#dc3545',
+        padding: 8,
+        borderRadius: 4,
+        alignItems: 'center',
         marginTop: 8,
+    },
+    cancelButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    removeButton: {
+        backgroundColor: '#6c757d',
+        padding: 8,
+        borderRadius: 4,
+        alignItems: 'center',
+        marginTop: 8,
+    },
+    removeButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+
+    viewDetailsButton: {
+        marginTop: 8,
+        padding: 8,
+        backgroundColor: '#007BFF',
+        borderRadius: 4,
+        alignItems: 'center',
+    },
+    viewDetailsText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
     loadMoreButton: {
         padding: 16,

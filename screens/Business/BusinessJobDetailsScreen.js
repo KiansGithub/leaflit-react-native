@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Alert } from 'react-native';
 import axios from '../../api';
 import { useRoute, useNavigation } from '@react-navigation/native';
 
@@ -77,18 +77,21 @@ export default function BusinessJobDetailsScreen() {
         <View style={styles.container}>
             {job ? (
                 <>
-                <Text>Location: {job.location}</Text>
-                <Text>Number of Leaflets: {job.number_of_leaflets}</Text>
-                <Text>Job Status: {job.status}</Text>
-                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('Edit Job', { jobId: job.id })}>
-                    <Text>Edit Job</Text>
-                </TouchableOpacity>
+                <Text style={styles.jobDetail}>Location: {job.location}</Text>
+                <Text style={styles.jobDetail}>Number of Leaflets: {job.number_of_leaflets}</Text>
+                <Text style={styles.jobDetail}>Job Status: {job.status}</Text>
+
+
+                {job.status === 'Open' && (
+                <>
                 <Text style={styles.sectionTitle}>Bids</Text>
                 <FlatList 
                     data={bids}
                     renderItem={renderBidItem}
                     keyExtractor={(item) => item.id.toString()}
                     />
+                </>
+                )}
                 </>
             ) : (
                 <Text>Loading...</Text>
@@ -106,6 +109,11 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
+    },
+    jobDetail: {
+        fontSize: 16,
+        marginBottom: 8,
+        color: '#555',
     },
     sectionTitle: {
         fontSize: 20,
@@ -138,4 +146,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 16,
     },
+    editButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    bidsList: {
+        paddingBottom: 16,
+    }
 });
