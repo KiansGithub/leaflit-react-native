@@ -20,6 +20,8 @@ import PasswordResetConfirmScreen from './screens/Shared/PasswordResetConfirmScr
 import PasswordResetRequestScreen from './screens/Shared/PasswordResetRequestScreen';
 import BusinessNotificationScreen from './screens/Business/BusinessNotificationScreen';
 import LeafleteerNotificationScreen from './screens/Leafleteer/LeafleteerNotificationScreen';
+import LeafleteerJobTrackingScreen from './screens/Leafleteer/LeafleteerJobTrackingScreen';
+import BusinessJobViewRoutesScreen from './screens/Business/BusinessJobViewRoutesScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -132,6 +134,8 @@ function MainStack() {
       <Stack.Screen name="Password Reset Request" component={PasswordResetRequestScreen} />
       <Stack.Screen name="Business Notifications" component={BusinessNotificationScreen} />
       <Stack.Screen name="Leafleteer Notifications" component={LeafleteerNotificationScreen} />
+      <Stack.Screen name="Leafleteer Job Tracking" component={LeafleteerJobTrackingScreen} />
+      <Stack.Screen name="Business Job View Routes" component={BusinessJobViewRoutesScreen} />
     </Stack.Navigator>
   );
 }

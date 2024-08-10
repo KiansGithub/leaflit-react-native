@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, Alert } from 'react-native';
 import axios from '../../api';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function LeafleteerMyJobsScreen() {
-    const [searchQuery, setSearchQuery] = useState('');
     const [jobs, setJobs] = useState([]);
     const navigation = useNavigation();
 
@@ -42,6 +41,7 @@ export default function LeafleteerMyJobsScreen() {
         try {
             const response = await axios.post(`/leafleteerjobs/${jobId}/start/`, { status: 'In Progress'});
             setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'In Progress'} : job));
+            navigation.navigate('Leafleteer Job Tracking', { jobId });
         } catch (error) {
             console.error('Error starting job:', error);
             Alert.alert('Error', 'Failed to start the job. Please try again.');
@@ -69,6 +69,17 @@ export default function LeafleteerMyJobsScreen() {
         }
     };
 
+    const removeJob = async (jobId) => {
+        try {
+            await axios.post(`/leafleteerjobs/${jobId}/remove/`);
+            setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+            Alert.alert('Success', 'Job removed from your view.');
+        } catch (error) {
+            console.error('Error removing job:', error);
+            Alert.alert('Error', 'Failed to remove the job. Please try again.');
+        }
+    };
+
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
             <Text style={styles.jobDetails}>Location: {item.location}</Text>
@@ -88,9 +99,27 @@ export default function LeafleteerMyJobsScreen() {
                 </>
                 )}
                 {item.status === 'In Progress' && (
+                    <>
+                    <TouchableOpacity style={styles.continueButton} onPress={() => navigation.navigate('Leafleteer Job Tracking', { jobId: item.id })}>
+                        <Ionicons name="arrow-forward-circle" size={24} color='white' />
+                        <Text style={styles.buttonText}>Continue</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.completeButton} onPress={() => completeJob(item.id)}>
                         <Ionicons name="checkmark-circle" size={24} color='white' />
                         <Text style={styles.buttonText}>Complete</Text>
+                    </TouchableOpacity>
+                    </>
+                )}
+                {item.status === 'Cancelled' && (
+                    <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
+                        <Ionicons name="trash-bin" size={24} color="white" />
+                        <Text style={styles.buttonText}>Remove</Text>
+                    </TouchableOpacity>
+                )}
+                {item.status === 'Completed' && (
+                    <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
+                        <Ionicons name="trash-bin" size={24} color="white" />
+                        <Text style={styles.buttonText}>Remove</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -163,6 +192,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginRight: 10,
     },
+    continueButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#ffc107',
+        padding: 10,
+        borderRadius: 5,
+        marginRight: 10,
+    },
     completeButton: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -181,6 +218,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#dc3545',
         padding: 10,
         borderRadius: 5,
+    },
+    removeButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#dc3545',
+        padding: 10,
+        borderRadius: 5,
+        marginRight: 10,
     },
     optionText: {
         color: '#007bff',

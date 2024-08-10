@@ -46,27 +46,44 @@ export default function BusinessMyJobsScreen() {
     }
 
     const renderJob = ({ item }) => (
-        <TouchableOpacity style={styles.jobContainer}>
+        <View style={styles.jobContainer}>
             <Text styles={styles.jobDetails}>Location: {item.location}</Text>
             <Text style={styles.jobTitle}>Number of Leaflets: {item.number_of_leaflets}</Text>
             <Text>Status: {item.status}</Text>
             {item.status === 'Open' && (
+                <>
                 <Text style={styles.jobDetails}>Pending Bids: {item.pending_bid_count}</Text>
-            )}
-            <TouchableOpacity style={styles.viewDetailsButton} onPress={() => navigation.navigate('Business Job Details', { jobId: item.id })}>
-                <Text style={styles.viewDetailsText}>View Job</Text>
-            </TouchableOpacity>
-            {item.status === 'Open' && (
+                <TouchableOpacity style={styles.viewDetailsButton} onPress={() => navigation.navigate('Business Job Details', { jobId: item.id })}>
+                    <Text style={styles.viewDetailsText}>View Job</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.cancelButton} onPress={() => cancelJob(item.id)}>
-                <Text style={styles.cancelButtonText}>Cancel Job</Text>
-            </TouchableOpacity>
+                    <Text style={styles.cancelButtonText}>Cancel Job</Text>
+                </TouchableOpacity>
+                </>
             )}
-            {(item.status === 'Completed' || item.status === 'Cancelled') && (
+    
+            {item.status === 'Completed' && (
+                <>
+                <TouchableOpacity
+                    style={styles.viewRoutesButton}
+                    onPress={() => navigation.navigate('Business Job View Routes', { jobId: item.id })}>
+                    <Text style={styles.viewRoutesText}>View Routes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.removeButton}
+                    onPress={() => removeJob(item.id)}
+                >
+                    <Text style={styles.removeButtonText}>Remove</Text>
+                </TouchableOpacity> 
+                </>
+            )}
+
+            {item.status === 'Cancelled' && (
                 <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
                     <Text style={styles.removeButtonText}>Remove</Text>
                 </TouchableOpacity>
             )}
-        </TouchableOpacity>
+        </View>
     );
 
     return (
@@ -133,7 +150,17 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
-
+    viewRoutesButton: {
+        backgroundColor: '#28a745',
+        padding: 8,
+        borderRadius: 4,
+        alignItems: 'center',
+        marginTop: 8,
+    },
+    viewRoutesText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
     viewDetailsButton: {
         marginTop: 8,
         padding: 8,

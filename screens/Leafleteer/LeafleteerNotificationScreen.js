@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../api';
-import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, Alert } from 'react-native';
 
 const LeafleteerNotificationScreen = () => {
     const [notifications, setNotifications] = useState([]);
@@ -39,6 +39,17 @@ const LeafleteerNotificationScreen = () => {
         }
     };
 
+    const clearAllNotifications = async () => {
+        try {
+            await axios.delete('/notifications/clear_all/');
+            fetchNotifications(); // Refresh notifications after clearing 
+            Alert.alert('Success', 'All notifications have been cleared.');
+        } catch (error) {
+            console.error('Error clearing notifications:', error);
+            Alert.alert('Error', 'Failed to clear notifications. Please try again.');
+        }
+    }
+
     const renderItem = ({ item }) => (
         <View style={styles.notification}>
             <Text style={styles.message}>{item.message}</Text>
@@ -53,15 +64,22 @@ const LeafleteerNotificationScreen = () => {
     }
 
     return (
+    <View style={styles.container}>
+        <Button title="Clear All Notifications" onPress={clearAllNotifications} />
         <FlatList 
             data={notifications}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
         />
-        );
+    </View>
+    );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 16,
+    },
     notification: {
         padding: 10,
         borderBottomWidth: 1,
