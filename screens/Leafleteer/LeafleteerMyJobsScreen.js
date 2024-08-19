@@ -3,25 +3,51 @@ import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, 
 import axios from '../../api';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
 
 export default function LeafleteerMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
     const navigation = useNavigation();
-
-    const fetchJobs = async () => {
-        try {
-            const response = await axios.get('leafleteerjobs/active/');
-            setJobs(response.data);
-        } catch (error) {
-            console.error('Error fetching jobs:', error);
-        }
-    };
 
     useFocusEffect(
         useCallback(() => {
             fetchJobs();
         }, [])
     );
+
+    const fetchJobs = async () => {
+        try {
+            const response = await axios.get('leafleteerjobs/active/');
+            const jobsWithLocationNames = await Promise.all(
+                response.data.map(async (job) => {
+                    const locationName = await fetchLocationName(job.latitude, job.longitude);
+                    return { ...job, location: locationName };
+                })
+            );
+            setJobs(jobsWithLocationNames);
+        } catch (error) {
+            console.error('Error fetching jobs:', error);
+        }
+    };
+
+    const fetchLocationName = async (latitude, longitude) => {
+        try {
+            const reverseGeocode = await Location.reverseGeocodeAsync({
+                latitude,
+                longitude,
+            });
+
+            if (reverseGeocode.length > 0) {
+                const address = reverseGeocode[0];
+                return `${address.city}, ${address.region}`;
+            } else {
+                return 'Unknown Location';
+            }
+        } catch (error) {
+            console.error('Error fetching location name:', error);
+            return 'Location Unavailable';
+        }
+    };
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -37,11 +63,16 @@ export default function LeafleteerMyJobsScreen() {
         }
     }, [navigation]);
 
-    const startJob = async (jobId) => {
+    const startJob = async (job) => {
         try {
-            const response = await axios.post(`/leafleteerjobs/${jobId}/start/`, { status: 'In Progress'});
-            setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'In Progress'} : job));
-            navigation.navigate('Leafleteer Job Tracking', { jobId });
+            const response = await axios.post(`/leafleteerjobs/${job.id}/start/`, { status: 'In Progress'});
+            setJobs(jobs.map(j => j.id === job.id ? { ...j, status: 'In Progress'} : j));
+            navigation.navigate('Leafleteer Job Tracking', {
+                jobId: job.id, 
+                coordinates: { latitude: job.latitude, longitude: job.longitude },
+                radius: job.radius,
+                businessUserId: job.business_user,
+            });
         } catch (error) {
             console.error('Error starting job:', error);
             Alert.alert('Error', 'Failed to start the job. Please try again.');
@@ -82,13 +113,13 @@ export default function LeafleteerMyJobsScreen() {
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
-            <Text style={styles.jobDetails}>Location: {item.location}</Text>
+            <Text style={styles.jobDetails}>Location: {item.location || 'Loading...'}</Text>
             <Text style={styles.jobDetails}>Number of Leaflets: {item.number_of_leaflets}</Text>
             <Text style={styles.jobDetails}>Status: {item.status}</Text>
             <View style={styles.jobOptions}>
                 {item.status === 'Assigned' && (
                     <>
-                    <TouchableOpacity style={styles.startButton} onPress={() => startJob(item.id)}>
+                    <TouchableOpacity style={styles.startButton} onPress={() => startJob(item)}>
                         <Ionicons name="play-circle" size={24} color="white" /> 
                         <Text style={styles.buttonText}>Start</Text>
                     </TouchableOpacity>
@@ -100,7 +131,12 @@ export default function LeafleteerMyJobsScreen() {
                 )}
                 {item.status === 'In Progress' && (
                     <>
-                    <TouchableOpacity style={styles.continueButton} onPress={() => navigation.navigate('Leafleteer Job Tracking', { jobId: item.id })}>
+                    <TouchableOpacity style={styles.continueButton} onPress={() => navigation.navigate('Leafleteer Job Tracking', { 
+                        jobId: item.id,
+                        coordinates: { latitude: item.latitude, longitude: item.longitude },
+                        radius: item.radius,
+                        businessUserId: item.business_user, 
+                        })}>
                         <Ionicons name="arrow-forward-circle" size={24} color='white' />
                         <Text style={styles.buttonText}>Continue</Text>
                     </TouchableOpacity>
@@ -122,6 +158,15 @@ export default function LeafleteerMyJobsScreen() {
                         <Text style={styles.buttonText}>Remove</Text>
                     </TouchableOpacity>
                 )}
+
+                <TouchableOpacity style={styles.mapButton} onPress={() => navigation.navigate('Leafleteer Job Map', {
+                    coordinates: { latitude: item.latitude, longitude: item.longitude },
+                    radius: item.radius,
+                    businessUserId: item.business_user,
+                    })}>
+                    <Ionicons name="map" size={24} color="white" />
+                    <Text style={styles.buttonText}>View Map</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -183,6 +228,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 8,
+        flexWrap: 'wrap',
     },
     startButton: {
         flexDirection: 'row',
@@ -191,6 +237,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         marginRight: 10,
+        marginBottom: 8,
     },
     continueButton: {
         flexDirection: 'row',
@@ -199,6 +246,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         marginRight: 10,
+        marginBottom: 8,
     },
     completeButton: {
         flexDirection: 'row',
@@ -206,6 +254,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#28a745',
         padding: 10,
         borderRadius: 5,
+        marginBottom: 8,
     },
     buttonText: {
         color: 'white',
@@ -218,6 +267,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#dc3545',
         padding: 10,
         borderRadius: 5,
+        marginBottom: 8,
     },
     removeButton: {
         flexDirection: 'row',
@@ -226,6 +276,15 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         marginRight: 10,
+        marginBottom: 8,
+    },
+    mapButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#007bff',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 8,
     },
     optionText: {
         color: '#007bff',

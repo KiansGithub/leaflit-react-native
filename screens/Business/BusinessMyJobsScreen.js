@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api'
+import * as Location from 'expo-location';
 
 export default function BusinessMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
-    const [search, setSearch] = useState('');
     const navigation = useNavigation();
 
     useFocusEffect(
@@ -18,9 +18,35 @@ export default function BusinessMyJobsScreen() {
     const fetchJobs = async () => {
         try {
             const response = await axios.get('/business-jobs/');
-            setJobs(response.data);
+            const jobsWithLocationNames = await Promise.all(
+                response.data.map(async (job) => {
+                    const locationName = await fetchLocationName(job.latitude, job.longitude);
+                    return { ...job, location: locationName };
+                })
+            )
+            setJobs(jobsWithLocationNames);
         } catch (error) {
             console.error('Error fetching jobs', error);
+        }
+    };
+
+    // Function to reverse geocode the location name 
+    const fetchLocationName = async (latitude, longitude) => {
+        try {
+            const reverseGeocode = await Location.reverseGeocodeAsync({
+                latitude, 
+                longitude,
+            });
+
+            if (reverseGeocode.length > 0) {
+                const address = reverseGeocode[0];
+                return `${address.city}, ${address.region}`;
+            } else {
+                return 'Unknown Location';
+            }
+        } catch (error) {
+            console.error('error fetching location name', error);
+            return 'Location Unavailable';
         }
     };
 
@@ -66,7 +92,13 @@ export default function BusinessMyJobsScreen() {
                 <>
                 <TouchableOpacity
                     style={styles.viewRoutesButton}
-                    onPress={() => navigation.navigate('Business Job View Routes', { jobId: item.id })}>
+                    onPress={() => navigation.navigate('Business Job View Routes', {
+                        jobId: item.id, 
+                        coordinates: { latitude: item.latitude, longitude: item.longitude },
+                        radius: item.radius,
+                        businessUserId: item.business_user, 
+                        })}
+                    >
                     <Text style={styles.viewRoutesText}>View Routes</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 

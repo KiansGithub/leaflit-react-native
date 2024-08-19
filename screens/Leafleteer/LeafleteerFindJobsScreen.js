@@ -2,18 +2,43 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
 import axios from '../../api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import * as Location from 'expo-location';
 
 export default function LeafleteerFindJobsScreen() {
-    const [searchQuery, setSearchQuery] = useState('');
     const [jobs, setJobs] = useState([]);
     const navigation = useNavigation();
 
     const fetchJobs = async () => {
         try {
             const response = await axios.get('/leafleteerjobs/available/');
-            setJobs(response.data);
+            const jobsWithLocationNames = await Promise.all(
+                response.data.map(async (job) => {
+                    const locationName = await fetchLocationName(job.latitude, job.longitude);
+                    return { ...job, locationName };
+                })
+            );
+            setJobs(jobsWithLocationNames);
         } catch (error) {
             console.error('Error fetching jobs:', error);
+        }
+    };
+
+    const fetchLocationName = async (latitude, longitude) => {
+        try {
+            const reverseGeocode = await Location.reverseGeocodeAsync({
+                latitude, 
+                longitude,
+            });
+
+            if (reverseGeocode.length > 0) {
+                const address = reverseGeocode[0];
+                return `${address.city}, ${address.region}`;
+            } else {
+                return 'Unknown Location';
+            } 
+        } catch (error) {
+            console.error('Error fetching location name:', error);
+            return 'Location Unavailable';
         }
     };
 
@@ -30,19 +55,9 @@ export default function LeafleteerFindJobsScreen() {
         return unsubscribe;
     }, [navigation]);
 
-    useEffect(() => {
-        const params = navigation.getState().routes.find(route => route.name === 'LeafleteerFindJobsScreen')?.params;
-        if (params?.refresh) {
-            console.log("Refresh parameter detected, fetching jobs...");
-            fetchJobs();
-            navigation.setParams({ refresh: false });
-        }
-    }, [navigation]);
-
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
-            <Text style={styles.jobTitle}>{item.title}</Text>
-            <Text style={styles.jobDetails}>Location: {item.location} </Text>
+            <Text style={styles.jobDetails}>Location: {item.locationName || 'Loading...'} </Text>
             <Text style={styles.jobDetails}>Status: {item.status}</Text>
             <Text style={styles.jobDetails}>Leaflets: {item.number_of_leaflets}</Text>
             <View style={styles.jobActions}>
@@ -51,6 +66,16 @@ export default function LeafleteerFindJobsScreen() {
                     onPress={() => navigation.navigate('Leafleteer Job Details', { jobId: item.id })}
                 >
                     <Text style={styles.bidButtonText}>Bid</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.mapButton} 
+                    onPress={() => navigation.navigate('Leafleteer Job Map', {
+                        coordinates: { latitude: item.latitude, longitude: item.longitude },
+                        radius: item.radius,
+                        businessUserId: item.business_user,
+                    })}
+                >
+                    <Text style={styles.mapButtonText}>View on Map</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -88,14 +113,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 16,
     },
-    searchInput: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingHorizontal: 8,
-        marginBottom: 16,
-        borderRadius: 4,
-    },
     jobList: {
         paddingBottom: 16,
     },
@@ -127,6 +144,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     bidButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    mapButton: {
+        backgroundColor: '#007bff',
+        padding: 10,
+        borderRadius: 5,
+    },
+    mapButtonText: {
         color: '#fff',
         fontSize: 16,
     },

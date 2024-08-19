@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -22,9 +22,26 @@ import BusinessNotificationScreen from './screens/Business/BusinessNotificationS
 import LeafleteerNotificationScreen from './screens/Leafleteer/LeafleteerNotificationScreen';
 import LeafleteerJobTrackingScreen from './screens/Leafleteer/LeafleteerJobTrackingScreen';
 import BusinessJobViewRoutesScreen from './screens/Business/BusinessJobViewRoutesScreen';
+import BusinessJobMapScreen from './screens/Business/BusinessJobMapScreen';
+import LeafleteerJobMapScreen from './screens/Leafleteer/LeafleteerJobMapScreen';
+import LeafleteerStripeOnboardingScreen from './screens/Leafleteer/LeafleteerStripeOnboardingScreen';
+import LeafleteerStripeOnboardingSuccessScreen from './screens/Leafleteer/LeafleteerStripeOnboardingSuccessScreen';
+import LeafleteerStripeOnboardingRefreshScreen from './screens/Leafleteer/LeafleteerStripeOnboardingRefreshScreen';
+import * as Linking from 'expo-linking';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// Define the deep linking configuration 
+const linking = {
+  prefixes: ['leaflitapp://', 'https://f7ea-86-18-167-205.ngrok-free.app'],
+  config: {
+    screens: {
+        LeafleteerStripeOnboardingSuccess: 'onboarding-success',
+        LeafleteerStripeOnboardingRefresh: 'onboarding-refresh',
+  },
+},
+};
 
 function BusinessTabs() {
   return (
@@ -136,13 +153,31 @@ function MainStack() {
       <Stack.Screen name="Leafleteer Notifications" component={LeafleteerNotificationScreen} />
       <Stack.Screen name="Leafleteer Job Tracking" component={LeafleteerJobTrackingScreen} />
       <Stack.Screen name="Business Job View Routes" component={BusinessJobViewRoutesScreen} />
+      <Stack.Screen name="Business Job Map" component={BusinessJobMapScreen} />
+      <Stack.Screen name="Leafleteer Job Map" component={LeafleteerJobMapScreen} />
+      <Stack.Screen name="Leafleteer Stripe Onboarding" component={LeafleteerStripeOnboardingScreen} />
+      <Stack.Screen name="Leafleteer Stripe Onboarding Success" component={LeafleteerStripeOnboardingSuccessScreen} />
+      <Stack.Screen name="Leafleteer Stripe Onboarding Refresh" component={LeafleteerStripeOnboardingRefreshScreen} />
     </Stack.Navigator>
   );
 }
 
 export default function App() {
+  useEffect(() => {
+    const linkingListener = ({ url }) => {
+      console.log('Received deep link:', url);
+    };
+
+    Linking.addEventListener('url', linkingListener);
+
+    // Cleanup the event listener on unmount
+    return () => {
+      Linking.removeEventListener('url', linkingListener);
+  };
+}, []);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <MainStack />
     </NavigationContainer>
   );

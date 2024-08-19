@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Alert } from 'react-native';
 import axios from '../../api';
+import * as Location from 'expo-location';
 import { useRoute, useNavigation } from '@react-navigation/native';
 
 export default function BusinessJobDetailsScreen() {
     const [job, setJob] = useState(null);
     const [bids, setBids] = useState([]);
     const [refresh, setRefresh] = useState(false);
+    const [locationName, setLocationName] = useState('');
+    const [isAcceptingBid, setIsAcceptingBid] = useState(false);
+
     const route = useRoute();
     const navigation = useNavigation();
     const { jobId } = route.params;
@@ -15,6 +19,12 @@ export default function BusinessJobDetailsScreen() {
         fetchJobDetails();
         fetchJobBids();
     }, [refresh]);
+
+    useEffect(() => {
+        if (job) {
+            fetchLocationName();
+        }
+    }, [job]);
 
     const fetchJobDetails = async () => {
         try {
@@ -36,7 +46,30 @@ export default function BusinessJobDetailsScreen() {
         }
     };
 
+    const fetchLocationName = async () => {
+        try {
+            const reverseGeocode = await Location.reverseGeocodeAsync({
+                latitude: job.latitude,
+                longitude: job.longitude,
+            });
+
+            if (reverseGeocode.length > 0) {
+                const address = reverseGeocode[0];
+                setLocationName(`${address.city}, ${address.region}`);
+            } else {
+                setLocationName('Unknown Location');
+            }
+        } catch (error) {
+            console.error('Error fetching location name:', error);
+            setLocationName('Location Unavailable');
+        }
+    };
+
     const handleAcceptBid = async (bidId) => {
+        if (isAcceptingBid) return; 
+
+        setIsAcceptingBid(true);
+
         try {
             console.log(`Accepting bid with id: ${bidId}`);
             const response = await axios.post(`/bids/${bidId}/accept/`);
@@ -45,6 +78,8 @@ export default function BusinessJobDetailsScreen() {
             navigation.navigate('Business')
         } catch (error) {
             console.error('Error accepting bid:', error);
+        } finally {
+            setIsAcceptingBid(false);
         }
     };
 
@@ -59,11 +94,23 @@ export default function BusinessJobDetailsScreen() {
         }
     }
 
+    const handleViewOnMap = () => {
+        navigation.navigate('Business Job Map', {
+            coordinates: { latitude: job.latitude, longitude: job.longitude },
+            radius: job.radius,
+            businessUserId: job.business_user,
+        });
+    }
+
     const renderBidItem = ({ item }) => (
         <View style={styles.bidItem}>
             <Text>Name: {item.leafleteer_user.first_name}  Bid Amount: ${item.bid_amount}</Text>
             <View style={styles.bidActions}>
-                <TouchableOpacity onPress={() => handleAcceptBid(item.id)}>
+                <TouchableOpacity 
+                onPress={() => handleAcceptBid(item.id)}
+                disabled={isAcceptingBid}
+                style={isAcceptingBid ? styles.disabledButton : styles.acceptButton}
+                >
                     <Text style={styles.acceptButton}>Accept</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleRejectBid(item.id)}>
@@ -77,7 +124,10 @@ export default function BusinessJobDetailsScreen() {
         <View style={styles.container}>
             {job ? (
                 <>
-                <Text style={styles.jobDetail}>Location: {job.location}</Text>
+                <Text style={styles.jobDetail}>Location: {locationName}</Text>
+                <TouchableOpacity style={styles.viewMapButton} onPress={handleViewOnMap}>
+                    <Text style={styles.viewMapButtonText}>View on Map</Text>
+                </TouchableOpacity>
                 <Text style={styles.jobDetail}>Number of Leaflets: {job.number_of_leaflets}</Text>
                 <Text style={styles.jobDetail}>Job Status: {job.status}</Text>
 
@@ -104,6 +154,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     title: {
         fontSize: 24,
@@ -136,6 +191,9 @@ const styles = StyleSheet.create({
     acceptButton: {
         color: 'green',
     },
+    disabledButton: {
+        color: 'gray',
+    },
    rejectButton: {
         color: 'red',
     },
@@ -152,5 +210,17 @@ const styles = StyleSheet.create({
     },
     bidsList: {
         paddingBottom: 16,
-    }
+    },
+    viewMapButton: {
+        backgroundColor: '#007BFF',
+        padding: 10,
+        borderRadius: 4,
+        alignItems: 'center',
+        marginTop: 8,
+        marginBottom: 16,
+    },
+    viewMapButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
 });
