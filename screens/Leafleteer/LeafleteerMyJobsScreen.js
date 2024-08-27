@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#EAF2F8',
     },
     headerContainer: {
         marginBottom: 16,
@@ -202,17 +202,18 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
+        color: '#00274D',
     },
     jobList: {
         paddingBottom: 16,
     },
     jobCard: {
-        backgroundColor: '#fff',
+        backgroundColor: '#F4F7FA',
         padding: 16,
         marginBottom: 16,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#7D8A95',
         elevation: 2,
     },
     jobTitle: {
@@ -223,6 +224,7 @@ const styles = StyleSheet.create({
     jobDetails: {
         fontSize: 14,
         marginBottom: 4,
+        color: '#00274d',
     },
     jobOptions: {
         flexDirection: 'row',
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
     startButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#007bff',
+        backgroundColor: '#00274D',
         padding: 10,
         borderRadius: 5,
         marginRight: 10,
@@ -242,7 +244,7 @@ const styles = StyleSheet.create({
     continueButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#ffc107',
+        backgroundColor: '#007bff',
         padding: 10,
         borderRadius: 5,
         marginRight: 10,
@@ -291,7 +293,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     loadMoreButton: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#00274D',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',

@@ -153,7 +153,7 @@ export default function LeafleteerJobDetailsScreen() {
                 <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
             <Text style={styles.header}>Job Details</Text>
-            <Text style={styles.jobDetail}>Posted by: {businessUser.user.first_name}</Text>
+            <Text style={styles.jobDetail}>Posted by: {businessUser.first_name}</Text>
             <Text style={styles.jobDetail}>Location: {locationName}</Text>
             <Text style={styles.jobDetail}>Number of Leaflets: {job.number_of_leaflets}</Text>
             <Text style={styles.jobDetail}>Average Bid Amount: £{job.average_bid_amount}</Text>
@@ -175,18 +175,21 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#EAF2F8',
     },
     backButton: {
         marginBottom: 16,
+        alignSelf: 'flex-start',
     },
     backButtonText: {
         color: '#007BFF',
         fontSize: 16,
+        fontWeight: 'bold',
     },
     header: {
         fontSize: 24,
         fontWeight: 'bold',
+        color: '#00274D',
         marginBottom: 16,
     },
     jobDescription: {
@@ -195,24 +198,28 @@ const styles = StyleSheet.create({
     },
     jobDetail: {
         fontSize: 16,
-        marginBottom: 16,
+        color: '#00274D',
+        marginBottom: 8,
     },
     input: {
         height: 40,
-        borderColor: 'gray',
+        borderColor: '#7D8A95',
         borderWidth: 1,
         paddingHorizontal: 8,
         marginBottom: 16,
-        borderRadius: 4,
+        borderRadius: 8,
+        backgroundColor: '#F4F7FA',
     },
     bidButton: {
         backgroundColor: '#28a745',
-        padding: 10,
-        borderRadius: 5,
+        padding: 12,
+        borderRadius: 8,
         alignItems: 'center',
+        marginTop: 16,
     },
     bidButtonText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: 'bold',
     },
 });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import axios from '../../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -52,15 +52,49 @@ export default function LoginScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text>Email:</Text>
-            <TextInput style={styles.input} value={email} onChangeText={setEmail} autoCapitalize='none' />
-            <Text>Password:</Text>
-            <TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry />
-            <Button title="Login" onPress={handleLogin} />
+            {/* Logo */}
+            <Image source={require('../../assets/icon.png')} style={styles.logo} />
+
+            {/* Email Input */}
+            <Text style={styles.label}>Email:</Text>
+            <TextInput 
+                style={styles.input} 
+                value={email} 
+                onChangeText={setEmail} 
+                autoCapitalize='none' 
+                placeholder="Enter your email"
+                placeholderTextColor="#7D8A95" // Light gray color
+            />
+
+            {/* Password Input */}
+            <Text style={styles.label}>Password:</Text>
+            <TextInput 
+                style={styles.input} 
+                value={password} 
+                onChangeText={setPassword} 
+                secureTextEntry
+                placeholder="Enter your password"
+                placeholderTextColor="#7D8A95" // Light gray color
+            />
+
+            {/* Login Button */}
+            <Button 
+                title="Login" 
+                onPress={handleLogin} 
+                color="#00274D" // Dark blue color
+            />
+
+            {/* Forgot Password Link */}
             <TouchableOpacity onPress={() => navigation.navigate('Password Reset Request')}>
                 <Text style={styles.forgotPassword}>Forgot Password?</Text>
             </TouchableOpacity>
-            <Button title="Register" onPress={() => navigation.navigate('Register')} />
+
+            {/* Register Button */}
+            <Button 
+                title="Register" 
+                onPress={() => navigation.navigate('Register')} 
+                color="#00274D" // Dark blue color
+                />
         </View>
     );
 }
@@ -69,17 +103,35 @@ const styles = StyleSheet.create({
     container: {
         flex: 1, 
         justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#EAF2F8',
         padding: 16,
     },
+    logo: {
+        width: 150,
+        height: 150,
+        marginBottom: 40,
+        resizeMode: 'contain',
+    },
+    label: {
+        alignSelf: 'flex-start',
+        marginLeft: 10,
+        marginBottom: 5,
+        color: '#00274D', // Dark blue text color
+        fontSize: 16,
+    },
     input: {
+        width: '100%',
         height: 40,
-        borderColor: 'gray',
+        borderColor: '#7D8A95', // Light gray border color
         borderWidth: 1,
+        borderRadius: 10,
         marginBottom: 12,
         paddingHorizontal: 8,
+        backgroundColor: '#fff',
     },
     forgotPassword: {
-        color: 'blue',
+        color: '#00274D',
         marginTop: 10,
         textAlign: 'center',
     }

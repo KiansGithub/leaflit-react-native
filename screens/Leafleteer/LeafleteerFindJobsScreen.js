@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#EAF2F8',
     },
     headerContainer: {
         marginBottom: 16,
@@ -111,28 +111,31 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 24,
         fontWeight: 'bold',
+        color: '#00274D',
         marginBottom: 16,
     },
     jobList: {
         paddingBottom: 16,
     },
     jobCard: {
-        backgroundColor: '#fff',
+        backgroundColor: '#F4F7FA',
         padding: 16,
         marginBottom: 16,
         borderRadius: 16,
-        borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#7D8A95',
+        elevation: 2,
     },
     jobTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
+        color: '#00274D',
     },
     jobDetails: {
         fontSize: 14,
         marginBottom: 4,
+        color: '#00274D',
     },
     jobActions: {
         flexDirection: 'row',
@@ -142,28 +145,34 @@ const styles = StyleSheet.create({
         backgroundColor: '#28a745',
         padding: 10,
         borderRadius: 5,
+        alignItems: 'center',
     },
     bidButtonText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: 'bold',
     },
     mapButton: {
         backgroundColor: '#007bff',
         padding: 10,
         borderRadius: 5,
+        alignItems: 'center',
     },
     mapButtonText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: 'bold',
     },
     loadMoreButton: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#00274D',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
+        marginTop: 16,
     },
     loadMoreText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: 'bold',
     },
 });

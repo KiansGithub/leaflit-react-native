@@ -70,7 +70,7 @@ export default function BusinessAddJobScreen({ navigation }) {
             setCoordinates(null);
             setRadius(100);
 
-            navigation.navigate('My Jobs');
+            navigation.navigate('Business My Jobs');
         
         } catch (error) {
             console.error('Error posting job', error);
@@ -110,6 +110,7 @@ export default function BusinessAddJobScreen({ navigation }) {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            <Text style={styles.header}>Add New Job</Text>
             <Text style={styles.label}>Location (Select on Map)</Text>
             <View style={styles.mapContainer}>
             {coordinates && (
@@ -132,8 +133,8 @@ export default function BusinessAddJobScreen({ navigation }) {
                         <Circle 
                             center={coordinates}
                             radius={parseFloat(radius)}
-                            fillColor="rgba(0, 0, 255, 0.3)"
-                            strokeColor="rgba(0, 0, 255, 0.5)"
+                            fillColor="rgba(0, 39, 77, 0.3)"
+                            strokeColor="rgba(0, 39, 77, 0.5)"
                         />
                         {recentRoutes.map((route, index) => (
                             <Polyline 
@@ -153,10 +154,10 @@ export default function BusinessAddJobScreen({ navigation }) {
 
             <View style={styles.radiusButtonsContainer}>
                 <TouchableOpacity style={styles.radiusButton} onPress={decreaseRadius}>
-                    <Ionicons name="remove-circle-outline" size={32} color="black" />
+                    <Ionicons name="remove-circle-outline" size={32} color="#00274D" />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.radiusButton} onPress={increaseRadius}>
-                    <Ionicons name="add-circle-outline" size={32} color="black" />
+                    <Ionicons name="add-circle-outline" size={32} color="#00274D" />
                 </TouchableOpacity>
             </View>
 
@@ -171,8 +172,11 @@ export default function BusinessAddJobScreen({ navigation }) {
                 onChangeText={setNumberOfLeaflets}
                 keyboardType="numeric"
                 placeholder="Enter number of Leaflets"
+                placehodlerTextColor="#7D8A95"
             />
-            <Button title="Add Job" onPress={handleAddJob} />
+            <TouchableOpacity style={styles.addButton} onPress={handleAddJob}>
+                <Text style={styles.addButtonText}>Add Job</Text>
+            </TouchableOpacity>
         </ScrollView>
     );
 }
@@ -181,20 +185,29 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         padding: 16,
-        backgroundColor: '#f8f8f8',
+        backgroundColor: '#EAF2F8',
     },
     loadingContainer: {
         justifyContent: 'center',
         alignItems: 'center',
     },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        color: '#00274D',
+    },
     label: {
         fontSize: 16,
         marginBottom: 8,
         fontWeight: 'bold',
+        color: '#00274D',
     },
     mapContainer: {
         height: 300,
         marginBottom: 16,
+        borderRadius: 8,
+        overflow: 'hidden',
     },
     map: {
         flex: 1,
@@ -210,12 +223,13 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
-        borderColor: 'gray',
+        borderColor: '#7D8A95',
         borderWidth: 1,
         marginBottom: 16,
         paddingHorizontal: 8,
         borderRadius: 4,
-        backgroundColor: '#fff',
+        backgroundColor: '#F4F7FA',
+        color: '#00274D',
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -227,10 +241,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#007bff',
         padding: 10,
         borderRadius: 5,
+        alignItems: 'center',
     },
     resetButtonText: {
         color: 'white',
         textAlign: 'center',
         fontWeight: 'bold', 
+    },
+    addButton: {
+        backgroundColor: '#00274D',
+        padding: 12,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 16,
+    },
+    addButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

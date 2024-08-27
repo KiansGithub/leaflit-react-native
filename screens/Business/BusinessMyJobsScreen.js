@@ -75,15 +75,15 @@ export default function BusinessMyJobsScreen() {
         <View style={styles.jobContainer}>
             <Text styles={styles.jobDetails}>Location: {item.location}</Text>
             <Text style={styles.jobTitle}>Number of Leaflets: {item.number_of_leaflets}</Text>
-            <Text>Status: {item.status}</Text>
+            <Text style={styles.jobDetails}>Status: {item.status}</Text>
             {item.status === 'Open' && (
                 <>
                 <Text style={styles.jobDetails}>Pending Bids: {item.pending_bid_count}</Text>
                 <TouchableOpacity style={styles.viewDetailsButton} onPress={() => navigation.navigate('Business Job Details', { jobId: item.id })}>
-                    <Text style={styles.viewDetailsText}>View Job</Text>
+                    <Text style={styles.buttonText}>View Job</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.cancelButton} onPress={() => cancelJob(item.id)}>
-                    <Text style={styles.cancelButtonText}>Cancel Job</Text>
+                    <Text style={styles.buttonText}>Cancel Job</Text>
                 </TouchableOpacity>
                 </>
             )}
@@ -99,20 +99,20 @@ export default function BusinessMyJobsScreen() {
                         businessUserId: item.business_user, 
                         })}
                     >
-                    <Text style={styles.viewRoutesText}>View Routes</Text>
+                    <Text style={styles.buttonText}>View Routes</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.removeButton}
                     onPress={() => removeJob(item.id)}
                 >
-                    <Text style={styles.removeButtonText}>Remove</Text>
+                    <Text style={styles.buttonText}>Remove</Text>
                 </TouchableOpacity> 
                 </>
             )}
 
             {item.status === 'Cancelled' && (
                 <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
-                    <Text style={styles.removeButtonText}>Remove</Text>
+                    <Text style={styles.buttonText}>Remove</Text>
                 </TouchableOpacity>
             )}
         </View>
@@ -140,30 +140,41 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: '#EAF2F8',
     },
     header: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
+        color: '#00274D',
     },
     listContainer: {
         paddingBottom: 16,
     },
     jobContainer: {
         padding: 16,
-        borderColor: 'gray',
+        borderColor: '#7D8A95',
         borderWidth: 1,
-        borderRadius: 4,
+        borderRadius: 8,
         marginBottom: 8,
+        backgroundColor: '#F4F7FA',
+        elevation: 2,
+    },
+    jobTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 8,
+        color: '#00274D',
     },
     jobDetails: {
         fontSize: 14,
         marginBottom: 4,
+        color: '#00274D',
     },
     cancelButton: {
         backgroundColor: '#dc3545',
-        padding: 8,
-        borderRadius: 4,
+        padding: 10,
+        borderRadius: 5,
         alignItems: 'center',
         marginTop: 8,
     },
@@ -173,8 +184,8 @@ const styles = StyleSheet.create({
     },
     removeButton: {
         backgroundColor: '#6c757d',
-        padding: 8,
-        borderRadius: 4,
+        padding: 10,
+        borderRadius: 5,
         alignItems: 'center',
         marginTop: 8,
     },
@@ -184,8 +195,8 @@ const styles = StyleSheet.create({
     },
     viewRoutesButton: {
         backgroundColor: '#28a745',
-        padding: 8,
-        borderRadius: 4,
+        padding: 10,
+        borderRadius: 5,
         alignItems: 'center',
         marginTop: 8,
     },
@@ -195,9 +206,9 @@ const styles = StyleSheet.create({
     },
     viewDetailsButton: {
         marginTop: 8,
-        padding: 8,
+        padding: 10,
         backgroundColor: '#007BFF',
-        borderRadius: 4,
+        borderRadius: 5,
         alignItems: 'center',
     },
     viewDetailsText: {
@@ -206,8 +217,8 @@ const styles = StyleSheet.create({
     },
     loadMoreButton: {
         padding: 16,
-        backgroundColor: '#007BFF',
-        borderRadius: 4,
+        backgroundColor: '#00274D',
+        borderRadius: 5,
         alignItems: 'center',
         marginTop: 16,
     },
@@ -215,4 +226,8 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
     },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    }
 });

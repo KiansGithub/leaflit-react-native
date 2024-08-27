@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import axios from '../../api';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function LeafleteerMyBidsScreen() {
     const [bids, setBids] = useState([]);
     const [jobs, setJobs] = useState({});
+    const [loading, setLoading] = useState(true);
 
     const fetchBids = async () => {
         try {
@@ -39,8 +39,11 @@ export default function LeafleteerMyBidsScreen() {
             }, {});
 
             setJobs(jobDetailsMap);
+            setLoading(false);
         } catch (error) {
             console.error('Error fetching bids:', error);
+            setLoading(false);
+            Alert.alert('Error', 'Failed to load bids. Please try again later.');
         }
     };
 
@@ -68,24 +71,20 @@ export default function LeafleteerMyBidsScreen() {
         <View style={styles.bidCard}>
             {jobDetails ? (
                 <>
-            <View style={styles.jobInfo}>
-                <Text style={styles.jobDetails}><Ionicons name="location-outline" size={18} />{jobDetails.location}</Text>
-                <Text style={styles.jobDetails}><Ionicons name="document-text-outline" size={18} />{jobDetails.number_of_leaflets}</Text>
-            </View>
-            </>
-            ) : (
-                <Text style={styles.jobDetails}>Loading job details...</Text>
-            )}
-            <View style={styles.bidInfo}>
-                <Text style={styles.bidAmount}>£{item.bid_amount}</Text>
-                <Text style={[styles.bidStatus, item.bid_status === 'Pending' ? styles.pending : null]}>{item.bid_status}</Text>
-            </View>
-            {item.bid_status === 'Pending' && (
-                <View style={styles.bidOptions}>
-                    <TouchableOpacity style={styles.cancelButton} onPress={() => handleCancelBid(item.id)}>
-                        <Ionicons name="trash-bin" size={24} color="white" />
-                    </TouchableOpacity>
+                <View style={styles.jobInfo}>
+                    <Text style={styles.location}>
+                        <Ionicons name="location-outline" size={18} color="#007BFF" />
+                        {jobDetails.location}
+                    </Text>
+                    <Text style={styles.amount}>£{item.bid_amount}</Text>
+                    <Text style={styles.posterName}>Posted by: {jobDetails.posterName}</Text>   
                 </View>
+                <TouchableOpacity style={styles.cancelButton} onPress={() => handleCancelBid(item.id)}>
+                    <Ionicons name="trash-bin" size={18} color="white" />
+                </TouchableOpacity>
+                </>
+            ) : (
+                <ActivityIndicator size="small" color="#007BFF" />
             )}
         </View>
         );
@@ -96,12 +95,16 @@ export default function LeafleteerMyBidsScreen() {
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>My Bids</Text>
             </View>
+            {loading ? (
+                <ActivityIndicator size="large" color="#007BFF" />
+            ) : (
             <FlatList 
                 data={bids}
                 renderItem={renderBidItem}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.bidList}
             />
+            )}
             <TouchableOpacity style={styles.loadMoreButton} onPress={fetchBids}>
                 <Text style={styles.loadMoreText}>Load More</Text>
             </TouchableOpacity>
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#EAF2F8',
     },
     headerContainer: {
         marginBottom: 16,
@@ -121,26 +124,48 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 24,
         fontWeight: 'bold',
+        color: '#00274D',
         marginBottom: 16,
     },
     bidList: {
         paddingBottom: 16,
     },
     bidCard: {
-        backgroundColor: '#fff',
+        backgroundColor: '#F4F7FA',
         padding: 16,
         marginBottom: 16,
-        borderRadius: 8,
+        borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#ddd',
-        elevation: 3,
+        borderColor: '#7D8A95',
+        elevation: 4,
         shadowColor: '#000',
         shadowOffer: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     jobInfo: {
+        flex: 1,
+        marginRight: 16,
+    },
+    location: {
+        fontSize: 16,
+        color: '#007BFF',
         marginBottom: 8,
+        fontWeight: '600',
+    },
+    amount: {
+        fontSize: 22,
+        color: '#28A745',
+        fontWeigjht: 'bold',
+        marginBottom: 12,
+    },
+    posterName: {
+        fontSize: 14,
+        color: '#7D8A95',
+        fontStyle: 'italic',
     },
     jobTitle: {
         fontSize: 18,
@@ -149,7 +174,7 @@ const styles = StyleSheet.create({
     },
     jobDetails: {
         fontSize: 16,
-        color: '#333',
+        color: '#00274D',
         marginBottom: 4,
     },
     bidInfo: {
@@ -173,10 +198,12 @@ const styles = StyleSheet.create({
     },
     cancelButton: {
         backgroundColor: '#dc3545',
-        padding: 10,
+        padding: 8,
         borderRadius: 5,
         alignItems: 'center',
-        alignSelf: 'flex-start',
+        justifyContent: 'center',
+        width: 40,
+        height: 40,
     },
     bidDetails: {
         fontSize: 16,
@@ -191,13 +218,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     loadMoreButton: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#00274D',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
+        marginTop: 16,
     },
     loadMoreText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: 'bold',
     },
 });

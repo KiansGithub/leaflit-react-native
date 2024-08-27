@@ -96,6 +96,7 @@ export default function BusinessJobDetailsScreen() {
 
     const handleViewOnMap = () => {
         navigation.navigate('Business Job Map', {
+            jobId: job.id,
             coordinates: { latitude: job.latitude, longitude: job.longitude },
             radius: job.radius,
             businessUserId: job.business_user,
@@ -104,17 +105,17 @@ export default function BusinessJobDetailsScreen() {
 
     const renderBidItem = ({ item }) => (
         <View style={styles.bidItem}>
-            <Text>Name: {item.leafleteer_user.first_name}  Bid Amount: ${item.bid_amount}</Text>
+            <Text style={styles.bidText}>Name: {item.leafleteer_user.first_name}  Bid Amount: ${item.bid_amount}</Text>
             <View style={styles.bidActions}>
                 <TouchableOpacity 
                 onPress={() => handleAcceptBid(item.id)}
                 disabled={isAcceptingBid}
                 style={isAcceptingBid ? styles.disabledButton : styles.acceptButton}
                 >
-                    <Text style={styles.acceptButton}>Accept</Text>
+                    <Text style={styles.buttonText}>Accept</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleRejectBid(item.id)}>
-                    <Text style={styles.rejectButton}>Reject</Text>
+                    <Text style={styles.rejectButtonText}>Reject</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -139,6 +140,7 @@ export default function BusinessJobDetailsScreen() {
                     data={bids}
                     renderItem={renderBidItem}
                     keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={styles.bidsList}
                     />
                 </>
                 )}
@@ -154,6 +156,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: '#EAF2F8',
     },
     loadingContainer: {
         flex: 1,
@@ -167,8 +170,8 @@ const styles = StyleSheet.create({
     },
     jobDetail: {
         fontSize: 16,
-        marginBottom: 8,
-        color: '#555',
+        marginBottom: 16,
+        color: '#00274D',
     },
     sectionTitle: {
         fontSize: 20,
@@ -177,11 +180,18 @@ const styles = StyleSheet.create({
     },
     bidItem: {
         padding: 16,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 4,
+        backgroundColor: '#F4F7FA',
+        borderRadius: 8,
         marginBottom: 8,
-        borderColor: '#ddd',
+        borderColor: '#7D8A95',
         borderWidth: 1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    bidText: {
+        color: '#00274D',
     },
     bidActions: {
         flexDirection: 'row',
@@ -189,23 +199,25 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     acceptButton: {
-        color: 'green',
+        backgroundColor: '#28a745',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        minWidth: 80,
+    },
+    rejectButtonText: {
+        color: '#dc3545',
+        fontWeight: 'bold',
     },
     disabledButton: {
-        color: 'gray',
-    },
-   rejectButton: {
-        color: 'red',
-    },
-    editButton: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#6c757d',
         padding: 10,
-        borderRadius: 4,
+        borderRadius: 5,
         alignItems: 'center',
-        marginTop: 16,
+        minWidth: 80,
     },
-    editButtonText: {
-        color: 'white',
+    buttonText: {
+        color: '#FFFFFF',
         fontWeight: 'bold',
     },
     bidsList: {
@@ -213,8 +225,8 @@ const styles = StyleSheet.create({
     },
     viewMapButton: {
         backgroundColor: '#007BFF',
-        padding: 10,
-        borderRadius: 4,
+        padding: 12,
+        borderRadius: 10,
         alignItems: 'center',
         marginTop: 8,
         marginBottom: 16,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import axios from '../../api';
 
 export default function BusinessHomeScreen() {
@@ -60,7 +61,7 @@ export default function BusinessHomeScreen() {
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobItem}>
-            <Text>{item.title} - {item.location} - {item.status}</Text>
+            <Text style={styles.jobText}>{item.title} - {item.location} - {item.status}</Text>
         </View>
     );
 
@@ -69,7 +70,7 @@ export default function BusinessHomeScreen() {
             <View style={styles.header}>
                 <Text style={styles.welcomeText}>Welcome</Text>
                 <TouchableOpacity style={styles.bellIcon} onPress={() => navigation.navigate('Business Notifications')}>
-                    <Text>🔔</Text>
+                    <Ionicons name="notifications-outline" size={28} color="#00274D" />
                     {unreadCount > 0 && <View style={styles.badge}><Text style={styles.badgeText}>{unreadCount}</Text></View>}
                 </TouchableOpacity>
             </View>
@@ -106,6 +107,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: '#EAF2F8',
     },
     header: {
         flexDirection: 'row',
@@ -116,15 +118,17 @@ const styles = StyleSheet.create({
     welcomeText: {
         fontSize: 24,
         fontWeight: 'bold',
+        color: '#00274D',
     },
     bellIcon: {
         fontSize: 24,
+        color: '#00274D',
     },
     badge: {
         position: 'absolute',
         top: -5,
-        right: -5,
-        backgroundColor: 'red',
+        right: -10,
+        backgroundColor: '#FF5A5F',
         borderRadius: 10,
         padding: 3,
         minWidth: 20,
@@ -136,9 +140,9 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     addButton: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#00274D',
         padding: 12,
-        borderRadius: 4,
+        borderRadius: 10,
         alignItems: 'center',
         marginBottom: 16,
     },
@@ -151,22 +155,28 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 16,
         marginBottom: 8,
+        color: '#00274',
     },
     jobList: {
         marginBottom: 16,
     },
     jobItem: {
         padding: 12,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 4,
+        backgroundColor: '#f4F7FA',
+        borderRadius: 10,
         marginBottom: 8,
+        borderWidth: 1,
+        borderColor: '#7D8A95',
+    },
+    jobText: {
+        color: '#00274D',
     },
     viewAllButton: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#00274D',
         padding: 10,
-        borderRadius: 4,
+        borderRadius: 10,
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: 8,
     },
     viewAllButtonText: {
         color: 'white',
@@ -174,7 +184,13 @@ const styles = StyleSheet.create({
     },
     statsContainer: {
         padding: 16,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 4,
+        backgroundColor: '#F4F7FA',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#7D8A95',
     },
+    statsText: {
+        color: '#00274D',
+        fontSize: 16,
+    }
 });

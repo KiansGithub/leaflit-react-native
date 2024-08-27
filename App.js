@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -45,38 +46,52 @@ const linking = {
 
 function BusinessTabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      // Hides the header for all screens in the BusinessTabs navigator 
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: '#00274D',
+        tabBarInactiveTintColor: '#7D8A95',
+        tabBarStyle: {
+          backgroundColor: '#EAF2F8',
+        },
+      }}
+    >
       <Tab.Screen 
-        name="Home"
+        name="Business Home"
         component={BusinessHomeScreen}
         options={{
+          title: 'Home',
           tabBarIcon: ({ color, size }) => (
             <Icon name="home-outline" color={color} size={size} />
           ),
         }}
       />
      <Tab.Screen
-       name="My Jobs"
+       name="Business My Jobs"
        component={BusinessMyJobsScreen}
        options={{
+        title: 'My Jobs',
         tabBarIcon: ({ color, size }) => (
           <Icon name="briefcase-outline" color={color} size={size} />
         ),
        }}
       />
       <Tab.Screen
-        name="Add Job"
+        name="Business Add Job"
         component={BusinessAddJobScreen}
         options={{
+          title: 'Add Job',
           tabBarIcon: ({ color, size }) => (
             <Icon name="add-circle-outline" color={color} size={size} />
           ),
         }}
       />
       <Tab.Screen
-        name="Menu"
+        name="Business Menu"
         component={BusinessMenuScreen}
         options={{
+          title: 'Menu',
           tabBarIcon: ({ color, size }) => (
             <Icon name="menu-outline" color={color} size={size} />
           ),
@@ -88,47 +103,61 @@ function BusinessTabs() {
 
 function LeafleteerTabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+    screenOptions={{
+      tabBarActiveTintColor: '#00274D',
+      tabBarInactiveTintColor: '#7D8A95',
+      tabBarStyle: {
+        backgroundColor: '#EAF2F8', 
+      },
+      headerShown: false,
+    }}
+    >
       <Tab.Screen 
-        name="Home"
+        name="Leafleteer Home"
         component={LeafleteerHomeScreen}
         options={{
+          title: 'Home',
           tabBarIcon: ({ color, size }) => (
             <Icon name="home-outline" color={color} size={size} />
           ),
         }}
       />
       <Tab.Screen 
-        name="My Jobs"
+        name="Leafleteer My Jobs"
         component={LeafleteerMyJobsScreen}
         options={{
+          title: 'My Jobs',
           tabBarIcon: ({ color, size }) => (
             <Icon name="briefcase-outline" color={color} size={size} />
           ),
         }}
       />
       <Tab.Screen 
-        name="Find Jobs"
+        name="Leafleteer Find Jobs"
         component={LeafleteerFindJobsScreen}
         options={{
+          title: 'Find Jobs',
           tabBarIcon: ({ color, size }) => (
             <Icon name="search-outline" color={color} size={size} />
           ),
         }}
       />
       <Tab.Screen 
-          name="My Bids"
+          name="Leafleteer My Bids"
           component={LeafleteerMyBidsScreen}
           options={{
+            title: 'My Bids',
             tabBarIcon: ({ color, size }) => (
               <Icon name="clipboard-outline" color={color} size={size} />
             ),
           }}
       />
       <Tab.Screen 
-        name="Menu"
+        name="Leafleteer Menu"
         component={LeafleteerMenuScreen}
         options={{
+          title: 'Menu',
           tabBarIcon: ({ color, size }) => (
             <Icon name="menu-outline" color={color} size={size} />
           ),
@@ -140,7 +169,17 @@ function LeafleteerTabs() {
 
 function MainStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+        screenOptions={{
+              headerStyle: {
+                backgroundColor: '#EAF2F8',
+              },
+              headerTintColor: '#00274D',
+              headerTitleAlign: 'center', 
+              headerTitle: '',
+              headerRight: () => null,
+        }}
+      >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegistrationScreen} />
       <Stack.Screen name="Business" component={BusinessTabs} />
@@ -168,11 +207,11 @@ export default function App() {
       console.log('Received deep link:', url);
     };
 
-    Linking.addEventListener('url', linkingListener);
+    const subscription = Linking.addEventListener('url', linkingListener);
 
     // Cleanup the event listener on unmount
     return () => {
-      Linking.removeEventListener('url', linkingListener);
+      subscription.remove();
   };
 }, []);
 
