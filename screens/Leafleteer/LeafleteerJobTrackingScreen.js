@@ -186,12 +186,15 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                     <Marker 
                         coordinate={coordinates}
                         title="Job Location"
-                    />
+                        pinColor="#00274D"
+                    >
+                        <Ionicons name="location-sharp" size={32} color="#007BFF" />
+                    </Marker>
                     <Circle 
                         center={coordinates}
                         radius={radius}
-                        fillColor="rgba(0, 0, 255, 0.3)"
-                        strokeColor="rgba(0, 0, 255, 0.5)"
+                        fillColor="rgba(0, 123, 255, 0.3)"
+                        strokeColor="#00274D"
                     />
 
                     {recentRoutes.map((route, index) => (
@@ -210,7 +213,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                         <Polyline
                         coordinates={currentCoordinates.map(coord => ({ latitude: coord.latitude, longitude: coord.longitude }))}
                         strokeWidth={5}
-                        strokeColor='blue'
+                        strokeColor='#007BFF'
                         />
                     )}
                 </MapView>
@@ -235,6 +238,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#EAF2F8',
         justifyContent: 'center',
         alignItems: 'center',
     },
