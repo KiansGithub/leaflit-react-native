@@ -4,6 +4,7 @@ import MapView, { Marker, Circle, Polyline } from 'react-native-maps';
 import { useRoute } from '@react-navigation/native';
 import axios from '../../api';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LeafleteerJobMapScreen() {
     const route = useRoute();
@@ -48,15 +49,15 @@ export default function LeafleteerJobMapScreen() {
                 <Marker 
                     coordinate={coordinates}
                     title="Job Location"
-                    pinColor="#00274D"
+                    pinColor={colors.primary}
                 >
-                    <Ionicons name="location-sharp" size={32} color="#007BFF" />
+                    <Ionicons name="location-sharp" size={32} color={colors.secondary} />
                 </Marker>
                 <Circle 
                     center={coordinates}
                     radius={radius}
                     fillColor="rgba(0, 123, 255, 0.3)"
-                    strokeColor="#00274D"
+                    strokeColor={colors.primary}
                 />
 
                 {recentRoutes.map((route, index) => (
@@ -78,7 +79,7 @@ export default function LeafleteerJobMapScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EAF2F8',
+        backgroundColor: colors.background,
     },
     map: {
         flex: 1,

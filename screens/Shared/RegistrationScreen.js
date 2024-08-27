@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, TouchableOpacity, Image } from 'react-native';
 import axios from '../../api';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function RegistrationScreen({ navigation }) {
     const [firstName, setFirstName] = useState('');
@@ -66,7 +67,7 @@ export default function RegistrationScreen({ navigation }) {
                 value={firstName} 
                 onChangeText={setFirstName}
                 placeholder="Enter your first name"
-                placeholderTextColor="#7D8A95"  
+                placeholderTextColor={colors.textSecondary}  
             />
 
             {/* Email Input */}
@@ -77,7 +78,7 @@ export default function RegistrationScreen({ navigation }) {
                 onChangeText={setEmail} 
                 autoCapitalize='none'
                 placeholder="Enter your email"
-                placeholderTextColor="#7D8A95" 
+                placeholderTextColor={colors.textSecondary} 
             />
 
             {/* Password Input */}
@@ -88,7 +89,7 @@ export default function RegistrationScreen({ navigation }) {
                 onChangeText={setPassword} 
                 secureTextEntry 
                 placeholder="Enter your password"
-                placeholderTextColor="#7D8A95" 
+                placeholderTextColor={colors.textSecondary} 
             />
 
             {/* Confirm Password Input */}
@@ -99,7 +100,7 @@ export default function RegistrationScreen({ navigation }) {
                 onChangeText={setConfirmPassword} 
                 secureTextEntry 
                 placeholder="Confirm your password"
-                placeholderTextColor="#7D8A95" 
+                placeholderTextColor={colors.textSecondary} 
             />
 
             {/* Phone Number Input */}
@@ -109,7 +110,7 @@ export default function RegistrationScreen({ navigation }) {
                 value={phoneNumber} 
                 onChangeText={setPhoneNumber} 
                 placeholder="Enter your phone number"
-                placeholderTextColor="#7D8A95" 
+                placeholderTextColor={colors.textSecondary} 
             />
 
             {/* User Type Toggle */}
@@ -132,14 +133,14 @@ export default function RegistrationScreen({ navigation }) {
 
             {/* Register Button */}
             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={handleRegister} style={[styles.customButton, { backgroundColor: '#00274D'}]}>
+                <TouchableOpacity onPress={handleRegister} style={[styles.customButton, { backgroundColor: colors.primary }]}>
                     <Text style={styles.customButtonText}>Register</Text>
                 </TouchableOpacity>
             </View>
 
             {/* Back to Login Button */}
             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.customButton, { backgroundColor: '#00274D' }]}>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.customButton, { backgroundColor: colors.primary }]}>
                     <Text style={styles.customButtonText}>Back to Login</Text>
                 </TouchableOpacity>
             </View>
@@ -152,64 +153,64 @@ const styles = StyleSheet.create({
         flexGrow: 1, 
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#EAF2F8', 
-        padding: 16,
-        paddingBottom: 60,
+        backgroundColor: colors.background, 
+        padding: spacing.medium,
+        paddingBottom: spacing.large,
     },
     logo: {
         width: 150, 
         height: 150,
-        marginBottom: 40,
+        marginBottom: spacing.large,
         resizeMode: 'contain',
     },
     label: {
         alignSelf: 'flex-start',
-        marginLeft: 10,
-        marginBottom: 5,
-        color: '#00274D', 
-        fontSize: 16,
+        marginLeft: spacing.small,
+        marginBottom: spacing.small / 2,
+        color: colors.primary, 
+        fontSize: fontSizes.medium,
     },
     input: {
         width: '100%',
         height: 40,
-        borderColor: '#7D8A95', 
+        borderColor: colors.textSecondary, 
         borderWidth: 1,
-        borderRadius: 10,
-        marginBottom: 12,
-        paddingHorizontal: 8,
-        backgroundColor: '#fff', 
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.medium,
+        paddingHorizontal: spacing.small,
+        backgroundColor: colors.white, 
     },
     toggleContainer: {
         flexDirection: 'row',
-        marginBottom: 20,
+        marginBottom: spacing.large,
         justifyContent: 'space-between',
     },
    toggleButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: spacing.small,
     borderWidth: 1,
-    borderColor: '#7D8A95',
-    borderRadius: 10,
-    marginHorizontal: 5,
+    borderColor: colors.textSecondary,
+    borderRadius: borderRadius.medium,
+    marginHorizontal: spacing.small / 2,
    },
    selectedToggleButton: {
-    backgroundColor: '#00274D',
+    backgroundColor: colors.primary,
    },
    toggleButtonText: {
-    color: '#7D8A95',
+    color: colors.textSecondary,
    },
    selectedToggleButtonText: {
-    color: 'white',
+    color: colors.white,
    },
     buttonContainer: {
         width: '100%',
-        marginBottom: 20,
+        marginBottom: spacing.medium,
     },
     customButton: {
-        backgroundColor: '#00274D',
-        paddingVertical: 12,
-        borderRadius: 10,
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.medium,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: '#000',
@@ -219,13 +220,13 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     customButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: '600',
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     },
     errorText: {
-        color: 'red',
-        marginBottom: 12,
+        color: colors.danger,
+        marginBottom: spacing.medium,
         textAlign: 'center',
     },
 });

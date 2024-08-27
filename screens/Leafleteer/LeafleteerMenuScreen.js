@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LeafleteerMenuScreen({ navigation }) {
     return (
@@ -44,45 +45,45 @@ export default function LeafleteerMenuScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        jsutifyContent: 'center',
+        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#EAF2F8',
-        padding: 16,
+        backgroundColor: colors.background,
+        padding: spacing.medium,
     },
     button: {
         flexDirection: 'row',
-        backgroundColor: '#00274D',
-        padding: 14,
-        marginVertical: 6,
+        backgroundColor: colors.primary,
+        padding: spacing.medium,
+        marginVertical: spacing.small,
         width: '90%',
         alignItems: 'center',
-        borderRadius: 8,
+        borderRadius: borderRadius.medium,
         justifyContent: 'flex-start',
     },
     icon: {
-        marginRight: 10,
+        marginRight: spacing.small,
     },
     buttonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     },
     logoutButton: {
         flexDirection: 'row',
-        backgroundColor: '#C82333',
-        padding: 14,
-        marginVertical: 6,
+        backgroundColor: colors.danger,
+        padding: spacing.medium,
+        marginVertical: spacing.small,
         width: '90%',
         alignItems: 'center',
-        borderRadius: 8,
+        borderRadius: borderRadius.medium,
         justifyContent: 'flex-start',
-        borderColor: '#DC3545',
+        borderColor: colors.danger,
         borderWidth: 1,
     },
     logoutButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginLeft: 10,
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
+        marginLeft: spacing.small,
     },
 });

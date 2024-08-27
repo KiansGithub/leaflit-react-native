@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import axios from '../../api';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function PasswordResetRequestScreen() {
     const [email, setEmail] = useState('');
@@ -22,9 +23,15 @@ export default function PasswordResetRequestScreen() {
                 style={styles.input}
                 value={email}
                 onChangeText={setEmail}
+                placeholder="Enter your email"
+                placeholderTextColor={colors.textSecondary}
             />
-            <Button title="Reset Password" onPress={handlePasswordReset} />
-            {message ? <Text>{message}</Text> : null}
+            <Button 
+            title="Reset Password" 
+            onPress={handlePasswordReset}
+            color={colors.primary} 
+            />
+            {message ? <Text style={styles.message}>{message}</Text> : null}
        </View>
     );
 }
@@ -32,18 +39,29 @@ export default function PasswordResetRequestScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        padding: spacing.medium,
         justifyContent: 'center',
+        backgroundColor: colors.background,
     },
     label: {
-        fontSize: 16,
-        marginBottom: 8,
+        fontSize: fontSizes.medium,
+        marginBottom: spacing.small,
+        color: colors.primary,
+        fontWeight: fontWeights.bold,
     },
     input: {
         height: 40,
-        borderColor: 'gray',
+        borderColor: colors.textSecondary,
         borderWidth: 1,
-        marginBottom: 16,
-        paddingHorizontal: 8,
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.medium,
+        paddingHorizontal: spacing.small,
+        backgroundColor: colors.white,
     },
+    message: {
+        marginTop: spacing.medium,
+        fontSize: fontSizes.medium,
+        color: colors.success,
+        fontWeight: fontWeights.regular,
+    }
 });

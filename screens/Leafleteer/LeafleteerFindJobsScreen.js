@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity }
 import axios from '../../api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import * as Location from 'expo-location';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LeafleteerFindJobsScreen() {
     const [jobs, setJobs] = useState([]);
@@ -102,77 +103,77 @@ export default function LeafleteerFindJobsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#EAF2F8',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     headerContainer: {
-        marginBottom: 16,
+        marginBottom: spacing.medium,
     },
     header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#00274D',
-        marginBottom: 16,
+        fontSize: fontSizes.xlarge, // 24 px
+        fontWeight: fontWeights.bold,
+        color: colors.textPrimary,
+        marginBottom: spacing.medium,
     },
     jobList: {
-        paddingBottom: 16,
+        paddingBottom: spacing.medium,
     },
     jobCard: {
-        backgroundColor: '#F4F7FA',
-        padding: 16,
-        marginBottom: 16,
-        borderRadius: 16,
+        backgroundColor: colors.cardBackground,
+        padding: spacing.medium,
+        marginBottom: spacing.medium,
+        borderRadius: borderRadius.large,
         borderWidth: 1,
-        borderColor: '#7D8A95',
+        borderColor: colors.textSecondary,
         elevation: 2,
     },
     jobTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        color: '#00274D',
+        fontSize: fontSizes.large,
+        fontWeight: fontWeights.bold,
+        marginBottom: spacing.small,
+        color: colors.textPrimary,
     },
     jobDetails: {
-        fontSize: 14,
-        marginBottom: 4,
-        color: '#00274D',
+        fontSize: fontSizes.small, // 14 px
+        marginBottom: spacing.small / 2, // 4 px
+        color: colors.textPrimary,
     },
     jobActions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     bidButton: {
-        backgroundColor: '#28a745',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.success,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
     },
     bidButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium, // 16 px
+        fontWeight: fontWeights.bold,
     },
     mapButton: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.secondary,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
     },
     mapButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     },
     loadMoreButton: {
-        backgroundColor: '#00274D',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.primary,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: spacing.medium,
     },
     loadMoreText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium, // 16 px
+        fontWeight: fontWeights.bold,
     },
 });

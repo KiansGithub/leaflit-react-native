@@ -76,7 +76,7 @@ export default function BusinessHomeScreen() {
             </View>
             <TouchableOpacity 
                 style={styles.addButton}
-                onPress={() => navigation.navigate('Add Job')}
+                onPress={() => navigation.navigate('Business Add Job')}
             >
                 <Text style={styles.addButtonText}>Add Job</Text>
             </TouchableOpacity>
@@ -89,7 +89,7 @@ export default function BusinessHomeScreen() {
             />
             <TouchableOpacity 
                 style={styles.viewAllButton}
-                onPress={() => navigation.navigate('My Jobs')}
+                onPress={() => navigation.navigate('Business My Jobs')}
             >
                 <Text style={styles.viewAllButtonText}>View All</Text>
             </TouchableOpacity>

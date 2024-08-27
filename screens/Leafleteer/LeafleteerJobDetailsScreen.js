@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Alert } fr
 import axios from '../../api';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LeafleteerJobDetailsScreen() {
     const [job, setJob] = useState(null);
@@ -174,52 +175,53 @@ export default function LeafleteerJobDetailsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#EAF2F8',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     backButton: {
-        marginBottom: 16,
+        marginBottom: spacing.medium,
         alignSelf: 'flex-start',
     },
     backButtonText: {
-        color: '#007BFF',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.secondary, // Bright blue
+        fontSize: fontSizes.medium, // 16px
+        fontWeight: fontWeights.bold,
     },
     header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#00274D',
-        marginBottom: 16,
+        fontSize: fontSizes.xlarge, // 24px
+        fontWeight: fontWeights.bold,
+        color: colors.primary, // Dark blue
+        marginBottom: spacing.medium,
     },
     jobDescription: {
-        fontSize: 16,
-        marginBottom: 16,
+        fontSize: fontSizes.medium, // 16px
+        marginBottom: spacing.medium,
+        color: colors.textPrimary,
     },
     jobDetail: {
-        fontSize: 16,
-        color: '#00274D',
-        marginBottom: 8,
+        fontSize: fontSizes.medium, // 16px
+        color: colors.textPrimary, // Dark blue
+        marginBottom: spacing.small,
     },
     input: {
         height: 40,
-        borderColor: '#7D8A95',
+        borderColor: colors.textSecondary, // Grey border
         borderWidth: 1,
-        paddingHorizontal: 8,
-        marginBottom: 16,
-        borderRadius: 8,
-        backgroundColor: '#F4F7FA',
+        paddingHorizontal: spacing.small,
+        marginBottom: spacing.medium,
+        borderRadius: borderRadius.medium,
+        backgroundColor: colors.cardBackground, // Very light grey-blue background
     },
     bidButton: {
-        backgroundColor: '#28a745',
-        padding: 12,
-        borderRadius: 8,
+        backgroundColor: colors.success, // Green for success
+        padding: spacing.medium,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: spacing.medium,
     },
     bidButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium, // 16px
+        fontWeight: fontWeights.bold,
     },
 });

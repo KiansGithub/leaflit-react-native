@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'rea
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
 import axios from '../../api';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 const LeafleteerStripeOnboardingScreen = () => {
     const [loading, setLoading] = useState(true);
@@ -37,7 +38,7 @@ const LeafleteerStripeOnboardingScreen = () => {
                 {loading && (
                     <ActivityIndicator 
                         size="large"
-                        color="#00274D"
+                        color={colors.primary}
                         style={styles.loadingIndicator}
                     />
                 )}
@@ -71,30 +72,30 @@ const LeafleteerStripeOnboardingScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#EAF2F8',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        color: '#00274D',
+        fontSize: fontSizes.xlarge,
+        fontWeight: fontWeights.bold,
+        marginBottom: spacing.medium,
+        color: colors.primary,
     },
     instructions: {
-        fontSize: 16,
-        marginBottom: 16,
-        color: '#00274D',
+        fontSize: fontSizes.medium,
+        marginBottom: spacing.medium,
+        color: colors.primary,
     },
     webViewContainer: {
         flex: 1,
-        backgroundColor: '#F4F7FA',
-        borderRadius: 10,
+        backgroundColor: colors.cardBackground,
+        borderRadius: borderRadius.medium,
         overflow: 'hidden',
     },
     webview: {
         flex: 1,
-        backgroundColor: '#00274D',
-        borderRadius: 10,
+        backgroundColor: colors.primary,
+        borderRadius: borderRadius.medium,
     },
     loadingIndicator: {
         position: 'absolute',
@@ -103,16 +104,16 @@ const styles = StyleSheet.create({
         transform: [{ translateX: -25 }, { translateY: -25}],
     },
     cancelButton: {
-        backgroundColor: '#FF5A5F',
-        padding: 12,
-        borderRadius: 10,
+        backgroundColor: colors.danger,
+        padding: spacing.medium,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: spacing.medium,
     },
     cancelButtonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     }
 });
 

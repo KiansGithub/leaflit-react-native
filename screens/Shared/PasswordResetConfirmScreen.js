@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import axios from '../../api';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function PasswordResetConfirmScreen({ route, navigation }) {
     const { uidb64, token } = route.params;
@@ -23,10 +24,16 @@ export default function PasswordResetConfirmScreen({ route, navigation }) {
                 style={styles.input}
                 value={password}
                 onChangeText={setPassword}
-                secureTextEntry 
+                secureTextEntry
+                placeholder="Enter your new password"
+                placeholderTextColor={colors.textSecondary}
             />
-            <Button title="Set New Password" onPress={handlePasswordResetConfirm} />
-            {message ? <Text>{message}</Text> : null}
+            <Button 
+                title="Set New Password" 
+                onPress={handlePasswordResetConfirm}
+                color={colors.primary} 
+            />
+            {message ? <Text style={styles.message}>{message}</Text> : null}
         </View>
     );
 }
@@ -34,18 +41,29 @@ export default function PasswordResetConfirmScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        padding: spacing.medium,
         justifyContent: 'center',
+        backgroundColor: colors.background
     },
     label: {
-        fontSize: 16,
-        marginBottom: 8,
+        fontSize: fontSizes.medium,
+        marginBottom: spacing.small,
+        color: colors.primary,
+        fontWeight: fontWeights.bold,
     },
     input: {
         height: 40,
-        borderColor: 'gray',
+        borderColor: colors.textSecondary,
         borderWidth: 1,
-        marginBottom: 16,
-        paddingHorizontal: 8,
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.medium,
+        paddingHorizontal: spacing.small,
+        backgroundColor: colors.white,
     },
+    message: {
+        marginTop: spacing.medium,
+        fontSize: fontSizes.medium,
+        color: colors.success,
+        fontWeight: fontWeights.regular,
+    }
 });

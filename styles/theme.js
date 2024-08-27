@@ -1,7 +1,7 @@
 export const colors = {
     primary: '#00274D', // Dark blue 
     secondary: '#007BFF', // Bright blue 
-    background: 'EAF2F8', // Light grey-blue background 
+    background: '#EAF2F8', // Light grey-blue background 
     cardBackground: '#F4F7FA', // Very light grey-blue card background 
     textPrimary: '#00274D', // Dark blue for primary text 
     textSecondary: '#7D8A95', // Grey for secondary text 
@@ -31,7 +31,7 @@ export const borderRadius = {
     xlarge: 20,
 };
 
-export const fontWeight = {
+export const fontWeights = {
     regular: '400',
     bold: '700',
 };

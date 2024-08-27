@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import axios from '../../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
@@ -63,7 +64,7 @@ export default function LoginScreen({ navigation }) {
                 onChangeText={setEmail} 
                 autoCapitalize='none' 
                 placeholder="Enter your email"
-                placeholderTextColor="#7D8A95" // Light gray color
+                placeholderTextColor={colors.textSecondary} // Light gray color
             />
 
             {/* Password Input */}
@@ -74,14 +75,14 @@ export default function LoginScreen({ navigation }) {
                 onChangeText={setPassword} 
                 secureTextEntry
                 placeholder="Enter your password"
-                placeholderTextColor="#7D8A95" // Light gray color
+                placeholderTextColor={colors.textSecondary} // Light gray color
             />
 
             {/* Login Button */}
             <Button 
                 title="Login" 
                 onPress={handleLogin} 
-                color="#00274D" // Dark blue color
+                color={colors.primary} // Dark blue color
             />
 
             {/* Forgot Password Link */}
@@ -93,7 +94,7 @@ export default function LoginScreen({ navigation }) {
             <Button 
                 title="Register" 
                 onPress={() => navigation.navigate('Register')} 
-                color="#00274D" // Dark blue color
+                color={colors.primary} // Dark blue color
                 />
         </View>
     );
@@ -104,35 +105,35 @@ const styles = StyleSheet.create({
         flex: 1, 
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#EAF2F8',
-        padding: 16,
+        backgroundColor: colors.background,
+        padding: spacing.medium,
     },
     logo: {
         width: 150,
         height: 150,
-        marginBottom: 40,
+        marginBottom: spacing.large,
         resizeMode: 'contain',
     },
     label: {
         alignSelf: 'flex-start',
-        marginLeft: 10,
-        marginBottom: 5,
-        color: '#00274D', // Dark blue text color
-        fontSize: 16,
+        marginLeft: spacing.small,
+        marginBottom: spacing.small / 2,
+        color: colors.primary, // Dark blue text color
+        fontSize: fontSizes.medium,
     },
     input: {
         width: '100%',
         height: 40,
-        borderColor: '#7D8A95', // Light gray border color
+        borderColor: colors.textSecondary, // Light gray border color
         borderWidth: 1,
-        borderRadius: 10,
-        marginBottom: 12,
-        paddingHorizontal: 8,
-        backgroundColor: '#fff',
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.medium,
+        paddingHorizontal: spacing.small,
+        backgroundColor: colors.white,
     },
     forgotPassword: {
-        color: '#00274D',
-        marginTop: 10,
+        color: colors.primary,
+        marginTop: spacing.small,
         textAlign: 'center',
     }
 });

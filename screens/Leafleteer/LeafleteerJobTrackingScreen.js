@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import axios from '../../api';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LeafleteerJobTrackingScreen({ route, navigation }) {
     const { jobId, coordinates, radius, businessUserId } = route.params;
@@ -186,15 +187,15 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                     <Marker 
                         coordinate={coordinates}
                         title="Job Location"
-                        pinColor="#00274D"
+                        pinColor={colors.primary} // Changed to use theme color for pin
                     >
-                        <Ionicons name="location-sharp" size={32} color="#007BFF" />
+                        <Ionicons name="location-sharp" size={32} color={colors.secondary} />
                     </Marker>
                     <Circle 
                         center={coordinates}
                         radius={radius}
                         fillColor="rgba(0, 123, 255, 0.3)"
-                        strokeColor="#00274D"
+                        strokeColor={colors.primary}
                     />
 
                     {recentRoutes.map((route, index) => (
@@ -213,7 +214,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                         <Polyline
                         coordinates={currentCoordinates.map(coord => ({ latitude: coord.latitude, longitude: coord.longitude }))}
                         strokeWidth={5}
-                        strokeColor='#007BFF'
+                        strokeColor={colors.secondary}
                         />
                     )}
                 </MapView>
@@ -221,12 +222,12 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
             <View style={styles.buttons}>
                 {!tracking ? (
                     <TouchableOpacity style={styles.startButton} onPress={startTracking}>
-                        <Ionicons name="play-circle" size={24} color="white" />
+                        <Ionicons name="play-circle" size={24} color={colors.white} />
                         <Text style={styles.buttonText}>Start Tracking</Text>
                     </TouchableOpacity>
                 ) : (
                     <TouchableOpacity style={styles.stopButton} onPress={stopTracking}>
-                        <Ionicons name="stop-circle" size={24} color="white" />
+                        <Ionicons name="stop-circle" size={24} color={colors.white} />
                         <Text style={styles.buttonText}>Stop Tracking</Text>
                     </TouchableOpacity>
                 )}
@@ -238,7 +239,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EAF2F8',
+        backgroundColor: colors.background,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -248,27 +249,27 @@ const styles = StyleSheet.create({
     },
     buttons: {
         position: 'absolute',
-        bottom: 20,
+        bottom: spacing.large,
         flexDirection: 'row',
     },
     startButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
-        marginRight: 10,
+        backgroundColor: colors.secondary,
+        padding: spacing.medium,
+        borderRadius: borderRadius.medium,
+        marginRight: spacing.small,
     },
     stopButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#28a745',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.success,
+        padding: spacing.medium,
+        borderRadius: borderRadius.medium,
     },
     buttonText: {
-        color: 'white',
-        marginLeft: 5,
-        fontWeight: 'bold',
+        color: colors.white,
+        marginLeft: spacing.small,
+        fontWeight: fontWeights.bold,
     },
 });

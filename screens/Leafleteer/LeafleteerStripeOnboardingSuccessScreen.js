@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 const LeafleteerStripeOnboardingSuccessScreen = () => {
     const navigation = useNavigation();
@@ -11,8 +12,8 @@ const LeafleteerStripeOnboardingSuccessScreen = () => {
     }, []);
 
     return (
-        <View style={StyleSheet.container}>
-            <Text style={StyleSheet.message}>Onboarding Completed! Redirecting...</Text>
+        <View style={styles.container}>
+            <Text style={styles.message}>Onboarding Completed! Redirecting...</Text>
         </View>
     );
 };
@@ -22,11 +23,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: colors.white,
     },
-    messsage: {
-        fontSize: 18,
-        fontWeight: 'bold',
+    message: {
+        fontSize: fontSizes.large,
+        fontWeight: fontWeights.bold,
+        color: colors.primary
     },
 });
 
