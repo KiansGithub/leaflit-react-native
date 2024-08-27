@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function MenuScreen({ navigation }) {
     const handleLogout = async () => {
@@ -12,27 +13,27 @@ export default function MenuScreen({ navigation }) {
     return (
         <ScrollView contentContainerStyle={styles.contentContainer}>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Profile')}>
-                <Ionicons name="person-circle-outline" size={24} color="white" style={styles.icon} />
+                <Ionicons name="person-circle-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.buttonText}>Profile</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business My Jobs')}>
-                <Ionicons name="briefcase-outline" size={24} color="white" style={styles.icon} />
+                <Ionicons name="briefcase-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.buttonText}>My Jobs</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Add Job')}>
-                <Ionicons name="add-circle-outline" size={24} color="white" style={styles.icon} />
+                <Ionicons name="add-circle-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.buttonText}>Add Job</Text>
             </TouchableOpacity> 
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Settings')}>
-                <Ionicons name="settings-outline" size={24} color="white" style={styles.icon} />
+                <Ionicons name="settings-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.buttonText}>Settings</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Help/Support')}>
-                <Ionicons name="help-circle-outline" size={24} color="white" style={styles.icon} />
+                <Ionicons name="help-circle-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.buttonText}>Help/Support</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                <Ionicons name="log-out-outline" size={24} color="white" style={styles.icon} />
+                <Ionicons name="log-out-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.logoutButtonText}>Logout</Text>
             </TouchableOpacity>
         </ScrollView>
@@ -45,43 +46,44 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 16,
-        backgroundColor: '#EAF2F8',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     button: {
         flexDirection: 'row',
         width: '90%',
-        padding: 14,
-        backgroundColor: '#00274D',
-        borderRadius: 8,
+        padding: spacing.medium,
+        backgroundColor: colors.primary,
+        borderRadius: borderRadius.medium,
+        alignItems: borderRadius.medium,
         alignItems: 'center',
-        marginVertical: 6,
+        marginVertical: spacing.small,
         justifyContent: 'flex-start',
     },
     icon: {
-        marginRight: 10,
+        marginRight: spacing.small,
     },
     buttonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     },
     logoutButton: {
         flexDirection: 'row',
-        backgroundColor: '#C82333',
-        padding: 14,
-        marginVertical: 6,
+        backgroundColor: colors.danger,
+        padding: spacing.medium,
+        marginVertical: spacing.small,
         width: '90%',
         alignItems: 'center',
-        borderRadius: 8,
+        borderRadius: borderRadius.medium,
         justifyContent: 'flex-start',
-        borderColor: '#DC3545',
+        borderColor: colors.danger,
         borderWidth: 1,
     },
     logoutButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginLeft: 10,
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
+        marginLeft: spacing.small,
     },
 });

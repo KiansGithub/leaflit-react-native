@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../api';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 const BusinessNotificationScreen = () => {
     const [notifications, setNotifications] = useState([]);
@@ -61,7 +62,7 @@ const BusinessNotificationScreen = () => {
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#00274D" />
+                <ActivityIndicator size="large" color={colors.primary} />
                 <Text style={styles.loadingText}>Loading notifications...</Text>
             </View>
         );
@@ -86,8 +87,8 @@ const BusinessNotificationScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#EAF2F8',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     loadingContainer: {
         flex: 1,
@@ -95,46 +96,46 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        marginTop: 10,
-        fontSize: 16,
-        color: '#00274D',
+        marginTop: spacing.small,
+        fontSize: fontSizes.medium,
+        color: colors.primary,
     },
     notification: {
-        padding: 12,
-        backgroundColor: '#F4F7FA',
-        borderRadius: 10,
-        marginBottom: 8,
+        padding: spacing.medium,
+        backgroundColor: colors.cardBackground,
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.small,
         borderWidth: 1,
-        borderColor: '#7D8A95',
+        borderColor: colors.textSecondary,
     },
     message: {
-        fontSize: 16,
-        color: '#00274D',
-        marginBottom: 8,
+        fontSize: fontSizes.medium,
+        color: colors.primary,
+        marginBottom: spacing.small / 2,
     },
     markAsReadButton: {
-        backgroundColor: '#28A745',
-        padding: 8,
-        borderRadius: 5,
+        backgroundColor: colors.success,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
-        marginTop: 4,
+        marginTop: spacing.small / 2,
     },
     markAsReadButtonText: {
-        color: 'white',
-        fontSize: 14,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.small,
+        fontWeight: fontWeights.bold,
     },
     clearAllButton: {
-        backgroundColor: '#00274D',
-        padding: 12,
-        borderRadius: 10,
+        backgroundColor: colors.primary,
+        padding: spacing.medium,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: spacing.medium,
     },
     clearAllButtonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     },
 });
 

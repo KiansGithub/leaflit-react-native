@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from '../../api';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function BusinessJobMapScreen() {
     const [job, setJob] = useState(null);
@@ -76,15 +77,15 @@ export default function BusinessJobMapScreen() {
                 <Marker 
                     coordinate={coordinates}
                     title="Job Location"
-                    pinColor="#00274D"                    
+                    pinColor={colors.primary}                    
                 >
-                    <Ionicons name="location-sharp" size={32} color="#007BFF" />
+                    <Ionicons name="location-sharp" size={32} color={colors.secondary} />
                 </Marker>
                 <Circle 
                     center={coordinates}
                     radius={radius}
                     fillColor="rgba(0, 123, 255, 0.3)"
-                    strokeColor="#00274D"
+                    strokeColor={colors.primary}
                 />
 
                 {/* Render recent routes as polylines */}
@@ -95,7 +96,7 @@ export default function BusinessJobMapScreen() {
                             latitude: coord.latitude,
                             longitude: coord.longitude,
                         }))}
-                        strokeColor="#FF0000"
+                        strokeColor={colors.danger}
                         strokeWidth={3}
                     />
                 ))}
@@ -112,23 +113,23 @@ export default function BusinessJobMapScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EAF2F8',
+        backgroundColor: colors.background,
     },
     map: {
         flex: 1,
     },
     detailsContainer: {
-        padding: 16,
-        backgroundColor: '#F4F7FA',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        padding: spacing.medium,
+        backgroundColor: colors.cardBackground,
+        borderTopLeftRadius: borderRadius.large,
+        borderTopRightRadius: borderRadius.large,
         elevation: 3,
         borderWidth: 1,
-        borderColor: '#7D8A95',
+        borderColor: colors.textSecondary,
     },
     jobDetail: {
-        fontSize: 16,
-        color: '#00274D',
-        marginBottom: 8,
+        fontSize: fontSizes.medium,
+        color: colors.textPrimary,
+        marginBottom: spacing.small,
     }
 });

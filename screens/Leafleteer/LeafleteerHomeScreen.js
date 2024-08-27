@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet,  TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import axios from '../../api';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
@@ -73,7 +74,7 @@ export default function LeafleteerHomeScreen() {
             <View style={styles.header}>
                 <Text style={styles.welcomeText}>Welcome, User</Text>
                 <TouchableOpacity style={styles.bellIcon} onPress={() => navigation.navigate('Leafleteer Notifications')}>
-                    <Text>🔔</Text>
+                    <Ionicons name="notifications-outline" size={28} color={colors.primary} />
                     {unreadCount > 0 && (
                         <View style={styles.badge}>
                             <Text style={styles.badgeText}>{unreadCount}</Text>

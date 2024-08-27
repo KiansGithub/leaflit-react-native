@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Alert } fro
 import axios from '../../api';
 import * as Location from 'expo-location';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function BusinessJobDetailsScreen() {
     const [job, setJob] = useState(null);
@@ -155,8 +156,8 @@ export default function BusinessJobDetailsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#EAF2F8',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     loadingContainer: {
         flex: 1,
@@ -164,75 +165,77 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
+        fontSize: fontSizes.xlarge,
+        fontWeight: fontWeights.bold,
+        marginBottom: spacing.large,
+        color: colors.primary,
     },
     jobDetail: {
-        fontSize: 16,
-        marginBottom: 16,
-        color: '#00274D',
+        fontSize: fontSizes.medium,
+        marginBottom: spacing.medium,
+        color: colors.primary,
     },
     sectionTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
+        fontSize: fontSizes.large,
+        fontWeight: fontWeights.bold,
+        marginBottom: spacing.medium,
+        color: colors.primary
     },
     bidItem: {
-        padding: 16,
-        backgroundColor: '#F4F7FA',
-        borderRadius: 8,
-        marginBottom: 8,
-        borderColor: '#7D8A95',
+        padding: spacing.medium,
+        backgroundColor: colors.cardBackground,
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.small,
+        borderColor: colors.textSecondary,
         borderWidth: 1,
-        shadowColor: '#000',
+        shadowColor: colors.textSecondary,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
     },
     bidText: {
-        color: '#00274D',
+        color: colors.primary,
     },
     bidActions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 8,
+        marginTop: spacing.small,
     },
     acceptButton: {
-        backgroundColor: '#28a745',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.success,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
         minWidth: 80,
     },
     rejectButtonText: {
-        color: '#dc3545',
-        fontWeight: 'bold',
+        color: colors.danger,
+        fontWeight: fontWeights.bold,
     },
     disabledButton: {
-        backgroundColor: '#6c757d',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.textSecondary,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
         minWidth: 80,
     },
     buttonText: {
-        color: '#FFFFFF',
-        fontWeight: 'bold',
+        color: colors.white,
+        fontWeight: fontWeights.bold,
     },
     bidsList: {
-        paddingBottom: 16,
+        paddingBottom: spacing.medium,
     },
     viewMapButton: {
-        backgroundColor: '#007BFF',
-        padding: 12,
-        borderRadius: 10,
+        backgroundColor: colors.secondary,
+        padding: spacing.medium,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
-        marginTop: 8,
-        marginBottom: 16,
+        marginTop: spacing.small,
+        marginBottom: spacing.medium,
     },
     viewMapButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
+        color: colors.white,
+        fontWeight: fontWeights.bold,
     },
 });

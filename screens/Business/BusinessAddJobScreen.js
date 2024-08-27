@@ -4,6 +4,7 @@ import MapView, { Marker, Circle, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import axios from '../../api';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function BusinessAddJobScreen({ navigation }) {
     const [location, setLocation] = useState('');
@@ -103,7 +104,7 @@ export default function BusinessAddJobScreen({ navigation }) {
     if (loading) {
         return ( 
             <View style={[styles.container, styles.loadingContainer]}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color={colors.primary} />
             </View>
         );
     }
@@ -154,10 +155,10 @@ export default function BusinessAddJobScreen({ navigation }) {
 
             <View style={styles.radiusButtonsContainer}>
                 <TouchableOpacity style={styles.radiusButton} onPress={decreaseRadius}>
-                    <Ionicons name="remove-circle-outline" size={32} color="#00274D" />
+                    <Ionicons name="remove-circle-outline" size={32} color={colors.primary} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.radiusButton} onPress={increaseRadius}>
-                    <Ionicons name="add-circle-outline" size={32} color="#00274D" />
+                    <Ionicons name="add-circle-outline" size={32} color={colors.primary} />
                 </TouchableOpacity>
             </View>
 
@@ -172,7 +173,7 @@ export default function BusinessAddJobScreen({ navigation }) {
                 onChangeText={setNumberOfLeaflets}
                 keyboardType="numeric"
                 placeholder="Enter number of Leaflets"
-                placehodlerTextColor="#7D8A95"
+                placehodlerTextColor={colors.textSecondary}
             />
             <TouchableOpacity style={styles.addButton} onPress={handleAddJob}>
                 <Text style={styles.addButtonText}>Add Job</Text>
@@ -184,29 +185,29 @@ export default function BusinessAddJobScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        padding: 16,
-        backgroundColor: '#EAF2F8',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     loadingContainer: {
         justifyContent: 'center',
         alignItems: 'center',
     },
     header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        color: '#00274D',
+        fontSize: fontSizes.xlarge,
+        fontWeight: fontWeights.bold,
+        marginBottom: spacing.medium,
+        color: colors.primary,
     },
     label: {
-        fontSize: 16,
-        marginBottom: 8,
-        fontWeight: 'bold',
-        color: '#00274D',
+        fontSize: fontSizes.medium,
+        marginBottom: spacing.small,
+        fontWeight: fontWeights.bold,
+        color: colors.primary,
     },
     mapContainer: {
         height: 300,
-        marginBottom: 16,
-        borderRadius: 8,
+        marginBottom: spacing.medium,
+        borderRadius: borderRadius.medium,
         overflow: 'hidden',
     },
     map: {
@@ -216,48 +217,48 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBttom: 16,
+        marginBttom: spacing.medium,
     },
     radiusButton: {
-        marginHorizontal: 10,
+        marginHorizontal: spacing.small,
     },
     input: {
         height: 40,
-        borderColor: '#7D8A95',
+        borderColor: colors.textSecondary,
         borderWidth: 1,
-        marginBottom: 16,
-        paddingHorizontal: 8,
-        borderRadius: 4,
-        backgroundColor: '#F4F7FA',
-        color: '#00274D',
+        marginBottom: spacing.medium,
+        paddingHorizontal: spacing.small,
+        borderRadius: borderRadius.small,
+        backgroundColor: colors.cardBackground,
+        color: colors.primary,
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: spacing.medium,
     },
     resetButton: {
-        marginVertical: 10,
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
+        marginVertical: spacing.small,
+        backgroundColor: colors.secondary,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
     },
     resetButtonText: {
-        color: 'white',
+        color: colors.white,
         textAlign: 'center',
-        fontWeight: 'bold', 
+        fontWeight: fontWeights.bold, 
     },
     addButton: {
-        backgroundColor: '#00274D',
-        padding: 12,
-        borderRadius: 5,
+        backgroundColor: colors.primary,
+        padding: spacing.medium,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: spacing.medium,
     },
     addButtonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     },
 });

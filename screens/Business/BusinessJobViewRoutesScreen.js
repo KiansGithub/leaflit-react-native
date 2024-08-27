@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import axios from '../../api';
 import MapView, { Polyline, Marker, Circle } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function BusinessJobViewRoutesScreen({ route }) {
     const { jobId, coordinates, radius, businessUserId } = route.params;
@@ -74,16 +75,16 @@ export default function BusinessJobViewRoutesScreen({ route }) {
                     <Marker 
                         coordinate={coordinates} 
                         title={locationName || "Job Location"}
-                        pinColor="#00274D"
+                        pinColor={colors.primary}
                     >
-                        <Ionicons name="location-sharp" size={32} color="#007BFF" />
+                        <Ionicons name="location-sharp" size={32} color={colors.secondary} />
                     </Marker>
 
                     <Circle 
                         center={coordinates}
                         radius={radius}
                         fillColor="rgba(0, 123, 255, 0.3)"
-                        strokeColor="#00274D"
+                        strokeColor={colors.primary}
                     />
 
                     {aggregatedCoordinates.length > 0 && (
@@ -93,7 +94,7 @@ export default function BusinessJobViewRoutesScreen({ route }) {
                             longitude: coord.longitude,
                         }))}
                         strokeWidth={5}
-                        strokeColor="#007BFF"
+                        strokeColor={colors.secondary}
                     />
                     )}
 
@@ -105,7 +106,7 @@ export default function BusinessJobViewRoutesScreen({ route }) {
                                 longitude: coord.longitude,
                             }))}
                             strokeWidth={3}
-                            strokeColor="rgba(255, 0, 0, 0.8)"
+                            strokeColor={colors.danger}
                         />
                     ))}
                 </MapView>
@@ -119,7 +120,7 @@ export default function BusinessJobViewRoutesScreen({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EAF2F8',
+        backgroundColor: colors.background,
     },
     mapContainer: {
         width: 300,
@@ -137,8 +138,8 @@ const styles = StyleSheet.create({
     },
     noRoutesText: {
         textAlgin: 'center',
-        fontSize: 16,
-        color: '#00274D',
-        marginTop: 20,
+        fontSize: fontSizes.medium,
+        color: colors.textPrimary,
+        marginTop: spacing.large,
     },
 });

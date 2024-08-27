@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api'
 import * as Location from 'expo-location';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function BusinessMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
@@ -139,76 +140,76 @@ export default function BusinessMyJobsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#EAF2F8',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        color: '#00274D',
+        fontSize: fontSizes.xlarge,
+        fontWeight: fontWeights.bold,
+        marginBottom: spacing.medium,
+        color: colors.primary,
     },
     listContainer: {
-        paddingBottom: 16,
+        paddingBottom: spacing.medium,
     },
     jobContainer: {
-        padding: 16,
-        borderColor: '#7D8A95',
+        padding: spacing.medium,
+        borderColor: colors.textSecondary,
         borderWidth: 1,
-        borderRadius: 8,
-        marginBottom: 8,
-        backgroundColor: '#F4F7FA',
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.small,
+        backgroundColor: colors.cardBackground,
         elevation: 2,
     },
     jobTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        color: '#00274D',
+        fontSize: fontSizes.large,
+        fontWeight: fontWeights.bold,
+        marginBottom: spacing.small,
+        color: colors.primary,
     },
     jobDetails: {
-        fontSize: 14,
-        marginBottom: 4,
-        color: '#00274D',
+        fontSize: fontSizes.medium,
+        marginBottom: spacing.small / 2,
+        color: colors.primary,
     },
     cancelButton: {
-        backgroundColor: '#dc3545',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.danger,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: spacing.small,
     },
     cancelButtonText: {
         color: '#fff',
         fontWeight: 'bold',
     },
     removeButton: {
-        backgroundColor: '#6c757d',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.textSecondary,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: spacing.small,
     },
     removeButtonText: {
         color: '#fff',
         fontWeight: 'bold',
     },
     viewRoutesButton: {
-        backgroundColor: '#28a745',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.success,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: spacing.small,
     },
     viewRoutesText: {
         color: '#fff',
         fontWeight: 'bold',
     },
     viewDetailsButton: {
-        marginTop: 8,
-        padding: 10,
-        backgroundColor: '#007BFF',
-        borderRadius: 5,
+        marginTop: spacing.small,
+        padding: spacing.small,
+        backgroundColor: colors.secondary,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
     },
     viewDetailsText: {
@@ -216,18 +217,18 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     loadMoreButton: {
-        padding: 16,
-        backgroundColor: '#00274D',
-        borderRadius: 5,
+        padding: spacing.medium,
+        backgroundColor: colors.primary,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: spacing.medium,
     },
     loadMoreText: {
-        color: 'white',
-        fontSize: 16,
+        color: colors.white,
+        fontSize: fontSizes.medium,
     },
     buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
+        color: colors.white,
+        fontWeight: fontWeights.bold,
     }
 });
