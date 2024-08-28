@@ -27,7 +27,6 @@ export default function LeafleteerMyJobsScreen() {
             );
             setJobs(jobsWithLocationNames);
         } catch (error) {
-            console.error('Error fetching jobs:', error);
         }
     };
 
@@ -45,7 +44,6 @@ export default function LeafleteerMyJobsScreen() {
                 return 'Unknown Location';
             }
         } catch (error) {
-            console.error('Error fetching location name:', error);
             return 'Location Unavailable';
         }
     };
@@ -75,7 +73,6 @@ export default function LeafleteerMyJobsScreen() {
                 businessUserId: job.business_user,
             });
         } catch (error) {
-            console.error('Error starting job:', error);
             Alert.alert('Error', 'Failed to start the job. Please try again.');
         }
     };
@@ -85,7 +82,6 @@ export default function LeafleteerMyJobsScreen() {
             const response = await axios.post(`/leafleteerjobs/${jobId}/complete/`, { status: 'Completed' });
             setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'Completed' } : job));
         } catch (error) {
-            console.error('Error completing job:', error);
             Alert.alert('Error', 'Failed to complete the job. Please try again.');
         }
     };
@@ -96,7 +92,6 @@ export default function LeafleteerMyJobsScreen() {
             setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'Cancelled' } : job));
             Alert.alert('Success', 'Job cancelled successfully.');
         } catch (error) {
-            console.error('Error cancelling job:', error);
             Alert.alert('Error', 'Failed to cancel the job. Please try again.');
         }
     };
@@ -107,7 +102,6 @@ export default function LeafleteerMyJobsScreen() {
             setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
             Alert.alert('Success', 'Job removed from your view.');
         } catch (error) {
-            console.error('Error removing job:', error);
             Alert.alert('Error', 'Failed to remove the job. Please try again.');
         }
     };

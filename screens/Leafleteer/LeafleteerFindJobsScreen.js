@@ -20,7 +20,6 @@ export default function LeafleteerFindJobsScreen() {
             );
             setJobs(jobsWithLocationNames);
         } catch (error) {
-            console.error('Error fetching jobs:', error);
         }
     };
 
@@ -38,7 +37,6 @@ export default function LeafleteerFindJobsScreen() {
                 return 'Unknown Location';
             } 
         } catch (error) {
-            console.error('Error fetching location name:', error);
             return 'Location Unavailable';
         }
     };

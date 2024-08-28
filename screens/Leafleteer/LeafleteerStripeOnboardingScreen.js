@@ -12,8 +12,6 @@ const LeafleteerStripeOnboardingScreen = () => {
     const { onboardingUrl } = route.params; 
     const navigation = useNavigation();
 
-    console.log('Onboarding URL:', onboardingUrl);
-
     const handleOnboardingComplete = () => {
         // Navigate back to the main app after onboarding is complete 
         navigation.navigate('Leafleteer');
@@ -49,7 +47,6 @@ const LeafleteerStripeOnboardingScreen = () => {
                     style={styles.webview}
                     onLoadEnd={() => setLoading(false)}
                     onNavigationStateChange={(navState) => {
-                        console.log('Navigating to URL:', navState.url);
                         if (navState.url.includes('onboarding-success')) {
                             handleOnboardingComplete();
                         } else if (navState.url.includes('onboarding-refresh')) {

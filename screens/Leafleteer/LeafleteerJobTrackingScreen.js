@@ -26,7 +26,6 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
             }
 
             let location = await Location.getCurrentPositionAsync({});
-            console.log("User Location:", location);
             setLocation(location);
             setRegion({
                 latitude: location.coords.latitude,
@@ -52,7 +51,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
             });
             setRecentRoutes(response.data);
         } catch (error) {
-            console.error('Error fetching recent routes:', error);
+            
         }
     };
 
@@ -67,7 +66,6 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                     longitude: location.coords.longitude,
                     timestamp: location.timestamp,
                 };
-                console.log("New Coordinate:", newCoordinate);
                 setCurrentCoordinates((prev) => [...prev, newCoordinate]);
                 
                 const newRegion = {
@@ -85,7 +83,6 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                 }
             },
             (error) => {
-                console.error("Location error:", error);
                 Alert.alert("Error", "Unable to fetch location. Please check your settings.");
             }
         );
@@ -104,7 +101,6 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                 // Save the route to the server 
                 await saveRoute();
             } catch (error) {
-                console.error('Error saving route:', error);
                 Alert.alert('Error', 'Failed to save the route. It will be saved locally and retried later.');
                 // Save the route locally for retry 
                 await saveRouteLocally(currentCoordinates);
@@ -135,7 +131,6 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
             unsavedRoutes.push({ jobId, coordinates });
             await AsyncStorage.setItem('unsavedRoutes', JSON.stringify(unsavedRoutes));
         } catch (error) {
-            console.error('Error saving route locally:', error);
         }
     };
 
@@ -156,7 +151,6 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                         end_time: route.coordinates[route.coordinates.length - 1].timestamp,
                     });
                 } catch (error) {
-                    console.error('Error retrying unsaved route:', error);
                     return;
                 }
             }
@@ -164,7 +158,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
             // Clear the local storage if all retries are successful 
             await AsyncStorage.removeItem('unsavedRoutes');
         } catch (error) {
-            console.error('Error retrying unsaved routes:', error);
+    
         }
     };
 

@@ -24,18 +24,15 @@ export default function LeafleteerJobDetailsScreen() {
     const fetchJobDetails = async () => {
         try {
             const response = await axios.get(`/leafleteer-jobs/${jobId}/`);
-            console.log('Job Details:', response.data);
 
             // Accessing job details correctly 
             const jobData = response.data.job; 
 
-            console.log('Business User ID:', jobData.business_user);
             setJob(jobData);
 
             if (jobData.business_user) {
                 fetchBusinessUserDetails(jobData.business_user);
             } else {
-                console.warn('Business User ID is undefined');
                 setBusinessUser(null);
             }
 
@@ -43,10 +40,9 @@ export default function LeafleteerJobDetailsScreen() {
                 fetchLocationName(jobData.latitude, jobData.longitude);
             } else {
                 setLocationName('Location unavailable');
-                console.warn('Latitude or Longitude is missing from job data');
             }
         } catch (error) {
-            console.error('Error fetching job details:', error);
+          
         }
     };
 
@@ -55,12 +51,11 @@ export default function LeafleteerJobDetailsScreen() {
             const response = await axios.get(`/profiles/${userId}/`);
             setBusinessUser(response.data);
         } catch (error) {
-            console.error('Error fetching business user details:', error);
+            
         }
     };
 
     const fetchLocationName = async (latitude, longitude) => {
-        console.log('Fetching location name for:', latitude, longitude);
         try {
             const reverseGeocode = await Location.reverseGeocodeAsync({
                 latitude, 
@@ -74,7 +69,6 @@ export default function LeafleteerJobDetailsScreen() {
                 setLocationName('Unknown Location');
             }
         } catch (error) {
-            console.error('Error fetching location name:', error);
             setLocationName('Location Unavailable');
         }
     };
@@ -87,26 +81,19 @@ export default function LeafleteerJobDetailsScreen() {
             if (!response.data.is_stripe_account_fully_setup) {
                 // Fetch the Stripe onboarding URL if the account is not fully set up 
                 const onboardingResponse = await axios.get('/stripe-onboarding-url/');
-                console.log('Onboarding response data:', onboardingResponse.data);
 
                 if (onboardingResponse.data && onboardingResponse.data.onboarding_url) {
                     setOnboardingUrl(onboardingResponse.data.onboarding_url);
-                    console.log('Onboarding URL:', onboardingResponse.data.onboarding_url);
                 } else {
-                    console.error('Onboarding URL is missing in the response');
                 }
             }
         } catch (error) {
-            console.error('Error checking Stripe account setup:', error);
             Alert.alert('Error', 'unable to check payment setup. Please try again later.');
         }
     };
 
     const handleBid = async () => {
-        console.log('Bid button clicked');
-        console.log('Is Stripe Account setup:', isStripeAccountSetup);
         if (!isStripeAccountSetup) {
-            console.log('Onboarding URL:', onboardingUrl);
             Alert.alert(
                 'Complete Your Payment Setup',
                 'You need to complete your Stripe account setup before placing a bid.',
@@ -124,7 +111,6 @@ export default function LeafleteerJobDetailsScreen() {
         }
 
         try {
-            console.log('Placing bid...')
             const response = await axios.post('/bids/', {
                 job: jobId, 
                 bid_amount: bidAmount,
@@ -135,7 +121,6 @@ export default function LeafleteerJobDetailsScreen() {
                 navigation.navigate('Leafleteer', { refresh: true });
             }
         } catch (error) {
-            console.error('Error placing bid:', error);
             alert('Error placing bid');
         }
     };

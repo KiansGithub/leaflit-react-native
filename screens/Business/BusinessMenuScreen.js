@@ -6,7 +6,6 @@ import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../sty
 export default function MenuScreen({ navigation }) {
     const handleLogout = async () => {
         await AsyncStorage.clear();
-        console.log("User logged out");
         navigation.navigate('Login');
     }
 

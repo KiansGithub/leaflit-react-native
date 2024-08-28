@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from '../../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
@@ -7,18 +7,31 @@ import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../sty
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+
+    // Email validation regex 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const handleLogin = async() => {
         try {
-            console.log("Starting login process");
-            console.log("Email:", email.toLowerCase(), "Password:", password);
+            setError(null);
+
+            // Basic validation 
+            if(!email || !password) {
+                setError('Please enter both email and password');
+                return;
+            }
+
+            // Email format validation 
+            if (!emailRegex.test(email)) { // Check if email is in valid format 
+                setError('Please enter a valid email address');
+                return;    
+            }
 
             const response = await axios.post('/token/', {
                 email: email.toLowerCase(), 
                 password 
             });
-
-            console.log("Login response received", response.data);
 
             const { access, refresh, user_type } = response.data;
 
@@ -26,33 +39,30 @@ export default function LoginScreen({ navigation }) {
             await AsyncStorage.setItem('refresh_token', refresh);
             await AsyncStorage.setItem('user_type', user_type);
 
-            console.log("Tokens and user type saved to AsyncStorage");
-
-            console.log("User Type: ", user_type)
-
             if(user_type === 'business') {
-                console.log("Navigating to Business home screen");
                 navigation.navigate('Business');
             } else {
-                console.log("Navigating to Leafleteer home screen");
                 navigation.navigate('Leafleteer');
             }
         } catch(error) {
             if (error.response) {
-                console.error("Login error response", error.response.data);
-                alert("Login failed: " + (error.response.data.detail || "Unknown error"));
+                const errorMessage = error.response.data.detail || "Incorrect email or password. Please try again.";
+                setError(errorMessage)
             } else if (error.request) {
-                console.error("Login error request", error.request);
-                alert("Network error: Please check your internet connection.");
+                setError("Network error: Please check your internet connection.");
             } else {
-                console.error("Login error", error.message);
-                alert("An error occurred: " + error.message);
+                setError("An unexpected error occured: " + error.message);
             }
         }
     };
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView 
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={100}
+        >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
             {/* Logo */}
             <Image source={require('../../assets/icon.png')} style={styles.logo} />
 
@@ -78,6 +88,9 @@ export default function LoginScreen({ navigation }) {
                 placeholderTextColor={colors.textSecondary} // Light gray color
             />
 
+            {/* Display Error Message */}
+            {error && <Text style={styles.errorText}>{error}</Text>}
+
             {/* Login Button */}
             <Button 
                 title="Login" 
@@ -85,27 +98,31 @@ export default function LoginScreen({ navigation }) {
                 color={colors.primary} // Dark blue color
             />
 
-            {/* Forgot Password Link */}
-            <TouchableOpacity onPress={() => navigation.navigate('Password Reset Request')}>
-                <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
-
             {/* Register Button */}
             <Button 
                 title="Register" 
                 onPress={() => navigation.navigate('Register')} 
                 color={colors.primary} // Dark blue color
+                style={styles.registerButton}
                 />
-        </View>
+
+                {/* Forgot Password Link */}
+            <TouchableOpacity onPress={() => navigation.navigate('Password Reset Request')} style={styles.forgotPasswordContainer}>
+                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+            </TouchableOpacity>
+        </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
+        backgroundColor: colors.background,
+    },
+    scrollContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: colors.background,
         padding: spacing.medium,
     },
     logo: {
@@ -131,9 +148,20 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.small,
         backgroundColor: colors.white,
     },
+    forgotPasswordContainer: {
+        marginTop: spacing.medium,
+    },
     forgotPassword: {
         color: colors.primary,
         marginTop: spacing.small,
+        textAlign: 'center',
+    },
+    registerButton: {
+        marginTop: spacing.medium,
+    },
+    errorText: {
+        color: colors.danger,
+        marginBottom: spacing.small,
         textAlign: 'center',
     }
 });

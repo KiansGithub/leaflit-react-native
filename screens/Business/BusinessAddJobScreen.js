@@ -24,7 +24,6 @@ export default function BusinessAddJobScreen({ navigation }) {
             }
 
             let location = await Location.getCurrentPositionAsync({});
-            console.log("User Location:", location);
             setCoordinates({
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
@@ -40,9 +39,7 @@ export default function BusinessAddJobScreen({ navigation }) {
         try {
             const response = await axios.get('/business-jobs/recent_routes/');
             setRecentRoutes(response.data);
-            console.log('Recnet Routes:', response.data);
         } catch (error) {
-            console.error('Error fetching recent routes:', error);
             Alert.alert('Failed to fetch recent routes', 'Please try again');
         }
     }
@@ -60,7 +57,6 @@ export default function BusinessAddJobScreen({ navigation }) {
                 longitude: coordinates.longitude,
                 radius: radius,
             });
-            console.log('Job added successfully:', response.data)
 
             // Display a confirmation message 
             Alert.alert('Success', 'Job added successfully');
@@ -74,7 +70,6 @@ export default function BusinessAddJobScreen({ navigation }) {
             navigation.navigate('Business My Jobs');
         
         } catch (error) {
-            console.error('Error posting job', error);
             Alert.alert('Failed to create job', 'Please try again');
         }
     };

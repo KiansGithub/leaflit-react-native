@@ -39,7 +39,7 @@ export default function LeafleteerHomeScreen() {
             const response = await axios.get('/leafleteerjobs/active/');
             setRecentJobs(response.data.slice(0, 2));
         } catch (error) {
-            console.error('Error fetching recent jobs', error);
+
         }
     };
 
@@ -48,7 +48,7 @@ export default function LeafleteerHomeScreen() {
             const response = await axios.get('leafleteer-stats/');
             setStats(response.data);
         } catch (error) {
-            console.error('Error fetching stats', error);
+      
         }
     };
 
@@ -57,14 +57,14 @@ export default function LeafleteerHomeScreen() {
             const response = await axios.get('/notifications/unread-count/');
             setUnreadCount(response.data.unread_count);
         } catch (error) {
-            console.error('Error fetching unread notifications count', error);
+ 
         }
     };
 
     const renderJobItem = ({ item }) => {
         return (
         <View style={styles.jobItem}>
-            <Text>- {item.location} - {item.status} - {item.number_of_leaflets}</Text>
+            <Text>{item.status} - {item.number_of_leaflets}</Text>
         </View>
         );
     };
@@ -104,7 +104,6 @@ export default function LeafleteerHomeScreen() {
             <Text style={styles.sectionTitle}>Overview</Text>
             <View style={styles.statsContainer}>
                 <Text style={styles.statsText}>Total Jobs Completed: {stats.totalJobsCompleted}</Text>
-                <Text style={styles.statsText}>Total Earnings: £{stats.totalEarnings}</Text>
                 <Text style={styles.statsText}>Total Leaflets Delivered: {stats.totalLeafletsDistributed}</Text>
             </View>
         </View>

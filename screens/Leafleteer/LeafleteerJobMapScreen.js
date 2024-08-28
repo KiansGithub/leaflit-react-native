@@ -12,11 +12,6 @@ export default function LeafleteerJobMapScreen() {
     const [recentRoutes, setRecentRoutes] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Debug: Check radius and coordinates value 
-    console.log("Coordinates:", coordinates);
-    console.log("Radius:", radius);
-    console.log("Business User ID:", businessUserId);
-
     useEffect(() => {
         fetchRecentRoutes();
     }, []);
@@ -26,11 +21,9 @@ export default function LeafleteerJobMapScreen() {
             const response = await axios.get('/business-jobs/recent_routes/', {
                 params: { business_user: businessUserId }
             });
-            console.log('Recent Routes:', response.data);
             setRecentRoutes(response.data);
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching recent routes:', error);
             setLoading(false);
         }
     }

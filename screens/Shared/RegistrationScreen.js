@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from '../../api';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
@@ -12,20 +12,38 @@ export default function RegistrationScreen({ navigation }) {
     const [userType, setUserType] = useState('business');
     const [error, setError] = useState(null);
 
+    // Email validation regex 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Phone number validation regex (same as backend)
+    const phoneRegex = /^\+?1?\d{9,15}$/;
+
     const handleRegister = async() => {
+        setError(null);
+
+        // Basic validation 
+        if (!firstName || !email || !password || !confirmPassword || !phoneNumber) {
+            setError('Please fill in all fields');
+            return;
+        }
+
+        // Email validation 
+        if (!emailRegex.test(email)) {
+            setError('Please enter a valid email address');
+            return;
+        }
+
+        // Phone number validation 
+        if (!phoneRegex.test(phoneNumber)) {
+            setError('Please enter a valid phone number (9 to 15 digits)');
+            return;
+        }
+
         if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
         }
         try {
-            console.log('Making API request to register user');
-            console.log({
-                first_name: firstName, 
-                email, 
-                password, 
-                phone_number: phoneNumber,
-                user_type: userType,
-            });
             const response = await axios.post('/register/', { 
                 first_name: firstName,
                 email,
@@ -37,10 +55,8 @@ export default function RegistrationScreen({ navigation }) {
                     'No-Auth': true
                 }
             });
-            console.log('API response', response.data);
             navigation.navigate('Login');
         } catch(error) {
-            console.error(error); 
             if (error.response && error.response.data) {
                 if (error.response.data.username) {
                     setError(error.response.data.username[0]);
@@ -56,7 +72,12 @@ export default function RegistrationScreen({ navigation }) {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <KeyboardAvoidingView 
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={100}
+        >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
             {/* Logo */}
             <Image source={require('../../assets/icon.png')} style={styles.logo} />
 
@@ -145,17 +166,20 @@ export default function RegistrationScreen({ navigation }) {
                 </TouchableOpacity>
             </View>
         </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container : {
-        flexGrow: 1, 
+        flex: 1, 
+        backgroundColor: colors.background, 
+    },
+    scrollContainer: {
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: colors.background, 
         padding: spacing.medium,
-        paddingBottom: spacing.large,
     },
     logo: {
         width: 150, 

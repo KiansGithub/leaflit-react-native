@@ -38,9 +38,7 @@ export default function BusinessJobDetailsScreen() {
 
     const fetchJobBids = async () => {
         try {
-            console.log(`Fetching bids for jobId: ${jobId}`);
             const response = await axios.get(`/bids/?job_id=${jobId}`);
-            console.log(`Fetched bids:`, response.data);
             setBids(response.data);
         } catch (error) {
             console.error('Error fetching job bids:', error);
@@ -72,7 +70,6 @@ export default function BusinessJobDetailsScreen() {
         setIsAcceptingBid(true);
 
         try {
-            console.log(`Accepting bid with id: ${bidId}`);
             const response = await axios.post(`/bids/${bidId}/accept/`);
             console.log('Bid accepted:', response.data);
             setRefresh(prev => !prev);
@@ -85,10 +82,8 @@ export default function BusinessJobDetailsScreen() {
     };
 
     const handleRejectBid = async (bidId) => {
-        try {
-            console.log(`Rejecting bid with id: ${bidId}`);
+        try {;
             const response = await axios.post(`/bids/${bidId}/reject/`);
-            console.log('Bid rejected:', response.data);
             setRefresh(prev => !prev);
         } catch (error) {
             console.error('Error rejecting bid:', error);

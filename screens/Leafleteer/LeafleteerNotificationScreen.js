@@ -14,15 +14,10 @@ const LeafleteerNotificationScreen = () => {
     const fetchNotifications = async () => {
         try {
             const response = await axios.get('/notifications/');
-            console.log(response.data);
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching notifications:', error);
             if (error.response) {
-                console.error('Error response data:', error.response.data);
-                console.error('Error resoponse status:', error.response.status);
-                console.error('Error response headers:', error.response.headers);
             }
             setLoading(false);
         }
@@ -33,9 +28,7 @@ const LeafleteerNotificationScreen = () => {
             await axios.patch(`/notifications/${id}/`, { is_read: true });
             fetchNotifications(); // Refresh notifications
         } catch (error) {
-            console.error('Error marking notification as read:', error);
             if (error.response) {
-                console.error('Error response data:', error.response.data);
             }
         }
     };
@@ -46,7 +39,6 @@ const LeafleteerNotificationScreen = () => {
             fetchNotifications(); // Refresh notifications after clearing 
             Alert.alert('Success', 'All notifications have been cleared.');
         } catch (error) {
-            console.error('Error clearing notifications:', error);
             Alert.alert('Error', 'Failed to clear notifications. Please try again.');
         }
     }

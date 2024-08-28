@@ -16,33 +16,9 @@ export default function LeafleteerMyBidsScreen() {
                 params: { status: 'Pending' }
             });
             const bidData = response.data;
-            console.log("Bids fetched:", bidData);
             setBids(bidData);
-
-            // Fetch job details for each bid 
-            const jobDetails = await Promise.all(
-                bidData.map(async (bid) => {
-                    try {
-                    const jobResponse = await axios.get(`/leafleteerjobs/${bid.job}/`);
-                    console.log("Job detais fetched for job ID", bid.job, ":", jobResponse.data);
-                    return { jobId: bid.job, jobDetails: jobResponse.data};
-                    } catch (error) {
-                        console.error(`Error fetching job details for job ID ${bid.job}:`, error);
-                        return { jobId: bid.job, jobDetails: null};
-                    }
-                })
-            );
-
-            // Store job details in the jobs state 
-            const jobDetailsMap = jobDetails.reduce((acc, job) => {
-                acc[job.jobId] = job.jobDetails;
-                return acc;
-            }, {});
-
-            setJobs(jobDetailsMap);
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching bids:', error);
             setLoading(false);
             Alert.alert('Error', 'Failed to load bids. Please try again later.');
         }
@@ -60,33 +36,18 @@ export default function LeafleteerMyBidsScreen() {
             fetchBids();
             Alert.alert('Success', 'Bid cancelled successfully');
         } catch (error) {
-            console.error('Error cancelling bid:', error);
             Alert.alert('Error', 'Failed to cancel bid. Please try again.');
         }
     }
 
     const renderBidItem = ({ item }) => {
-        const jobDetails = jobs[item.job];
 
         return (
         <View style={styles.bidCard}>
-            {jobDetails ? (
-                <>
-                <View style={styles.jobInfo}>
-                    <Text style={styles.location}>
-                        <Ionicons name="location-outline" size={18} color="#007BFF" />
-                        {jobDetails.location}
-                    </Text>
-                    <Text style={styles.amount}>£{item.bid_amount}</Text>
-                    <Text style={styles.posterName}>Posted by: {jobDetails.posterName}</Text>   
-                </View>
-                <TouchableOpacity style={styles.cancelButton} onPress={() => handleCancelBid(item.id)}>
-                    <Ionicons name="trash-bin" size={18} color="white" />
-                </TouchableOpacity>
-                </>
-            ) : (
-                <ActivityIndicator size="small" color="#007BFF" />
-            )}
+            <Text style={styles.amount}>£{item.bid_amount}</Text>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => handleCancelBid(item.id)}>
+                <Ionicons name="trash-bin" size={18} color="white" />
+            </TouchableOpacity>
         </View>
         );
     };
@@ -162,22 +123,6 @@ const styles = StyleSheet.create({
         color: colors.success,
         fontWeigjht: fontWeights.bold,
         marginBottom: spacing.large,
-    },
-    posterName: {
-        fontSize: fontSizes.small,
-        color: colors.textSecondary,
-        fontStyle: 'italic',
-    },
-    jobTitle: {
-        fontSize: fontSizes.large,
-        fontWeight: fontWeights.bold,
-        marginBottom: spacing.small,
-        color: colors.textPrimary
-    },
-    jobDetails: {
-        fontSize: fontSizes.medium,
-        color: colors.textPrimary,
-        marginBottom: spacing.small,
     },
     bidInfo: {
         flexDirection: 'row',
