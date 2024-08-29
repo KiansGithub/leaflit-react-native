@@ -38,7 +38,6 @@ export default function BusinessHomeScreen() {
             const response = await axios.get('/business-jobs/');
             setRecentJobs(response.data.slice(0,2 ));
         } catch (error) {
-            console.error('Error fetching recent jobs', error);
         }
     };
 
@@ -47,7 +46,6 @@ export default function BusinessHomeScreen() {
             const response = await axios.get('/business-stats/');
             setStats(response.data);
         } catch (error) {
-            console.error('Error fetching stats', error);
         }
     };
 
@@ -56,13 +54,12 @@ export default function BusinessHomeScreen() {
             const response = await axios.get('/notifications/unread-count/');
             setUnreadCount(response.data.unread_count);
         } catch (error) {
-            console.error('Error fetching unread notifications count', error);
         }
     };
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobItem}>
-            <Text style={styles.jobText}>{item.title} - {item.location} - {item.status}</Text>
+            <Text style={styles.jobText}>{item.status}</Text>
         </View>
     );
 
@@ -98,7 +95,6 @@ export default function BusinessHomeScreen() {
             <View style={styles.statsContainer}>
                 <Text>Total Jobs Completed: {stats.totalJobsCompleted}</Text>
                 <Text>Total Leaflets Distributed: {stats.totalLeafletsDistributed}</Text>
-                <Text>Total Amount Spent: £{stats.totalAmountSpent}</Text>
             </View>
         </View>
     );

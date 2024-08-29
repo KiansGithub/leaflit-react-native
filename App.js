@@ -3,6 +3,8 @@ import { Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StripeProvider } from '@stripe/stripe-react-native';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoginScreen from './screens/Shared/LoginScreen';
 import RegistrationScreen from './screens/Shared/RegistrationScreen';
@@ -32,6 +34,9 @@ import * as Linking from 'expo-linking';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// Publishable key for the Stripe API
+const publishableKey = 'pk_test_51OitMvIjsBAazCjHAwOMpH0hUZoEg97keC1O1dh4oLN6Kx5Jw9UzACcYuBtnLm7VR5KolNkVHDr1jn1dY37FycK300Ele0bTuy';
 
 // Define the deep linking configuration 
 const linking = {
@@ -182,8 +187,14 @@ function MainStack() {
       >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegistrationScreen} />
-      <Stack.Screen name="Business" component={BusinessTabs} />
-      <Stack.Screen name="Leafleteer" component={LeafleteerTabs} />
+      <Stack.Screen 
+          name="Business" 
+          component={BusinessTabs} 
+      />
+      <Stack.Screen 
+          name="Leafleteer" 
+          component={LeafleteerTabs}
+      />
       <Stack.Screen name="Leafleteer Job Details" component={LeafleteerJobDetailsScreen} />
       <Stack.Screen name="Business Job Details" component={BusinessJobDetailsScreen} />
       <Stack.Screen name="Password Reset Confirm" component={PasswordResetConfirmScreen} />
@@ -216,8 +227,12 @@ export default function App() {
 }, []);
 
   return (
-    <NavigationContainer linking={linking}>
-      <MainStack />
-    </NavigationContainer>
+    <StripeProvider 
+      publishableKey={publishableKey}
+    >
+      <NavigationContainer linking={linking}>
+        <MainStack />
+      </NavigationContainer>
+    </StripeProvider>
   );
 }

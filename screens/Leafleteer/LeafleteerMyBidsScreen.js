@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
         padding: spacing.medium,
         borderRadius: borderRadius.small,
         alignItems: 'center',
-        marginTop: spacing.medium,
     },
     loadMoreText: {
         color: colors.white,

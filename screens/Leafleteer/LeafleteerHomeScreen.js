@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet,  TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet,  TouchableOpacity, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from '../../api';
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: spacing.medium,
+        paddingTop: spacing.large,
         backgroundColor: colors.background,
     },
     header: {
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
         padding: spacing.small,
         borderRadius: borderRadius.medium,
         alignItems: 'center',
-        marginBottom: spacing.small,
+        marginBottom: spacing.medium,
     },
     viewAllButtonText: {
         color: colors.white,

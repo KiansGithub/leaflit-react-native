@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, ActivityIndicator, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import MapView, { Marker, Circle, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from '../../api';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
@@ -12,28 +13,43 @@ export default function BusinessAddJobScreen({ navigation }) {
     const [coordinates, setCoordinates] = useState(null);
     const [radius, setRadius] = useState(100);
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
     const [recentRoutes, setRecentRoutes] = useState([]);
 
 
     useEffect(() => {
         (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permission to access location was denied');
-                return;
-            }
+            setLoading(true);
 
-            let location = await Location.getCurrentPositionAsync({});
-            setCoordinates({
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-            });
-            setLoading(false);  // Set loading to false after fetching data
-
-            // Fetch recent routes for this business 
-            fetchRecentRoutes();
+            await Promise.all([fetchLocation(), fetchRecentRoutes()]);
+            setLoading(false);
         })();
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            (async () => {
+                setLoading(true);
+                await fetchLocation();
+                setLoading(false);
+            })();
+        }, [])
+    );
+
+    // Fetch the user's current location 
+    const fetchLocation = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permission to access location was denied');
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        setCoordinates({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+        });
+    };
 
     const fetchRecentRoutes = async () => {
         try {
@@ -45,9 +61,15 @@ export default function BusinessAddJobScreen({ navigation }) {
     }
 
     const handleAddJob = async () => {
+        if (submitting) return; 
+
+        setSubmitting(true);
+
         try {
             if (!coordinates) {
                 Alert.alert('Error', 'Please select a location on the map.');
+                setSubmitting(false);
+                return;
             }
             const response = await axios.post('/business-jobs/', {
                 location,
@@ -71,6 +93,8 @@ export default function BusinessAddJobScreen({ navigation }) {
         
         } catch (error) {
             Alert.alert('Failed to create job', 'Please try again');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -105,7 +129,15 @@ export default function BusinessAddJobScreen({ navigation }) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <KeyboardAvoidingView 
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={100}
+        >
+        <ScrollView 
+            contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled"
+            >
             <Text style={styles.header}>Add New Job</Text>
             <Text style={styles.label}>Location (Select on Map)</Text>
             <View style={styles.mapContainer}>
@@ -174,6 +206,7 @@ export default function BusinessAddJobScreen({ navigation }) {
                 <Text style={styles.addButtonText}>Add Job</Text>
             </TouchableOpacity>
         </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -212,7 +245,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBttom: spacing.medium,
+        marginBottom: spacing.medium,
     },
     radiusButton: {
         marginHorizontal: spacing.small,

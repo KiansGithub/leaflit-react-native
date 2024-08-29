@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Button, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import axios from '../../api';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
@@ -12,6 +12,7 @@ export default function LeafleteerJobDetailsScreen() {
     const [bidAmount, setBidAmount] = useState('');
     const [isStripeAccountSetup, setIsStripeAccountSetup] = useState(false);
     const [onboardingUrl, setOnboardingUrl] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const route = useRoute();
     const navigation = useNavigation();
     const { jobId } = route.params;
@@ -93,6 +94,9 @@ export default function LeafleteerJobDetailsScreen() {
     };
 
     const handleBid = async () => {
+        if (isSubmitting) return; // Prevent further submissions 
+        setIsSubmitting(true);
+
         if (!isStripeAccountSetup) {
             Alert.alert(
                 'Complete Your Payment Setup',
@@ -107,6 +111,7 @@ export default function LeafleteerJobDetailsScreen() {
                     { text: 'Cancel', style: 'cancel' },
                 ]
             );
+            setIsSubmitting(false);
             return;
         }
 
@@ -122,6 +127,8 @@ export default function LeafleteerJobDetailsScreen() {
             }
         } catch (error) {
             alert('Error placing bid');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -149,9 +156,18 @@ export default function LeafleteerJobDetailsScreen() {
                 value={bidAmount}
                 onChangeText={setBidAmount}
                 keyboardType="numeric"
+                editable={!isSubmitting}
             />
-            <TouchableOpacity style={styles.bidButton} onPress={handleBid}>
-                <Text style={styles.bidButtonText}>Bid on Job</Text>
+            <TouchableOpacity 
+                style={styles.bidButton} 
+                onPress={handleBid}
+                disabled={isSubmitting}
+            >
+                {isSubmitting ? (
+                    <ActivityIndicator size="small" color={colors.white} />
+                ) : (
+                    <Text style={styles.bidButtonText}>Bid on Job</Text>
+                )}
             </TouchableOpacity>
         </View>
     );
@@ -203,6 +219,9 @@ const styles = StyleSheet.create({
         borderRadius: borderRadius.medium,
         alignItems: 'center',
         marginTop: spacing.medium,
+    },
+    disabledButton: {
+        backgroundColor: colors.textSecondary,
     },
     bidButtonText: {
         color: colors.white,

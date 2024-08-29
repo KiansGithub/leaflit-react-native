@@ -9,12 +9,10 @@ export default function BusinessJobViewRoutesScreen({ route }) {
     const { jobId, coordinates, radius, businessUserId } = route.params;
     const [routes, setRoutes] = useState([]);
     const [recentRoutes, setRecentRoutes] = useState([]);
-    const [locationName, setLocationName] = useState('');
 
     useEffect(() => {
         fetchRoutes();
         fetchRecentRoutes();
-        fetchLocationName();
     }, [jobId, businessUserId]);
         
         
@@ -39,25 +37,6 @@ export default function BusinessJobViewRoutesScreen({ route }) {
         }
     };
 
-    const fetchLocationName = async () => {
-        try {
-            const reverseGeocode = await Location.reverseGeocodeAsync({
-                latitude: coordinates.latitude,
-                longitude: coordinates.longitude,
-            });
-
-            if (reverseGeocode.length > 0) {
-                const address = reverseGeocode[0];
-                setLocationName(`${address.city}, ${address.region}`);
-            } else {
-                setLocationName('Unknown Location');
-            } 
-        } catch (error) {
-            console.error('Error fetching location name:', error);
-            setLocationName('Location Unavailable');
-        }
-    }
-
     const aggregatedCoordinates = routes.flatMap(route => route.coordinates);
 
     return (
@@ -74,7 +53,7 @@ export default function BusinessJobViewRoutesScreen({ route }) {
                 >
                     <Marker 
                         coordinate={coordinates} 
-                        title={locationName || "Job Location"}
+                        title={"Job Location"}
                         pinColor={colors.primary}
                     >
                         <Ionicons name="location-sharp" size={32} color={colors.secondary} />

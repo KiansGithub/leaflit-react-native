@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button, Alert, Linking } from 'react-native';
 import axios from '../../api';
 import * as Location from 'expo-location';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
+import { useStripe } from '@stripe/stripe-react-native';
 
 export default function BusinessJobDetailsScreen() {
     const [job, setJob] = useState(null);
@@ -15,6 +16,7 @@ export default function BusinessJobDetailsScreen() {
     const route = useRoute();
     const navigation = useNavigation();
     const { jobId } = route.params;
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
     useEffect(() => {
         fetchJobDetails();
@@ -72,6 +74,40 @@ export default function BusinessJobDetailsScreen() {
         try {
             const response = await axios.post(`/bids/${bidId}/accept/`);
             console.log('Bid accepted:', response.data);
+
+            // Extract the client_asecret, empheralKey, and customer ID from the response 
+            const { client_secret, ephemeral_key, customer_id } = response.data;
+
+            if (client_secret) {
+                console.log('Client Secret:', client_secret);
+                console.log('Ephemeral Key:', ephemeral_key);
+                console.log('Customer ID:', customer_id);
+
+                // Initialize the PaymentSheet
+                const { error: initError } = await initPaymentSheet({
+                    merchantDisplayName: 'Leaflit',
+                    customerId: customer_id,
+                    customerEphemeralKeySecret: ephemeral_key,
+                    paymentIntentClientSecret: client_secret,
+                });
+
+                if (initError) {
+                    console.error('Error initializing PaymentSheet:', initError);
+                    Alert.alert('Error', 'Failed to initialize payment. Please try again.');
+                    return;
+                }
+
+                // Present the PaymentSheet to the user 
+                const { error: sheetError } = await presentPaymentSheet();
+
+                if (sheetError) {
+                    console.error('Error presenting PaymentSheet:', sheetError);
+                    Alert.alert('Payment Failed', sheetError.message);
+                } else {
+                    Alert.alert('Payment Successful', 'Your payment was successful!');
+                }
+            }
+
             setRefresh(prev => !prev);
             navigation.navigate('Business')
         } catch (error) {

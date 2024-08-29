@@ -17,6 +17,7 @@
     "@react-navigation/drawer": "^6.7.2",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
+    "@stripe/stripe-react-native": "0.37.2",
     "@testing-library/jest-dom": "^6.4.8",
     "axios": "^1.7.2",
     "expo": "~51.0.22",

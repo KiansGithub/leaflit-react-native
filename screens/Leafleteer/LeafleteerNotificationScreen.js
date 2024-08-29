@@ -34,13 +34,29 @@ const LeafleteerNotificationScreen = () => {
     };
 
     const clearAllNotifications = async () => {
-        try {
-            await axios.delete('/notifications/clear_all/');
-            fetchNotifications(); // Refresh notifications after clearing 
-            Alert.alert('Success', 'All notifications have been cleared.');
-        } catch (error) {
-            Alert.alert('Error', 'Failed to clear notifications. Please try again.');
-        }
+        Alert.alert(
+            "Clear All Notifications",
+            "Are you sure you want to clear all notifications? This action cannot be undone.",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Clear All",
+                    onPress: async () => {
+                        try {
+                            await axios.delete('/notifications/clear_all/');
+                            fetchNotifications();
+                            Alert.alert('Success', 'All notifications have been cleared.');
+                        } catch (error) {
+                            Alert.alert('Error', 'Failed to clear notifications. Please try again.');
+                        }
+                    },
+                    style: "destructive"
+                }
+            ]
+        )
     }
 
     const renderItem = ({ item }) => (
@@ -83,9 +99,9 @@ const styles = StyleSheet.create({
         padding: spacing.medium,
         backgroundColor: colors.background,
     },
-    loadingContaner: {
+    loadingContainer: {
         flex: 1,
-        justifyContnet: 'center',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     loadingText: {
@@ -123,7 +139,7 @@ const styles = StyleSheet.create({
         padding: spacing.medium,
         borderRadius: borderRadius.medium,
         alignItems: 'center',
-        marginBottomn: spacing.large,
+        marginBottom: spacing.large,
     },
     clearAllButtonText: {
         color: colors.white,
