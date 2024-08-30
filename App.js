@@ -31,6 +31,7 @@ import LeafleteerStripeOnboardingScreen from './screens/Leafleteer/LeafleteerStr
 import LeafleteerStripeOnboardingSuccessScreen from './screens/Leafleteer/LeafleteerStripeOnboardingSuccessScreen';
 import LeafleteerStripeOnboardingRefreshScreen from './screens/Leafleteer/LeafleteerStripeOnboardingRefreshScreen';
 import LeafleteerEarningsDashboardScreen from './screens/Leafleteer/LeafleteerEarningsDashboardScreen';
+import LeafleteerProfileScreen from './screens/Leafleteer/LeafleteerProfileScreen'
 import * as Linking from 'expo-linking';
 
 const Stack = createStackNavigator();
@@ -210,6 +211,7 @@ function MainStack() {
       <Stack.Screen name="Leafleteer Stripe Onboarding Success" component={LeafleteerStripeOnboardingSuccessScreen} />
       <Stack.Screen name="Leafleteer Stripe Onboarding Refresh" component={LeafleteerStripeOnboardingRefreshScreen} />
       <Stack.Screen name="Leafleteer Earnings Dashboard" component={LeafleteerEarningsDashboardScreen} />
+      <Stack.Screen name="Leafleteer Profile" component={LeafleteerProfileScreen} />
     </Stack.Navigator>
   );
 }
