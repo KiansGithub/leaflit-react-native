@@ -5,6 +5,7 @@ import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../sty
 
 export default function RegistrationScreen({ navigation }) {
     const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -22,7 +23,7 @@ export default function RegistrationScreen({ navigation }) {
         setError(null);
 
         // Basic validation 
-        if (!firstName || !email || !password || !confirmPassword || !phoneNumber) {
+        if (!firstName || !lastName || !email || !password || !confirmPassword || !phoneNumber) {
             setError('Please fill in all fields');
             return;
         }
@@ -46,6 +47,7 @@ export default function RegistrationScreen({ navigation }) {
         try {
             const response = await axios.post('/register/', { 
                 first_name: firstName,
+                last_name: lastName,
                 email,
                 password,
                 phone_number: phoneNumber,
@@ -89,6 +91,16 @@ export default function RegistrationScreen({ navigation }) {
                 onChangeText={setFirstName}
                 placeholder="Enter your first name"
                 placeholderTextColor={colors.textSecondary}  
+            />
+
+            {/* Last Name Input */}
+            <Text style={styles.label}>Last Name:</Text>
+            <TextInput 
+                style={styles.input}
+                value={lastName}
+                onChangeText={setLastName}
+                placeholder="Enter your last name"
+                placeholderTextColor={colors.textSecondary}
             />
 
             {/* Email Input */}

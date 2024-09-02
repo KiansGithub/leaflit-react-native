@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from '../../api';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
-export default function LeafleteerProfileScreen() {
+export default function BusinessProfileScreen() {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
@@ -25,10 +25,10 @@ export default function LeafleteerProfileScreen() {
         }
     };
 
-    // Use useFocusEffect to refresh the data when the screen comes back into focus 
+    // useFocusEffect to refresh the data when the screen comes back into focus 
     useFocusEffect(
         useCallback(() => {
-            setLoading(true); // Set loading to true before fetching the data again
+            setLoading(true);
             fetchProfile();
         }, [])
     );
@@ -52,8 +52,8 @@ export default function LeafleteerProfileScreen() {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.headerText}>Profile</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Leafleteer Edit Profile')}>
+                <Text style={styles.headerText}>Business Profile</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Business Edit Profile')}>
                     <Ionicons name="create-outline" size={28} color={colors.primary} />
                 </TouchableOpacity>
             </View>
@@ -74,11 +74,19 @@ export default function LeafleteerProfileScreen() {
                 <Text style={styles.detailText}>{profile.phone_number}</Text>
             </View>
             <View style={styles.detailsContainer}>
-                <Text style={styles.label}>Address</Text>
+                <Text style={styles.label}>Home Address</Text>
                 <Text style={styles.detailText}>{profile.home_address || 'N/A'}</Text>
             </View>
+            <View style={styles.detailsContainer}>
+                <Text style={styles.label}>Business Name</Text>
+                <Text style={styles.detailText}>{profile.business_name || 'N/A'}</Text>
+            </View>
+            <View style={styles.detailsContainer}>
+                <Text style={styles.label}>Business Address</Text>
+                <Text style={styles.detailText}>{profile.business_address || 'N/A'}</Text>
+            </View>
         </ScrollView>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -108,8 +116,8 @@ const styles = StyleSheet.create({
         backgroundColor: colors.cardBackground, 
         padding: spacing.medium, 
         borderRadius: borderRadius.medium, 
-        borderWidth: 1, 
-        borderColor: colors.textSecondary, 
+        borderWidth: 1,
+        borderColor: colors.textSecondary,
     },
     label: {
         fontSize: fontSizes.medium, 
@@ -120,5 +128,8 @@ const styles = StyleSheet.create({
     detailText: {
         fontSize: fontSizes.medium, 
         color: colors.textPrimary,
+    },
+    errorText: {
+        color: colors.danger, 
     },
 });
