@@ -1,4 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import Constans from 'expo-constants';
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 import { Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -37,6 +40,8 @@ import BusinessProfileScreen from './screens/Business/BusinessProfileScreen';
 import BusinessEditProfileScreen from './screens/Business/BusinessEditProfileScreen';
 import LeafleteerSettingsScreen from './screens/Leafleteer/LeafleteerSettingsScreen';
 import BusinessSettingsScreen from './screens/Business/BusinessSettingsScreen';
+import LeafleteerHelpSupportScreen from './screens/Leafleteer/LeafleteerHelpSupportScreen';
+import BusinessHelpSupportScreen from './screens/Business/BusinessHelpSupportScreen';
 import * as Linking from 'expo-linking';
 
 const Stack = createStackNavigator();
@@ -222,12 +227,31 @@ function MainStack() {
       <Stack.Screen name="Business Edit Profile" component={BusinessEditProfileScreen} />
       <Stack.Screen name="Leafleteer Settings" component={LeafleteerSettingsScreen} />
       <Stack.Screen name="Business Settings" component={BusinessSettingsScreen} />
+      <Stack.Screen name="Leafleteer Help Support" component={LeafleteerHelpSupportScreen} />
+      <Stack.Screen name="Business Help Support" component={BusinessHelpSupportScreen} />
     </Stack.Navigator>
   );
 }
 
 export default function App() {
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
   useEffect(() => {
+    // Register for push notifications and handle incoming notifications 
+    registerForPushNotificationsAsync();
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received:', notification);
+      // Handle the notification here (e.g., display an in-app alert)
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log('Notification response received:', response);
+      // Handle the response here (e.g., navigate to a specific screen);
+    });
+    
+
     const linkingListener = ({ url }) => {
       console.log('Received deep link:', url);
     };
@@ -237,8 +261,40 @@ export default function App() {
     // Cleanup the event listener on unmount
     return () => {
       subscription.remove();
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
   };
 }, []);
+
+// Function to register for push notifications 
+async function registerForPushNotificationsAsync() {
+  let token;
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus; 
+
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+
+  if (finalStatus !== 'granted') {
+    alert('Failed to get push token for push notifications!');
+    return;
+  }
+
+  // Get the projectId from app.json
+  const projectId = Constants.manifest?.extra?.eas?.projectId;
+
+  token = (await Notifications.getExpoPushTokenAsync()).data;
+  console.log('Push notification token:', token);
+
+  // Send the token to the backend server 
+  try {
+    await axios.post('/push-tokens/register/', { token });
+  } catch (error) {
+    console.error('Error sending push token to backend:', error);
+  }
+}
 
   return (
     <StripeProvider 

@@ -2,11 +2,16 @@ import React from 'react';
 import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MenuScreen({ navigation }) {
     const handleLogout = async () => {
-        await AsyncStorage.clear();
-        navigation.navigate('Login');
+        try {
+            await AsyncStorage.clear();
+            navigation.navigate('Login');
+        } catch (error) {
+            console.error("Failed to clear AsyncStorage:", error);
+        }
     }
 
     return (
@@ -27,7 +32,7 @@ export default function MenuScreen({ navigation }) {
                 <Ionicons name="settings-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.buttonText}>Settings</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Help/Support')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Help Support')}>
                 <Ionicons name="help-circle-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.buttonText}>Help/Support</Text>
             </TouchableOpacity>
