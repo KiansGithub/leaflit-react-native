@@ -35,6 +35,8 @@ import LeafleteerProfileScreen from './screens/Leafleteer/LeafleteerProfileScree
 import LeafleteerEditProfileScreen from './screens/Leafleteer/LeafleteerEditProfileScreen';
 import BusinessProfileScreen from './screens/Business/BusinessProfileScreen';
 import BusinessEditProfileScreen from './screens/Business/BusinessEditProfileScreen';
+import LeafleteerSettingsScreen from './screens/Leafleteer/LeafleteerSettingsScreen';
+import BusinessSettingsScreen from './screens/Business/BusinessSettingsScreen';
 import * as Linking from 'expo-linking';
 
 const Stack = createStackNavigator();
@@ -218,6 +220,8 @@ function MainStack() {
       <Stack.Screen name="Leafleteer Edit Profile" component={LeafleteerEditProfileScreen} />
       <Stack.Screen name="Business Profile" component={BusinessProfileScreen} />
       <Stack.Screen name="Business Edit Profile" component={BusinessEditProfileScreen} />
+      <Stack.Screen name="Leafleteer Settings" component={LeafleteerSettingsScreen} />
+      <Stack.Screen name="Business Settings" component={BusinessSettingsScreen} />
     </Stack.Navigator>
   );
 }

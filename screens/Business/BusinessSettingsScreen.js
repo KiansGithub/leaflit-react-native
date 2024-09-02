@@ -1,0 +1,90 @@
+import React from 'react';
+import { ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
+
+export default function BusinessSettingsScreen({ navigation }) {
+    return (
+        <ScrollView contentContainerStyle={styles.container}>
+            <Text style={styles.sectionHeader}>Account Settings</Text>
+
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Account Management')}>
+                <Ionicons name="person-outline" size={24} color="white" style={styles.icon} />
+                <Text style={styles.buttonText}>Account Management</Text>
+                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Information')}>
+                <Ionicons name="business-outline" size={24} color="white" style={styles.icon} />
+                <Text style={styles.buttonText}>Business Information</Text>
+                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
+            </TouchableOpacity>
+
+            <Text style={styles.sectionHeader}>App Settings</Text>
+
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Notification Settings')}>
+                <Ionicons name="notifications-outline" size={24} color="white" style={styles.icon} />
+                <Text style={styles.buttonText}>Notifications</Text>
+                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('App Preferences')}>
+                <Ionicons name="settings-outline" size={24} color="white" style={styles.icon} />
+                <Text style={styles.buttonText}>App Preferences</Text>
+                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
+            </TouchableOpacity>
+
+            <Text style={styles.sectionHeader}>Support</Text>
+
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Help & Support')}>
+                <Ionicons name="help-circle-outline" size={24} color="white" style={styles.icon} />
+                <Text style={styles.buttonText}>Help & Support</Text>
+                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Legal')}>
+                <Ionicons name="document-text-outline" size={24} color="white" style={styles.icon} />
+                <Text style={styles.buttonText}>Legal</Text>
+                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
+            </TouchableOpacity>
+            
+        </ScrollView>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: colors.background, 
+        padding: spacing.medium, 
+    },
+    sectionHeader: {
+        fontSize: fontSizes.large, 
+        fontWeight: fontWeights.bold, 
+        color: colors.textSecondary, 
+        marginVertical: spacing.medium, 
+        marginLeft: spacing.small,
+    },
+    button: {
+        flexDirection: 'row', 
+        backgroundColor: colors.primary, 
+        padding: spacing.medium, 
+        marginVertical: spacing.small, 
+        width: '100%',
+        alignItems: 'center',
+        borderRadius: borderRadius.medium,
+        justifyContent: 'space-between',
+    },
+    icon: {
+        marginRight: spacing.small,
+    },
+    buttonText: {
+        color: colors.white, 
+        fontSize: fontSizes.medium, 
+        fontWeight: fontWeights.bold, 
+        flex: 1,
+    },
+    chevron: {
+        marginLeft: spacing.small,
+    },
+});
