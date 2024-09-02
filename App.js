@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import Constans from 'expo-constants';
+import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import { Image } from 'react-native';
@@ -43,6 +43,7 @@ import BusinessSettingsScreen from './screens/Business/BusinessSettingsScreen';
 import LeafleteerHelpSupportScreen from './screens/Leafleteer/LeafleteerHelpSupportScreen';
 import BusinessHelpSupportScreen from './screens/Business/BusinessHelpSupportScreen';
 import * as Linking from 'expo-linking';
+import axios from './api';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -238,9 +239,6 @@ export default function App() {
   const responseListener = useRef();
 
   useEffect(() => {
-    // Register for push notifications and handle incoming notifications 
-    registerForPushNotificationsAsync();
-
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       console.log('Notification received:', notification);
       // Handle the notification here (e.g., display an in-app alert)
@@ -265,36 +263,6 @@ export default function App() {
       Notifications.removeNotificationSubscription(responseListener.current);
   };
 }, []);
-
-// Function to register for push notifications 
-async function registerForPushNotificationsAsync() {
-  let token;
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus; 
-
-  if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-
-  if (finalStatus !== 'granted') {
-    alert('Failed to get push token for push notifications!');
-    return;
-  }
-
-  // Get the projectId from app.json
-  const projectId = Constants.manifest?.extra?.eas?.projectId;
-
-  token = (await Notifications.getExpoPushTokenAsync()).data;
-  console.log('Push notification token:', token);
-
-  // Send the token to the backend server 
-  try {
-    await axios.post('/push-tokens/register/', { token });
-  } catch (error) {
-    console.error('Error sending push token to backend:', error);
-  }
-}
 
   return (
     <StripeProvider 

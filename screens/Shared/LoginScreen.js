@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import axios from '../../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LoginScreen({ navigation }) {
@@ -39,6 +41,8 @@ export default function LoginScreen({ navigation }) {
             await AsyncStorage.setItem('refresh_token', refresh);
             await AsyncStorage.setItem('user_type', user_type);
 
+            await registerForPushNotificationsAsync();
+
             if(user_type === 'business') {
                 navigation.navigate('Business');
             } else {
@@ -55,6 +59,32 @@ export default function LoginScreen({ navigation }) {
             }
         }
     };
+
+    async function registerForPushNotificationsAsync() {
+        let token; 
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus; 
+
+        if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+        }
+
+        if (finalStatus !== 'granted') {
+            Alert.alert('Failed to get push token for push notifications!');
+            return;
+        }
+
+        const projectId = Constants.manifest?.extra?.eas?.projectId;
+        token =(await Notifications.getExpoPushTokenAsync({ projectId })).data;
+        console.log('Push notification token:', token);
+
+        try {
+            await axios.post('/push-tokens/register/', { token });
+        } catch (error) {
+            console.error('Error sending push token to backend:', error);
+        }
+    }
 
     return (
         <KeyboardAvoidingView 
