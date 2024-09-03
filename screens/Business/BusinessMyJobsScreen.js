@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     viewDetailsText: {
-        color: 'white',
+        color: colors.white,
         fontWeight: 'bold',
     },
     loadMoreButton: {
@@ -229,6 +229,6 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: colors.white,
-        fontWeight: fontWeights.bold,
+        fontWeight: 'bold',
     }
 });

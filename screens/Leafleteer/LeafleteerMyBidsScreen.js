@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import axios from '../../api';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,10 +7,11 @@ import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../sty
 
 export default function LeafleteerMyBidsScreen() {
     const [bids, setBids] = useState([]);
-    const [jobs, setJobs] = useState({});
     const [loading, setLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const fetchBids = async () => {
+        setLoading(true);
         try {
             const response = await axios.get('bids/', {
                 params: { status: 'Pending' }
@@ -21,6 +22,21 @@ export default function LeafleteerMyBidsScreen() {
         } catch (error) {
             setLoading(false);
             Alert.alert('Error', 'Failed to load bids. Please try again later.');
+        }
+    };
+
+    const loadMoreBids = async () => {
+        if (isLoadingMore) return; // Prevent multiple triggers 
+        setIsLoadingMore(true);
+        try {
+            const response = await axios.get('bids/', {
+                params: { status: 'Pending', offset: bids.length }
+            });
+            setBids(prevBids => [...prevBids, ...response.data]);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to load more bids. Please try again later.');
+        } finally {
+            setIsLoadingMore(false);
         }
     };
 
@@ -52,24 +68,37 @@ export default function LeafleteerMyBidsScreen() {
         );
     };
 
+    const renderEmptyState = () => (
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>You have no pending bids.</Text>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>My Bids</Text>
             </View>
             {loading ? (
-                <ActivityIndicator size="large" color="#007BFF" />
+                <ActivityIndicator size="large" color={colors.primary} />
             ) : (
             <FlatList 
                 data={bids}
                 renderItem={renderBidItem}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.bidList}
+                ListEmptyComponent={renderEmptyState}
             />
             )}
-            <TouchableOpacity style={styles.loadMoreButton} onPress={fetchBids}>
-                <Text style={styles.loadMoreText}>Load More</Text>
-            </TouchableOpacity>
+            {!loading && bids.length > 0 && (
+                <TouchableOpacity style={styles.loadMoreButton} onPress={loadMoreBids}>
+                    {isLoadingMore ? (
+                        <ActivityIndicator size="small" color={colors.white} />
+                    ) : (
+                        <Text style={styles.loadMoreText}>Load More</Text>
+                    )}
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
@@ -151,6 +180,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: 40,
         height: 40,
+    },
+    emptyContainer: {
+        alignItems:'center',
+        justifyContent: 'center',
+        flex: 1,
     },
     bidDetails: {
         fontSize: fontSizes.medium,
