@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import axios from '../../api';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function BusinessHomeScreen() {
     const [recentJobs, setRecentJobs] = useState([]);
@@ -36,7 +38,6 @@ export default function BusinessHomeScreen() {
             const response = await axios.get('/business-jobs/');
             setRecentJobs(response.data.slice(0,2 ));
         } catch (error) {
-            console.error('Error fetching recent jobs', error);
         }
     };
 
@@ -45,7 +46,6 @@ export default function BusinessHomeScreen() {
             const response = await axios.get('/business-stats/');
             setStats(response.data);
         } catch (error) {
-            console.error('Error fetching stats', error);
         }
     };
 
@@ -54,13 +54,12 @@ export default function BusinessHomeScreen() {
             const response = await axios.get('/notifications/unread-count/');
             setUnreadCount(response.data.unread_count);
         } catch (error) {
-            console.error('Error fetching unread notifications count', error);
         }
     };
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobItem}>
-            <Text>{item.title} - {item.location} - {item.status}</Text>
+            <Text style={styles.jobText}>{item.status}</Text>
         </View>
     );
 
@@ -69,13 +68,13 @@ export default function BusinessHomeScreen() {
             <View style={styles.header}>
                 <Text style={styles.welcomeText}>Welcome</Text>
                 <TouchableOpacity style={styles.bellIcon} onPress={() => navigation.navigate('Business Notifications')}>
-                    <Text>🔔</Text>
+                    <Ionicons name="notifications-outline" size={28} color={colors.primary} />
                     {unreadCount > 0 && <View style={styles.badge}><Text style={styles.badgeText}>{unreadCount}</Text></View>}
                 </TouchableOpacity>
             </View>
             <TouchableOpacity 
                 style={styles.addButton}
-                onPress={() => navigation.navigate('Add Job')}
+                onPress={() => navigation.navigate('Business Add Job')}
             >
                 <Text style={styles.addButtonText}>Add Job</Text>
             </TouchableOpacity>
@@ -88,7 +87,7 @@ export default function BusinessHomeScreen() {
             />
             <TouchableOpacity 
                 style={styles.viewAllButton}
-                onPress={() => navigation.navigate('My Jobs')}
+                onPress={() => navigation.navigate('Business My Jobs')}
             >
                 <Text style={styles.viewAllButtonText}>View All</Text>
             </TouchableOpacity>
@@ -96,7 +95,6 @@ export default function BusinessHomeScreen() {
             <View style={styles.statsContainer}>
                 <Text>Total Jobs Completed: {stats.totalJobsCompleted}</Text>
                 <Text>Total Leaflets Distributed: {stats.totalLeafletsDistributed}</Text>
-                <Text>Total Amount Spent: £{stats.totalAmountSpent}</Text>
             </View>
         </View>
     );
@@ -105,76 +103,91 @@ export default function BusinessHomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: spacing.medium,
     },
     welcomeText: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: fontSizes.xlarge,
+        fontWeight: fontWeights.bold,
+        color: colors.primary,
     },
     bellIcon: {
-        fontSize: 24,
+        fontSize: fontSizes.xlarge,
+        color: colors.primary,
     },
     badge: {
         position: 'absolute',
         top: -5,
-        right: -5,
-        backgroundColor: 'red',
-        borderRadius: 10,
-        padding: 3,
+        right: -10,
+        backgroundColor: colors.danger,
+        borderRadius: borderRadius.small,
+        padding: spacing.small,
         minWidth: 20,
         justifyContent: 'center',
         alignItems: 'center',
     },
     badgeText: {
         color: 'white',
-        fontSize: 12,
+        fontSize: fontSizes.small,
     },
     addButton: {
-        backgroundColor: '#007BFF',
-        padding: 12,
-        borderRadius: 4,
+        backgroundColor: colors.primary,
+        padding: spacing.medium,
+        borderRadius: borderRadius.large,
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: spacing.medium,
     },
     addButtonText: {
-        color: 'white',
-        fontSize: 16,
+        color: colors.white,
+        fontSize: fontSizes.medium,
     },
     sectionTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 16,
-        marginBottom: 8,
+        fontSize: fontSizes.large,
+        fontWeight: fontWeights.bold,
+        marginTop: spacing.medium,
+        marginBottom: spacing.small,
+        color: colors.primary,
     },
     jobList: {
-        marginBottom: 16,
+        marginBottom: spacing.medium,
     },
     jobItem: {
-        padding: 12,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 4,
-        marginBottom: 8,
+        padding: spacing.medium,
+        backgroundColor: colors.cardBackground,
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.small,
+        borderWidth: 1,
+        borderColor: colors.textSecondary,
+    },
+    jobText: {
+        color: colors.primary,
     },
     viewAllButton: {
-        backgroundColor: '#007BFF',
-        padding: 10,
-        borderRadius: 4,
+        backgroundColor: colors.primary,
+        padding: spacing.small,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: spacing.small,
     },
     viewAllButtonText: {
-        color: 'white',
-        fontSize: 16,
+        color: colors.white,
+        fontSize: fontSizes.medium,
     },
     statsContainer: {
-        padding: 16,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 4,
+        padding: spacing.medium,
+        backgroundColor: colors.cardBackground,
+        borderRadius: borderRadius.medium,
+        borderWidth: 1,
+        borderColor: colors.textSecondary,
     },
+    statsText: {
+        color: colors.primary,
+        fontSize: fontSizes.medium,
+    }
 });

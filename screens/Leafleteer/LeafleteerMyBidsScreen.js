@@ -1,25 +1,42 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import axios from '../../api';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LeafleteerMyBidsScreen() {
-    const [searchQuery, setSearchQuery] = useState('');
     const [bids, setBids] = useState([]);
-    const [jobs, setJobs] = useState([]);
-    const [editingBid, setEditingBid] = useState(null);
-    const [bidAmount, setBidAmount] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const fetchBids = async () => {
+        setLoading(true);
         try {
             const response = await axios.get('bids/', {
                 params: { status: 'Pending' }
             });
-            console.log(response.data);
-            setBids(response.data);
+            const bidData = response.data;
+            setBids(bidData);
+            setLoading(false);
         } catch (error) {
-            console.error('Error fetching bids:', error);
+            setLoading(false);
+            Alert.alert('Error', 'Failed to load bids. Please try again later.');
+        }
+    };
+
+    const loadMoreBids = async () => {
+        if (isLoadingMore) return; // Prevent multiple triggers 
+        setIsLoadingMore(true);
+        try {
+            const response = await axios.get('bids/', {
+                params: { status: 'Pending', offset: bids.length }
+            });
+            setBids(prevBids => [...prevBids, ...response.data]);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to load more bids. Please try again later.');
+        } finally {
+            setIsLoadingMore(false);
         }
     };
 
@@ -29,83 +46,59 @@ export default function LeafleteerMyBidsScreen() {
         }, [])
     );
 
-    const handleEditBid = (bid) => {
-        setEditingBid(bid);
-        setBidAmount(bid.bid_amount.toString());
-    }
-
-    const handleUpdateBid = async () => {
-        try {
-            const response = await axios.put(`/bids/${editingBid.id}/`, {
-                bid_amount: bidAmount
-        });
-        setEditingBid(null);
-        fetchBids();
-        Alert.alert('Success', 'Bid updated successfully');
-        } catch(error) {
-            console.error('Error updating bid:', error);
-            Alert.alert('Error', 'Failed to update bid. Please try again.');
-        }
-    };
-
     const handleCancelBid = async (bidId) => {
         try {
             await axios.delete(`/bids/${bidId}/`);
             fetchBids();
             Alert.alert('Success', 'Bid cancelled successfully');
         } catch (error) {
-            console.error('Error cancelling bid:', error);
             Alert.alert('Error', 'Failed to cancel bid. Please try again.');
         }
     }
 
     const renderBidItem = ({ item }) => {
+
         return (
         <View style={styles.bidCard}>
-            <Text style={styles.bidDetails}>Bid Amount: £{item.bid_amount}</Text>
-            <Text style={styles.bidDetails}>Status: {item.bid_status}</Text>
-            {item.bid_status === 'Pending' && (
-                <View style={styles.bidOptions}>
-                    <TouchableOpacity onPress={() => handleEditBid(item)}>
-                        <Text style={styles.optionText}>Edit</Text>
-                    </TouchableOpacity>
-                    <Text> | </Text>
-                    <TouchableOpacity onPress={() => handleCancelBid(item.id)}>
-                        <Text style={styles.optionText}>Cancel</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+            <Text style={styles.amount}>£{item.bid_amount}</Text>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => handleCancelBid(item.id)}>
+                <Ionicons name="trash-bin" size={18} color="white" />
+            </TouchableOpacity>
         </View>
-    )
+        );
     };
+
+    const renderEmptyState = () => (
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>You have no pending bids.</Text>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>My Bids</Text>
             </View>
+            {loading ? (
+                <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
             <FlatList 
                 data={bids}
                 renderItem={renderBidItem}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.bidList}
+                ListEmptyComponent={renderEmptyState}
             />
-            {editingBid && (
-                <View style={styles.editBidContainer}>
-                    <Text>Edit Bid Amount:</Text>
-                    <TextInput 
-                        style={styles.input}
-                        value={bidAmount}
-                        onChangeText={setBidAmount}
-                        keyboardType="numeric"
-                    />
-                    <Button title="Update Bid" onPress={handleUpdateBid} />
-                    <Button title="Cancel" onPress={() => setEditingBid(null)} />
-                </View>
             )}
-            <TouchableOpacity style={styles.loadMoreButton} onPress={fetchBids}>
-                <Text style={styles.loadMoreText}>Load More</Text>
-            </TouchableOpacity>
+            {!loading && bids.length > 0 && (
+                <TouchableOpacity style={styles.loadMoreButton} onPress={loadMoreBids}>
+                    {isLoadingMore ? (
+                        <ActivityIndicator size="small" color={colors.white} />
+                    ) : (
+                        <Text style={styles.loadMoreText}>Load More</Text>
+                    )}
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
@@ -113,73 +106,108 @@ export default function LeafleteerMyBidsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#f5f5f5',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     headerContainer: {
-        marginBottom: 16,
+        marginBottom: spacing.medium,
     },
     header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-    },
-    searchInput: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingHorizontal: 8,
-        marginBottom: 16,
-        borderRadius: 4,
+        fontSize: fontSizes.xlarge,
+        fontWeight: fontWeights.bold,
+        color: colors.textPrimary,
+        marginBottom: spacing.medium,
     },
     bidList: {
-        paddingBottom: 16,
+        paddingBottom: spacing.medium,
     },
     bidCard: {
-        backgroundColor: '#fff',
-        padding: 16,
-        marginBottom: 16,
-        borderRadius: 8,
+        backgroundColor: colors.cardBackground,
+        padding: spacing.medium,
+        marginBottom: spacing.medium,
+        borderRadius: borderRadius.large,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: colors.textSecondary,
+        elevation: 4,
+        shadowColor: colors.textPrimary,
+        shadowOffer: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
-    jobTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
+    jobInfo: {
+        flex: 1,
+        marginRight: spacing.medium,
+    },
+    location: {
+        fontSize: fontSizes.large,
+        color: colors.success,
+        marginBottom: fontWeights.bold,
+        fontWeight: spacing.large,
+    },
+    amount: {
+        fontSize: fontSizes.large,
+        color: colors.success,
+        fontWeigjht: fontWeights.bold,
+        marginBottom: spacing.large,
+    },
+    bidInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: spacing.small,
+    },
+    bidAmount: {
+        fontSize: fontSizes.large,
+        fontWeight: fontWeights.bold,
+        color: colors.textSecondary,
+    },
+    bidStatus: {
+        fontSize: fontSizes.small,
+        fontWeight: fontWeights.bold,
+        color: colors.textSecondary,
+    },
+    pending: {
+        color: colors.warning,
+    },
+    cancelButton: {
+        backgroundColor: colors.danger,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 40,
+        height: 40,
+    },
+    emptyContainer: {
+        alignItems:'center',
+        justifyContent: 'center',
+        flex: 1,
+    },
+    bidDetails: {
+        fontSize: fontSizes.medium,
+        marginBottom: spacing.small,
+        color: colors.textPrimary
     },
     bidOptions: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     optionText: {
-        color: '#007bff',
-        fontWeight: 'bold',
+        color: colors.danger,
+        fontWeight: fontWeights.bold,
     },
     loadMoreButton: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.primary,
+        padding: spacing.medium,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
     },
     loadMoreText: {
-        color: '#fff',
-        fontSize: 16,
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     },
-    editBidContainer: {
-        padding: 16, 
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        marginBottom: 16,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingHorizontal: 8,
-        marginBottom: 16,
-        borderRadius: 4,
-    }
 });

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from '../../api';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function RegistrationScreen({ navigation }) {
     const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -11,22 +13,41 @@ export default function RegistrationScreen({ navigation }) {
     const [userType, setUserType] = useState('business');
     const [error, setError] = useState(null);
 
+    // Email validation regex 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Phone number validation regex (same as backend)
+    const phoneRegex = /^\+?1?\d{9,15}$/;
+
     const handleRegister = async() => {
+        setError(null);
+
+        // Basic validation 
+        if (!firstName || !lastName || !email || !password || !confirmPassword || !phoneNumber) {
+            setError('Please fill in all fields');
+            return;
+        }
+
+        // Email validation 
+        if (!emailRegex.test(email)) {
+            setError('Please enter a valid email address');
+            return;
+        }
+
+        // Phone number validation 
+        if (!phoneRegex.test(phoneNumber)) {
+            setError('Please enter a valid phone number (9 to 15 digits)');
+            return;
+        }
+
         if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
         }
         try {
-            console.log('Making API request to register user');
-            console.log({
-                first_name: firstName, 
-                email, 
-                password, 
-                phone_number: phoneNumber,
-                user_type: userType,
-            });
             const response = await axios.post('/register/', { 
                 first_name: firstName,
+                last_name: lastName,
                 email,
                 password,
                 phone_number: phoneNumber,
@@ -36,13 +57,10 @@ export default function RegistrationScreen({ navigation }) {
                     'No-Auth': true
                 }
             });
-            console.log('API response', response.data);
             navigation.navigate('Login');
         } catch(error) {
-            console.error(error);
-            // Set error message from the API response 
             if (error.response && error.response.data) {
-                if (error.response && error.response.data) {
+                if (error.response.data.username) {
                     setError(error.response.data.username[0]);
                 } else if (error.response.data.email) {
                     setError(error.response.data.email[0]);
@@ -56,85 +74,195 @@ export default function RegistrationScreen({ navigation }) {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text>First Name:</Text>
-            <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} />
-            <Text>Email:</Text>
-            <TextInput style={styles.input} value={email} onChangeText={setEmail} />
-            <Text>Password:</Text>
-            <TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry />
-            <Text>Confirm Password:</Text>
-            <TextInput style={styles.input} value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
-            <Text>Phone Number:</Text>
-            <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} />
-            <Text>User Type:</Text>
+        <KeyboardAvoidingView 
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={100}
+        >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+            {/* Logo */}
+            <Image source={require('../../assets/icon.png')} style={styles.logo} />
+
+            {/* First Name Input */}
+            <Text style={styles.label}>First Name:</Text>
+            <TextInput 
+                style={styles.input} 
+                value={firstName} 
+                onChangeText={setFirstName}
+                placeholder="Enter your first name"
+                placeholderTextColor={colors.textSecondary}  
+            />
+
+            {/* Last Name Input */}
+            <Text style={styles.label}>Last Name:</Text>
+            <TextInput 
+                style={styles.input}
+                value={lastName}
+                onChangeText={setLastName}
+                placeholder="Enter your last name"
+                placeholderTextColor={colors.textSecondary}
+            />
+
+            {/* Email Input */}
+            <Text style={styles.label}>Email:</Text>
+            <TextInput 
+                style={styles.input} 
+                value={email} 
+                onChangeText={setEmail} 
+                autoCapitalize='none'
+                placeholder="Enter your email"
+                placeholderTextColor={colors.textSecondary} 
+            />
+
+            {/* Password Input */}
+            <Text style={styles.label}>Password:</Text>
+            <TextInput 
+                style={styles.input} 
+                value={password} 
+                onChangeText={setPassword} 
+                secureTextEntry 
+                placeholder="Enter your password"
+                placeholderTextColor={colors.textSecondary} 
+            />
+
+            {/* Confirm Password Input */}
+            <Text style={styles.label}>Confirm Password:</Text>
+            <TextInput 
+                style={styles.input} 
+                value={confirmPassword} 
+                onChangeText={setConfirmPassword} 
+                secureTextEntry 
+                placeholder="Confirm your password"
+                placeholderTextColor={colors.textSecondary} 
+            />
+
+            {/* Phone Number Input */}
+            <Text style={styles.label}>Phone Number:</Text>
+            <TextInput 
+                style={styles.input} 
+                value={phoneNumber} 
+                onChangeText={setPhoneNumber} 
+                placeholder="Enter your phone number"
+                placeholderTextColor={colors.textSecondary} 
+            />
+
+            {/* User Type Toggle */}
+            <Text style={styles.label}>User Type:</Text>
             <View style={styles.toggleContainer}>
                 <TouchableOpacity
                     style={[styles.toggleButton, userType === 'business' && styles.selectedToggleButton]}
-                    onPress={() => setUserType('business')}
-                    >
-                        <Text style={[styles.toggleButtonText, userType === 'business' && styles.selectedToggleButtonText]}>Business</Text>
-                    </TouchableOpacity>
+                    onPress={() => setUserType('business')}>
+                    <Text style={[styles.toggleButtonText, userType === 'business' && styles.selectedToggleButtonText]}>Business</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.toggleButton, userType === 'leafleteer' && styles.selectedToggleButton]}
-                    onPress={() => setUserType('leafleteer')}
-                >
+                    onPress={() => setUserType('leafleteer')}>
                     <Text style={[styles.toggleButtonText, userType === 'leafleteer' && styles.selectedToggleButtonText]}>Leafleteer</Text>
                 </TouchableOpacity>
             </View>
 
+            {/* Error Message */}
             {error && <Text style={styles.errorText}>{error}</Text>}
 
+            {/* Register Button */}
             <View style={styles.buttonContainer}>
-                <Button title="Register" onPress={handleRegister} />
+                <TouchableOpacity onPress={handleRegister} style={[styles.customButton, { backgroundColor: colors.primary }]}>
+                    <Text style={styles.customButtonText}>Register</Text>
+                </TouchableOpacity>
             </View>
+
+            {/* Back to Login Button */}
             <View style={styles.buttonContainer}>
-                <Button title="Back to Login" onPress={() => navigation.navigate('Login')} />
+                <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.customButton, { backgroundColor: colors.primary }]}>
+                    <Text style={styles.customButtonText}>Back to Login</Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container : {
-        flexGrow: 1, 
+        flex: 1, 
+        backgroundColor: colors.background, 
+    },
+    scrollContainer: {
+        flexGrow: 1,
         justifyContent: 'center',
-        padding: 16,
-        paddingBottom: 60,
+        alignItems: 'center',
+        padding: spacing.medium,
+    },
+    logo: {
+        width: 150, 
+        height: 150,
+        marginBottom: spacing.large,
+        resizeMode: 'contain',
+    },
+    label: {
+        alignSelf: 'flex-start',
+        marginLeft: spacing.small,
+        marginBottom: spacing.small / 2,
+        color: colors.primary, 
+        fontSize: fontSizes.medium,
     },
     input: {
+        width: '100%',
         height: 40,
-        borderColor: 'gray',
+        borderColor: colors.textSecondary, 
         borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 8,
+        borderRadius: borderRadius.medium,
+        marginBottom: spacing.medium,
+        paddingHorizontal: spacing.small,
+        backgroundColor: colors.white, 
     },
     toggleContainer: {
         flexDirection: 'row',
-        marginBottom: 20,
+        marginBottom: spacing.large,
         justifyContent: 'space-between',
     },
    toggleButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: spacing.small,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: colors.textSecondary,
+    borderRadius: borderRadius.medium,
+    marginHorizontal: spacing.small / 2,
    },
    selectedToggleButton: {
-    backgroundColor: 'blue',
+    backgroundColor: colors.primary,
    },
    toggleButtonText: {
-    color: 'gray',
+    color: colors.textSecondary,
    },
    selectedToggleButtonText: {
-    color: 'white',
+    color: colors.white,
    },
     buttonContainer: {
-        marginBottom: 20,
+        width: '100%',
+        marginBottom: spacing.medium,
+    },
+    customButton: {
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.medium,
+        borderRadius: borderRadius.medium,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    customButtonText: {
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
     },
     errorText: {
-        color: 'red',
-        marginBottom: 12,
-    }
+        color: colors.danger,
+        marginBottom: spacing.medium,
+        textAlign: 'center',
+    },
 });

@@ -2,18 +2,42 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
 import axios from '../../api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import * as Location from 'expo-location';
+import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LeafleteerFindJobsScreen() {
-    const [searchQuery, setSearchQuery] = useState('');
     const [jobs, setJobs] = useState([]);
     const navigation = useNavigation();
 
     const fetchJobs = async () => {
         try {
             const response = await axios.get('/leafleteerjobs/available/');
-            setJobs(response.data);
+            const jobsWithLocationNames = await Promise.all(
+                response.data.map(async (job) => {
+                    const locationName = await fetchLocationName(job.latitude, job.longitude);
+                    return { ...job, locationName };
+                })
+            );
+            setJobs(jobsWithLocationNames);
         } catch (error) {
-            console.error('Error fetching jobs:', error);
+        }
+    };
+
+    const fetchLocationName = async (latitude, longitude) => {
+        try {
+            const reverseGeocode = await Location.reverseGeocodeAsync({
+                latitude, 
+                longitude,
+            });
+
+            if (reverseGeocode.length > 0) {
+                const address = reverseGeocode[0];
+                return `${address.city}, ${address.region}`;
+            } else {
+                return 'Unknown Location';
+            } 
+        } catch (error) {
+            return 'Location Unavailable';
         }
     };
 
@@ -30,19 +54,9 @@ export default function LeafleteerFindJobsScreen() {
         return unsubscribe;
     }, [navigation]);
 
-    useEffect(() => {
-        const params = navigation.getState().routes.find(route => route.name === 'LeafleteerFindJobsScreen')?.params;
-        if (params?.refresh) {
-            console.log("Refresh parameter detected, fetching jobs...");
-            fetchJobs();
-            navigation.setParams({ refresh: false });
-        }
-    }, [navigation]);
-
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
-            <Text style={styles.jobTitle}>{item.title}</Text>
-            <Text style={styles.jobDetails}>Location: {item.location} </Text>
+            <Text style={styles.jobDetails}>Location: {item.locationName || 'Loading...'} </Text>
             <Text style={styles.jobDetails}>Status: {item.status}</Text>
             <Text style={styles.jobDetails}>Leaflets: {item.number_of_leaflets}</Text>
             <View style={styles.jobActions}>
@@ -51,6 +65,16 @@ export default function LeafleteerFindJobsScreen() {
                     onPress={() => navigation.navigate('Leafleteer Job Details', { jobId: item.id })}
                 >
                     <Text style={styles.bidButtonText}>Bid</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.mapButton} 
+                    onPress={() => navigation.navigate('Leafleteer Job Map', {
+                        coordinates: { latitude: item.latitude, longitude: item.longitude },
+                        radius: item.radius,
+                        businessUserId: item.business_user,
+                    })}
+                >
+                    <Text style={styles.mapButtonText}>View on Map</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -77,67 +101,77 @@ export default function LeafleteerFindJobsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#f5f5f5',
+        padding: spacing.medium,
+        backgroundColor: colors.background,
     },
     headerContainer: {
-        marginBottom: 16,
+        marginBottom: spacing.medium,
     },
     header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-    },
-    searchInput: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingHorizontal: 8,
-        marginBottom: 16,
-        borderRadius: 4,
+        fontSize: fontSizes.xlarge, // 24 px
+        fontWeight: fontWeights.bold,
+        color: colors.textPrimary,
+        marginBottom: spacing.medium,
     },
     jobList: {
-        paddingBottom: 16,
+        paddingBottom: spacing.medium,
     },
     jobCard: {
-        backgroundColor: '#fff',
-        padding: 16,
-        marginBottom: 16,
-        borderRadius: 16,
-        borderRadius: 8,
+        backgroundColor: colors.cardBackground,
+        padding: spacing.medium,
+        marginBottom: spacing.medium,
+        borderRadius: borderRadius.large,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: colors.textSecondary,
+        elevation: 2,
     },
     jobTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
+        fontSize: fontSizes.large,
+        fontWeight: fontWeights.bold,
+        marginBottom: spacing.small,
+        color: colors.textPrimary,
     },
     jobDetails: {
-        fontSize: 14,
-        marginBottom: 4,
+        fontSize: fontSizes.small, // 14 px
+        marginBottom: spacing.small / 2, // 4 px
+        color: colors.textPrimary,
     },
     jobActions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     bidButton: {
-        backgroundColor: '#28a745',
-        padding: 10,
-        borderRadius: 5,
-    },
-    bidButtonText: {
-        color: '#fff',
-        fontSize: 16,
-    },
-    loadMoreButton: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: colors.success,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
         alignItems: 'center',
     },
+    bidButtonText: {
+        color: colors.white,
+        fontSize: fontSizes.medium, // 16 px
+        fontWeight: fontWeights.bold,
+    },
+    mapButton: {
+        backgroundColor: colors.secondary,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
+        alignItems: 'center',
+    },
+    mapButtonText: {
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: fontWeights.bold,
+    },
+    loadMoreButton: {
+        backgroundColor: colors.primary,
+        padding: spacing.small,
+        borderRadius: borderRadius.small,
+        alignItems: 'center',
+        marginTop: spacing.medium,
+    },
     loadMoreText: {
-        color: '#fff',
-        fontSize: 16,
+        color: colors.white,
+        fontSize: fontSizes.medium, // 16 px
+        fontWeight: fontWeights.bold,
     },
 });
