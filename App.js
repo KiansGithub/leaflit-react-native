@@ -203,10 +203,18 @@ function MainStack() {
       <Stack.Screen 
           name="Business" 
           component={BusinessTabs} 
+          options={{ 
+            headerLeft: null, 
+            gestureEnabled: false,
+          }}
       />
       <Stack.Screen 
           name="Leafleteer" 
           component={LeafleteerTabs}
+          options={{ 
+            headerLeft: null, 
+            gestureEnabled: false,
+          }}
       />
       <Stack.Screen name="Leafleteer Job Details" component={LeafleteerJobDetailsScreen} />
       <Stack.Screen name="Business Job Details" component={BusinessJobDetailsScreen} />

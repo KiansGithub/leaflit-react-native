@@ -19,32 +19,8 @@ export default function LeafleteerMyJobsScreen() {
     const fetchJobs = async () => {
         try {
             const response = await axios.get('leafleteerjobs/active/');
-            const jobsWithLocationNames = await Promise.all(
-                response.data.map(async (job) => {
-                    const locationName = await fetchLocationName(job.latitude, job.longitude);
-                    return { ...job, location: locationName };
-                })
-            );
-            setJobs(jobsWithLocationNames);
+            setJobs(response.data);
         } catch (error) {
-        }
-    };
-
-    const fetchLocationName = async (latitude, longitude) => {
-        try {
-            const reverseGeocode = await Location.reverseGeocodeAsync({
-                latitude,
-                longitude,
-            });
-
-            if (reverseGeocode.length > 0) {
-                const address = reverseGeocode[0];
-                return `${address.city}, ${address.region}`;
-            } else {
-                return 'Unknown Location';
-            }
-        } catch (error) {
-            return 'Location Unavailable';
         }
     };
 
@@ -108,7 +84,6 @@ export default function LeafleteerMyJobsScreen() {
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
-            <Text style={styles.jobDetails}>Location: {item.location || 'Loading...'}</Text>
             <Text style={styles.jobDetails}>Number of Leaflets: {item.number_of_leaflets}</Text>
             <Text style={styles.jobDetails}>Status: {item.status}</Text>
             <View style={styles.jobOptions}>
@@ -227,6 +202,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: spacing.small,
         flexWrap: 'wrap',
+        justifyContent: 'space-between',
     },
     startButton: {
         flexDirection: 'row',

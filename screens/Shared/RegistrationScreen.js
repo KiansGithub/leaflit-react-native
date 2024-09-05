@@ -59,12 +59,25 @@ export default function RegistrationScreen({ navigation }) {
             });
             navigation.navigate('Login');
         } catch(error) {
+            // Displaying specific validation errors from the backend
             if (error.response && error.response.data) {
-                if (error.response.data.username) {
-                    setError(error.response.data.username[0]);
-                } else if (error.response.data.email) {
-                    setError(error.response.data.email[0]);
-                } else {
+                const errorData = error.response.data;
+
+                if (errorData.username) {
+                    setError(errorData.username[0]);
+                } 
+                // Check if a specific error is returned for email
+                else if (errorData.email) {
+                    setError(errorData.email[0]);
+                } 
+                // Check for any other form-related error message 
+                else if (errorData.password) {
+                    setError(errorData.password[0]);
+                }
+                else if (errorData.non_field_errors) {
+                    setError(errorData.non_field_errors[0]);
+                }
+                else {
                     setError('Registration failed. Please try again.');
                 }
             } else {

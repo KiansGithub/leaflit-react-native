@@ -37,11 +37,6 @@ export default function LeafleteerJobDetailsScreen() {
                 setBusinessUser(null);
             }
 
-            if (jobData.latitude && jobData.longitude) {
-                fetchLocationName(jobData.latitude, jobData.longitude);
-            } else {
-                setLocationName('Location unavailable');
-            }
         } catch (error) {
           
         }
@@ -53,24 +48,6 @@ export default function LeafleteerJobDetailsScreen() {
             setBusinessUser(response.data);
         } catch (error) {
             
-        }
-    };
-
-    const fetchLocationName = async (latitude, longitude) => {
-        try {
-            const reverseGeocode = await Location.reverseGeocodeAsync({
-                latitude, 
-                longitude,
-            });
-
-            if (reverseGeocode.length > 0) {
-                const address = reverseGeocode[0];
-                setLocationName(`${address.city}, ${address.region}`);
-            } else {
-                setLocationName('Unknown Location');
-            }
-        } catch (error) {
-            setLocationName('Location Unavailable');
         }
     };
 
@@ -147,7 +124,6 @@ export default function LeafleteerJobDetailsScreen() {
             </TouchableOpacity>
             <Text style={styles.header}>Job Details</Text>
             <Text style={styles.jobDetail}>Posted by: {businessUser.first_name}</Text>
-            <Text style={styles.jobDetail}>Location: {locationName}</Text>
             <Text style={styles.jobDetail}>Number of Leaflets: {job.number_of_leaflets}</Text>
             <Text style={styles.jobDetail}>Average Bid Amount: £{job.average_bid_amount}</Text>
             <TextInput 

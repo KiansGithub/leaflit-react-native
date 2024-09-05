@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from '../../api';
 import MapView, { Polyline, Marker, Circle } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ export default function BusinessJobViewRoutesScreen({ route }) {
     const { jobId, coordinates, radius, businessUserId } = route.params;
     const [routes, setRoutes] = useState([]);
     const [recentRoutes, setRecentRoutes] = useState([]);
+    const[loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchRoutes();
@@ -22,6 +23,8 @@ export default function BusinessJobViewRoutesScreen({ route }) {
             setRoutes(response.data);
         } catch (error) {
             console.error('Error fetching routes:', error);            
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -41,7 +44,10 @@ export default function BusinessJobViewRoutesScreen({ route }) {
 
     return (
         <View style={styles.container}>
-            {aggregatedCoordinates.length > 0 || recentRoutes.length > 0 ? (
+            {loading ? (
+                <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
+                aggregatedCoordinates.length > 0 || recentRoutes.length > 0 ? (
                 <MapView 
                     style={styles.map}
                     initialRegion={{
@@ -91,6 +97,7 @@ export default function BusinessJobViewRoutesScreen({ route }) {
                 </MapView>
             ) : (
             <Text style={styles.noRoutesText}>No routes available</Text>
+            )
             )}
         </View>
     );
@@ -116,7 +123,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     noRoutesText: {
-        textAlgin: 'center',
+        textAlign: 'center',
         fontSize: fontSizes.medium,
         color: colors.textPrimary,
         marginTop: spacing.large,

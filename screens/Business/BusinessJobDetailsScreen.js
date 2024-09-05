@@ -10,7 +10,6 @@ export default function BusinessJobDetailsScreen() {
     const [job, setJob] = useState(null);
     const [bids, setBids] = useState([]);
     const [refresh, setRefresh] = useState(false);
-    const [locationName, setLocationName] = useState('');
     const [isAcceptingBid, setIsAcceptingBid] = useState(false);
 
     const route = useRoute();
@@ -22,12 +21,6 @@ export default function BusinessJobDetailsScreen() {
         fetchJobDetails();
         fetchJobBids();
     }, [refresh]);
-
-    useEffect(() => {
-        if (job) {
-            fetchLocationName();
-        }
-    }, [job]);
 
     const fetchJobDetails = async () => {
         try {
@@ -44,25 +37,6 @@ export default function BusinessJobDetailsScreen() {
             setBids(response.data);
         } catch (error) {
             console.error('Error fetching job bids:', error);
-        }
-    };
-
-    const fetchLocationName = async () => {
-        try {
-            const reverseGeocode = await Location.reverseGeocodeAsync({
-                latitude: job.latitude,
-                longitude: job.longitude,
-            });
-
-            if (reverseGeocode.length > 0) {
-                const address = reverseGeocode[0];
-                setLocationName(`${address.city}, ${address.region}`);
-            } else {
-                setLocationName('Unknown Location');
-            }
-        } catch (error) {
-            console.error('Error fetching location name:', error);
-            setLocationName('Location Unavailable');
         }
     };
 
@@ -137,7 +111,7 @@ export default function BusinessJobDetailsScreen() {
 
     const renderBidItem = ({ item }) => (
         <View style={styles.bidItem}>
-            <Text style={styles.bidText}>Name: {item.leafleteer_user.first_name}  Bid Amount: ${item.bid_amount}</Text>
+            <Text style={styles.bidText}>£{item.bid_amount} from {item.leafleteer_user.first_name}</Text>
             <View style={styles.bidActions}>
                 <TouchableOpacity 
                 onPress={() => handleAcceptBid(item.id)}
@@ -146,8 +120,11 @@ export default function BusinessJobDetailsScreen() {
                 >
                     <Text style={styles.buttonText}>Accept</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleRejectBid(item.id)}>
-                    <Text style={styles.rejectButtonText}>Reject</Text>
+                <TouchableOpacity 
+                    onPress={() => handleRejectBid(item.id)}
+                    style={styles.rejectButton}
+                    >
+                    <Text style={styles.buttonText}>Reject</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -157,7 +134,6 @@ export default function BusinessJobDetailsScreen() {
         <View style={styles.container}>
             {job ? (
                 <>
-                <Text style={styles.jobDetail}>Location: {locationName}</Text>
                 <TouchableOpacity style={styles.viewMapButton} onPress={handleViewOnMap}>
                     <Text style={styles.viewMapButtonText}>View on Map</Text>
                 </TouchableOpacity>
@@ -168,12 +144,16 @@ export default function BusinessJobDetailsScreen() {
                 {job.status === 'Open' && (
                 <>
                 <Text style={styles.sectionTitle}>Bids</Text>
-                <FlatList 
-                    data={bids}
-                    renderItem={renderBidItem}
-                    keyExtractor={(item) => item.id.toString()}
-                    contentContainerStyle={styles.bidsList}
+                {bids.length > 0 ? (
+                    <FlatList 
+                        data={bids}
+                        renderItem={renderBidItem}
+                        keyExtractor={(item) => item.id.toString()}
+                        contentContainerStyle={styles.bidsList}
                     />
+                ) : (
+                    <Text style={styles.noBidsText}>No bids yet</Text>
+                )}
                 </>
                 )}
                 </>
@@ -213,7 +193,7 @@ const styles = StyleSheet.create({
         color: colors.primary
     },
     bidItem: {
-        padding: spacing.medium,
+        padding: spacing.large,
         backgroundColor: colors.cardBackground,
         borderRadius: borderRadius.medium,
         marginBottom: spacing.small,
@@ -225,23 +205,29 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     bidText: {
+        fontSize: fontSizes.large,
         color: colors.primary,
+        fontWeight: fontWeights.bold, 
+        marginBottom: spacing.small,
     },
     bidActions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: spacing.small,
+        marginTop: spacing.medium,
     },
     acceptButton: {
         backgroundColor: colors.success,
         padding: spacing.small,
         borderRadius: borderRadius.small,
         alignItems: 'center',
-        minWidth: 80,
+        minWidth: 100,
     },
-    rejectButtonText: {
-        color: colors.danger,
-        fontWeight: fontWeights.bold,
+    rejectButton: {
+        backgroundColor: colors.danger, 
+        padding: spacing.small, 
+        borderRadius: borderRadius.small, 
+        alignItems: 'center',
+        minWidth: 100,
     },
     disabledButton: {
         backgroundColor: colors.textSecondary,
@@ -253,9 +239,16 @@ const styles = StyleSheet.create({
     buttonText: {
         color: colors.white,
         fontWeight: fontWeights.bold,
+        fontSize: fontSizes.medium,
     },
     bidsList: {
         paddingBottom: spacing.medium,
+    },
+    noBidsText: {
+        fontSize: fontSizes.medium, 
+        color: colors.textSecondary, 
+        textAlign: 'center', 
+        marginTop: spacing.medium, 
     },
     viewMapButton: {
         backgroundColor: colors.secondary,

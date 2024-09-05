@@ -36,7 +36,7 @@ export default function BusinessHomeScreen() {
     const fetchRecentJobs = async () => {
         try {
             const response = await axios.get('/business-jobs/');
-            setRecentJobs(response.data.slice(0,2 ));
+            setRecentJobs(response.data.slice(0,4));
         } catch (error) {
         }
     };
@@ -170,10 +170,10 @@ const styles = StyleSheet.create({
     },
     viewAllButton: {
         backgroundColor: colors.primary,
-        padding: spacing.small,
-        borderRadius: borderRadius.medium,
+        padding: spacing.medium,
+        borderRadius: borderRadius.large,
         alignItems: 'center',
-        marginBottom: spacing.small,
+        marginBottom: spacing.medium,
     },
     viewAllButtonText: {
         color: colors.white,

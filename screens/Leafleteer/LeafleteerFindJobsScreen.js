@@ -12,32 +12,8 @@ export default function LeafleteerFindJobsScreen() {
     const fetchJobs = async () => {
         try {
             const response = await axios.get('/leafleteerjobs/available/');
-            const jobsWithLocationNames = await Promise.all(
-                response.data.map(async (job) => {
-                    const locationName = await fetchLocationName(job.latitude, job.longitude);
-                    return { ...job, locationName };
-                })
-            );
-            setJobs(jobsWithLocationNames);
+            setJobs(response.data);
         } catch (error) {
-        }
-    };
-
-    const fetchLocationName = async (latitude, longitude) => {
-        try {
-            const reverseGeocode = await Location.reverseGeocodeAsync({
-                latitude, 
-                longitude,
-            });
-
-            if (reverseGeocode.length > 0) {
-                const address = reverseGeocode[0];
-                return `${address.city}, ${address.region}`;
-            } else {
-                return 'Unknown Location';
-            } 
-        } catch (error) {
-            return 'Location Unavailable';
         }
     };
 
@@ -56,7 +32,6 @@ export default function LeafleteerFindJobsScreen() {
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
-            <Text style={styles.jobDetails}>Location: {item.locationName || 'Loading...'} </Text>
             <Text style={styles.jobDetails}>Status: {item.status}</Text>
             <Text style={styles.jobDetails}>Leaflets: {item.number_of_leaflets}</Text>
             <View style={styles.jobActions}>
@@ -164,7 +139,7 @@ const styles = StyleSheet.create({
     },
     loadMoreButton: {
         backgroundColor: colors.primary,
-        padding: spacing.small,
+        padding: spacing.medium,
         borderRadius: borderRadius.small,
         alignItems: 'center',
         marginTop: spacing.medium,

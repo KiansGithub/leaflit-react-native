@@ -19,35 +19,9 @@ export default function BusinessMyJobsScreen() {
     const fetchJobs = async () => {
         try {
             const response = await axios.get('/business-jobs/');
-            const jobsWithLocationNames = await Promise.all(
-                response.data.map(async (job) => {
-                    const locationName = await fetchLocationName(job.latitude, job.longitude);
-                    return { ...job, location: locationName };
-                })
-            )
-            setJobs(jobsWithLocationNames);
+            setJobs(response.data);
         } catch (error) {
             console.error('Error fetching jobs', error);
-        }
-    };
-
-    // Function to reverse geocode the location name 
-    const fetchLocationName = async (latitude, longitude) => {
-        try {
-            const reverseGeocode = await Location.reverseGeocodeAsync({
-                latitude, 
-                longitude,
-            });
-
-            if (reverseGeocode.length > 0) {
-                const address = reverseGeocode[0];
-                return `${address.city}, ${address.region}`;
-            } else {
-                return 'Unknown Location';
-            }
-        } catch (error) {
-            console.error('error fetching location name', error);
-            return 'Location Unavailable';
         }
     };
 
@@ -74,7 +48,6 @@ export default function BusinessMyJobsScreen() {
 
     const renderJob = ({ item }) => (
         <View style={styles.jobContainer}>
-            <Text styles={styles.jobDetails}>Location: {item.location}</Text>
             <Text style={styles.jobTitle}>Number of Leaflets: {item.number_of_leaflets}</Text>
             <Text style={styles.jobDetails}>Status: {item.status}</Text>
             {item.status === 'Open' && (

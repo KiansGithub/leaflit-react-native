@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import MapView, { Circle, Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import axios from '../../api';
@@ -15,6 +15,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
     const [region, setRegion] = useState(null);
     const [watcher, setWatcher] = useState(null);
     const [recentRoutes, setRecentRoutes] = useState([]);
+    const [mapLoading, setMapLoading] = useState(true);
     const mapRef = useRef(null);
 
     useEffect(() => {
@@ -33,6 +34,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
             });
+            setMapLoading(false);
         })();
 
         fetchRecentRoutes();
@@ -168,7 +170,10 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
 
     return (
         <View style={styles.container}>
-            {region && (
+            {mapLoading ? (
+                <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
+            region && (
                 <MapView 
                     ref={mapRef}
                     style={styles.map}
@@ -212,6 +217,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                         />
                     )}
                 </MapView>
+            )
             )}
             <View style={styles.buttons}>
                 {!tracking ? (
