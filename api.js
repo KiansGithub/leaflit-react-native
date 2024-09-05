@@ -21,7 +21,6 @@ instance.interceptors.response.use(response => {
     console.log("Response received:", response);
     return response;
 }, async error => {
-    console.error("Response error", error);
     const originalRequest = error.config;
 if (error.response) {
     if (error.response.status === 401 && !originalRequest._retry) {
@@ -38,17 +37,24 @@ if (error.response) {
             } catch(refreshError) {
                 await AsyncStorage.removeItem('access_token');
                 await AsyncStorage.removeItem('refresh_token');
+
+                console.error("Token refresh failed", refreshError);
                 return Promise.reject(refreshError);
             }
         }
     }
-    return Promise.reject(error);
+    
+    // Avoid logging error if retry successful 
+    if (error.response.status !== 401 || originalRequest._retry) {
+        console.error("Response error", error);
+    }
 } else if (error.request) {
     console.error("Network error", error);
     return Promise.reject(new Error("Network error. Please check your internet connection."));
 } else {
     return Promise.reject(error);
 }
+return Promise.reject(error);
 });
 
 export default instance;
