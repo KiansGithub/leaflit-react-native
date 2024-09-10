@@ -24,7 +24,7 @@ export default function LeafleteerEditProfileScreen() {
     const fetchProfile = async () => {
         try {
             const response = await axios.get('/profiles/');
-            const profileData = response.data;
+            const profileData = response.data || {};
             console.log('Profile data:', profileData);
             setProfile(profileData);
             setFirstName(profileData.first_name);
