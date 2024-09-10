@@ -41,6 +41,16 @@ export default function LoginScreen({ navigation }) {
             await AsyncStorage.setItem('refresh_token', refresh);
             await AsyncStorage.setItem('user_type', user_type);
 
+            // Fetch the user's profile to get user ID 
+            const profileResponse = await axios.get('/profiles/', {
+                headers: {
+                    Authorization: `Bearer ${access}`,
+                }
+            });
+
+            const userId = profileResponse.data.id; 
+            await AsyncStorage.setItem('user_id', userId.toString());
+
             await registerForPushNotificationsAsync();
 
             if(user_type === 'business') {
