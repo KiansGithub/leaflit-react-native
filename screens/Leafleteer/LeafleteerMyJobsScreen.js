@@ -3,12 +3,24 @@ import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, 
 import axios from '../../api';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function LeafleteerMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
+    const [currentUserId, setCurrentUserId] = useState(null);
     const navigation = useNavigation();
+
+    useEffect(() => {
+        // Load the current user's ID when the component mounts 
+        const loadUserId = async () => {
+            const userId = await AsyncStorage.getItem('user_id');
+            if (userId) {
+                setCurrentUserId(userId);
+            }
+        };
+        loadUserId();
+    })
 
     useFocusEffect(
         useCallback(() => {
@@ -37,6 +49,18 @@ export default function LeafleteerMyJobsScreen() {
             navigation.setParams({ refresh: false });
         }
     }, [navigation]);
+
+    // Function to navigate to the chat screen with the job's business user 
+    const navigateToChat = (job) => {
+        if (currentUserId) {
+            navigation.navigate('Chat', {
+                user_1: currentUserId, 
+                user_2: job.business_user 
+            });
+        } else {
+            Alert.alert('Error', 'Unable to retrieve current user information.');
+        }
+    }
 
     const startJob = async (job) => {
         try {
@@ -128,6 +152,14 @@ export default function LeafleteerMyJobsScreen() {
                         <Text style={styles.buttonText}>Remove</Text>
                     </TouchableOpacity>
                 )}
+
+                <TouchableOpacity 
+                    style={styles.messageButton}
+                    onPress={() => navigateToChat(item)}
+                >
+                    <Ionicons name="chatbubbles-outline" size={24} color="white" />
+                    <Text style={styles.buttonText}>Message</Text>
+                </TouchableOpacity>
 
                 <TouchableOpacity style={styles.mapButton} onPress={() => navigation.navigate('Leafleteer Job Map', {
                     coordinates: { latitude: item.latitude, longitude: item.longitude },
@@ -259,6 +291,14 @@ const styles = StyleSheet.create({
         padding: spacing.small,
         borderRadius: borderRadius.small,
         marginBottom: spacing.small,
+    },
+    messageButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.primary, 
+        padding: spacing.small, 
+        borderRadius: borderRadius.small, 
+        marignBottom: spacing.small, 
     },
     optionText: {
         color: colors.secondary,
