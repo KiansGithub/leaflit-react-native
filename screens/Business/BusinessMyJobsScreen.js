@@ -3,11 +3,23 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api'
 import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
 export default function BusinessMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
+    const [currentUserId, setCurrentUserId] = useState(null);
     const navigation = useNavigation();
+
+    useEffect(() => {
+        const loadUserId = async () => {
+            const userId = await AsyncStorage.getItem('user_id');
+            if (userId) {
+                setCurrentUserId(userId);
+            }
+        };
+        loadUserId();
+    }, []);
 
     useFocusEffect(
         useCallback(() => {
@@ -20,6 +32,7 @@ export default function BusinessMyJobsScreen() {
         try {
             const response = await axios.get('/business-jobs/');
             setJobs(response.data);
+            console.log('Jobs:', response.data);
         } catch (error) {
             console.error('Error fetching jobs', error);
         }
@@ -45,6 +58,18 @@ export default function BusinessMyJobsScreen() {
             console.error('Error removing job:', error);
         }
     }
+
+    // Function to navigate to the chat screen with the job's leafleteer user 
+    const navigateToChat = (job) => {
+        if (currentUserId) {
+            navigation.navigate('Chat', {
+                user_1: currentUserId, 
+                user_2: job.leafleteer_user
+            });
+        } else {
+            Alert.alert('Error', 'Unable to retrieve current user information.');
+        }
+    };
 
     const renderJob = ({ item }) => (
         <View style={styles.jobContainer}>
@@ -87,6 +112,16 @@ export default function BusinessMyJobsScreen() {
             {item.status === 'Cancelled' && (
                 <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
                     <Text style={styles.buttonText}>Remove</Text>
+                </TouchableOpacity>
+            )}
+
+            {/* Message Button for business user to chat with leafleteer */}
+            {(item.status === 'Assigned' || item.status === 'In Progress' || item.status === 'Completed') && (
+                <TouchableOpacity 
+                    style={styles.messageButton}
+                    onPress={() => navigateToChat(item)}
+                >
+                    <Text style={styles.buttonText}>Message Leafleteer</Text>
                 </TouchableOpacity>
             )}
         </View>
@@ -203,5 +238,12 @@ const styles = StyleSheet.create({
     buttonText: {
         color: colors.white,
         fontWeight: 'bold',
-    }
+    }, 
+    messageButton: {
+        backgroundColor: colors.primary, 
+        padding: spacing.small, 
+        borderRadius: borderRadius.small, 
+        alignItems: 'center',
+        marginTop: spacing.small, 
+    }, 
 });
