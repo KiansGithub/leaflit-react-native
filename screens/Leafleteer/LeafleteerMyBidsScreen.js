@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     },
     bidCard: {
         backgroundColor: colors.cardBackground,
-        padding: spacing.large,
+        padding: spacing.medium,
         marginBottom: spacing.medium,
         borderRadius: borderRadius.large,
         borderWidth: 1,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         elevation: 4,
         shadowColor: colors.textPrimary,
         shadowOffer: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.1,
         shadowRadius: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         fontWeight: spacing.large,
     },
     amount: {
-        fontSize: fontSizes.xlarge,
+        fontSize: fontSizes.large,
         color: colors.success,
         fontWeigjht: fontWeights.bold,
         marginBottom: spacing.large,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     bidAmount: {
         fontSize: fontSizes.large,
         fontWeight: fontWeights.bold,
-        color: colors.textPrimary,
+        color: colors.textSecondary,
     },
     bidStatus: {
         fontSize: fontSizes.small,
