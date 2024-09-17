@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
 import { Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';

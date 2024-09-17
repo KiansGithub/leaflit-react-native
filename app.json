@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Leaflit",
-    "slug": "Leaflit",
+    "name": "leaflit",
+    "slug": "leaflit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -36,7 +36,6 @@
     "scheme": "leaflit",
     "platforms": ["ios", "android"],
     "extra": {
-      "ngrokUrl": "https://1e28-86-18-167-205.ngrok-free.app", 
       "eas": {
         "projectId": "cbfc8d44-0270-413a-9195-d16843a5dbaf"
       }
