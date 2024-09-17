@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "LeaflitApp",
-    "slug": "LeaflitApp",
+    "name": "Leaflit",
+    "slug": "Leaflit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,27 +12,37 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "buildNumber": "1.0.0",
       "supportsTablet": true,
-      "bundleIdentifier": "com.leaflitapp.kian"
+      "bundleIdentifier": "com.leaflit.kian"
     },
     "android": {
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.leaflitapp.kian"
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "INTERNET",
+        "VIBRATE"
+      ],
+      "package": "com.leaflit.kian"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "jsEngine": "hermes",
-    "scheme": "leaflitapp",
+    "scheme": "leaflit",
     "platforms": ["ios", "android"],
     "extra": {
       "ngrokUrl": "https://1e28-86-18-167-205.ngrok-free.app", 
       "eas": {
         "projectId": "cbfc8d44-0270-413a-9195-d16843a5dbaf"
       }
-    }
+    }, 
+    "assetBundlePatterns": [
+      "assets/*"
+    ]
   }
 }

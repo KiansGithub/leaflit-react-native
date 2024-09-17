@@ -7,14 +7,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StripeProvider } from '@stripe/stripe-react-native';
-
 import Icon from 'react-native-vector-icons/Ionicons';
+
+import * as Linking from 'expo-linking';
+import axios from './api';
+
+// Lazy load screens
 import LoginScreen from './screens/Shared/LoginScreen';
 import RegistrationScreen from './screens/Shared/RegistrationScreen';
 import BusinessHomeScreen from './screens/Business/BusinessHomeScreen';
 import LeafleteerHomeScreen from './screens/Leafleteer/LeafleteerHomeScreen';
-import BusinessMenuScreen from './screens/Business/BusinessMenuScreen'; // New screen for the menu 
-import LeafleteerMenuScreen from './screens/Leafleteer/LeafleteerMenuScreen'; // New screen for the menu
+import BusinessMenuScreen from './screens/Business/BusinessMenuScreen'; 
+import LeafleteerMenuScreen from './screens/Leafleteer/LeafleteerMenuScreen'; 
 import BusinessAddJobScreen from './screens/Business/BusinessAddJobScreen';
 import BusinessMyJobsScreen from './screens/Business/BusinessMyJobsScreen';
 import LeafleteerMyJobsScreen from './screens/Leafleteer/LeafleteerMyJobsScreen';
@@ -42,8 +46,6 @@ import LeafleteerSettingsScreen from './screens/Leafleteer/LeafleteerSettingsScr
 import BusinessSettingsScreen from './screens/Business/BusinessSettingsScreen';
 import LeafleteerHelpSupportScreen from './screens/Leafleteer/LeafleteerHelpSupportScreen';
 import BusinessHelpSupportScreen from './screens/Business/BusinessHelpSupportScreen';
-import * as Linking from 'expo-linking';
-import axios from './api';
 import ContactDetailsScreen from './screens/Shared/ContactDetailsScreen';
 
 const Stack = createStackNavigator();
