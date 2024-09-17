@@ -2,24 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api'
-import * as Location from 'expo-location';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function BusinessMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
-    const [currentUserId, setCurrentUserId] = useState(null);
     const navigation = useNavigation();
-
-    useEffect(() => {
-        const loadUserId = async () => {
-            const userId = await AsyncStorage.getItem('user_id');
-            if (userId) {
-                setCurrentUserId(userId);
-            }
-        };
-        loadUserId();
-    }, []);
 
     useFocusEffect(
         useCallback(() => {
@@ -38,6 +26,19 @@ export default function BusinessMyJobsScreen() {
         }
     };
 
+    // Confirmation dialog for canceling a job 
+    const confirmCancelJob = (jobId) => {
+        Alert.alert(
+            "Cancel Job", 
+            "Are you sure you want to cancel this job?", 
+            [
+                { text: "No", style: "cancel" },
+                { text: "Yes", onPress: () => cancelJob(jobId) }
+            ],
+            { cancelable: true }
+        );
+    };
+
     const cancelJob = async (jobId) => {
         try {
             const response = await axios.post(`/business-jobs/${jobId}/cancel/`);
@@ -49,6 +50,18 @@ export default function BusinessMyJobsScreen() {
         }
     };
 
+    // Confirmation dialog for removing a job 
+    const confirmRemoveJob = (jobId) => {
+        Alert.alert(
+            "Remove Job", 
+            "Are you sure you want to remove this job?",
+            [
+                { text: "Cancel", style: "cancel" }, 
+                { text: "Yes", onPress: () => removeJob(jobId) }
+            ],
+            { cancelable: true }
+        );
+    };
 
     const removeJob = async (jobId) => {
         try {
@@ -59,29 +72,33 @@ export default function BusinessMyJobsScreen() {
         }
     }
 
-    // Function to navigate to the chat screen with the job's leafleteer user 
-    const navigateToChat = (job) => {
-        if (currentUserId) {
-            navigation.navigate('Chat', {
-                user_1: currentUserId, 
-                user_2: job.leafleteer_user
-            });
-        } else {
-            Alert.alert('Error', 'Unable to retrieve current user information.');
-        }
-    };
+    const viewLeafleteerDetails = (leafleteerId) => {
+        console.log(leafleteerId);
+        navigation.navigate('Contact Details', { userId: leafleteerId });
+    }
 
     const renderJob = ({ item }) => (
         <View style={styles.jobContainer}>
             <Text style={styles.jobTitle}>Number of Leaflets: {item.number_of_leaflets}</Text>
             <Text style={styles.jobDetails}>Status: {item.status}</Text>
+
+            {/* Add contact icon if job has a leafleteer */}
+            {item.leafleteer_user && (
+                <TouchableOpacity 
+                    style={styles.contactButton}
+                    onPress={() => viewLeafleteerDetails(item.leafleteer_user)}
+                >
+                    <Ionicons name="person-circle" size={24} color={colors.primary} />
+                </TouchableOpacity>
+            )}
+
             {item.status === 'Open' && (
                 <>
                 <Text style={styles.jobDetails}>Pending Bids: {item.pending_bid_count}</Text>
                 <TouchableOpacity style={styles.viewDetailsButton} onPress={() => navigation.navigate('Business Job Details', { jobId: item.id })}>
                     <Text style={styles.buttonText}>View Job</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.cancelButton} onPress={() => cancelJob(item.id)}>
+                <TouchableOpacity style={styles.cancelButton} onPress={() => confirmCancelJob(item.id)}>
                     <Text style={styles.buttonText}>Cancel Job</Text>
                 </TouchableOpacity>
                 </>
@@ -102,7 +119,7 @@ export default function BusinessMyJobsScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.removeButton}
-                    onPress={() => removeJob(item.id)}
+                    onPress={() => confirmRemoveJob(item.id)}
                 >
                     <Text style={styles.buttonText}>Remove</Text>
                 </TouchableOpacity> 
@@ -110,18 +127,8 @@ export default function BusinessMyJobsScreen() {
             )}
 
             {item.status === 'Cancelled' && (
-                <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
+                <TouchableOpacity style={styles.removeButton} onPress={() => confirmRemoveJob(item.id)}>
                     <Text style={styles.buttonText}>Remove</Text>
-                </TouchableOpacity>
-            )}
-
-            {/* Message Button for business user to chat with leafleteer */}
-            {(item.status === 'Assigned' || item.status === 'In Progress' || item.status === 'Completed') && (
-                <TouchableOpacity 
-                    style={styles.messageButton}
-                    onPress={() => navigateToChat(item)}
-                >
-                    <Text style={styles.buttonText}>Message Leafleteer</Text>
                 </TouchableOpacity>
             )}
         </View>
@@ -227,7 +234,7 @@ const styles = StyleSheet.create({
     loadMoreButton: {
         padding: spacing.medium,
         backgroundColor: colors.primary,
-        borderRadius: borderRadius.small,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
         marginTop: spacing.medium,
     },
@@ -239,11 +246,8 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontWeight: 'bold',
     }, 
-    messageButton: {
-        backgroundColor: colors.primary, 
-        padding: spacing.small, 
-        borderRadius: borderRadius.small, 
-        alignItems: 'center',
-        marginTop: spacing.small, 
-    }, 
+    contactButton: {
+        marginLeft: 'auto', 
+        padding: spacing.small,
+    }
 });

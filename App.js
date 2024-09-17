@@ -44,6 +44,7 @@ import LeafleteerHelpSupportScreen from './screens/Leafleteer/LeafleteerHelpSupp
 import BusinessHelpSupportScreen from './screens/Business/BusinessHelpSupportScreen';
 import * as Linking from 'expo-linking';
 import axios from './api';
+import ContactDetailsScreen from './screens/Shared/ContactDetailsScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -61,6 +62,9 @@ const linking = {
   },
 },
 };
+
+// Create a ref to manage navigation 
+const navigationRef = React.createRef();
 
 function BusinessTabs() {
   return (
@@ -238,6 +242,7 @@ function MainStack() {
       <Stack.Screen name="Business Settings" component={BusinessSettingsScreen} />
       <Stack.Screen name="Leafleteer Help Support" component={LeafleteerHelpSupportScreen} />
       <Stack.Screen name="Business Help Support" component={BusinessHelpSupportScreen} />
+      <Stack.Screen name="Contact Details" component={ContactDetailsScreen} />
     </Stack.Navigator>
   );
 }
@@ -247,14 +252,27 @@ export default function App() {
   const responseListener = useRef();
 
   useEffect(() => {
+
+    // Request permission for notifications 
+    const getPermission = async () => {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== 'granted') {
+        await Notifications.requestPermissionsAsync();
+      }
+    };
+
+    getPermission();
+
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       console.log('Notification received:', notification);
       // Handle the notification here (e.g., display an in-app alert)
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('Notification response received:', response);
-      // Handle the response here (e.g., navigate to a specific screen);
+      const { screen, params } = response.notification.request.content.data;
+      if (screen) {
+        navigationRef.current?.navigate(screen, params);
+      }
     });
     
 

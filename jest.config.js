@@ -4,17 +4,15 @@ module.exports = {
         '@testing-library/jest-native/extend-expect'
     ],
     transformIgnorePatterns: [
-        "node_modules/(?!(react-native|@react-native|react-clone-referenced-element|@expo|expo-.*|@unimodules)/)"
+        "node_modules/(?!(react-native|@react-native|expo-.*|@expo|@unimodules|sentry-expo|native-base|@react-navigation)/)"
     ],
+    transform: {
+        '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
+    },
     testPathIgnorePatterns: [
         '/node_modules/', 
         '/android/', 
         '/ios/'
     ],
-    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-    globals: {
-        'ts-jest': {
-            babelConfig: true,
-        }
-    }
+    moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
 };

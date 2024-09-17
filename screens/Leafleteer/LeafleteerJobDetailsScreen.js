@@ -70,6 +70,19 @@ export default function LeafleteerJobDetailsScreen() {
         }
     };
 
+    // Function to confirm bidding 
+    const confirmBid = () => {
+        Alert.alert(
+            "Place Bid", 
+            `Are you sure you want to bid £${bidAmount}?`, 
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Yes", onPress: () => handleBid() }
+            ],
+            { cancelable: true }
+        );
+    };
+
     const handleBid = async () => {
         if (isSubmitting) return; // Prevent further submissions 
         setIsSubmitting(true);
@@ -136,7 +149,7 @@ export default function LeafleteerJobDetailsScreen() {
             />
             <TouchableOpacity 
                 style={styles.bidButton} 
-                onPress={handleBid}
+                onPress={confirmBid}
                 disabled={isSubmitting}
             >
                 {isSubmitting ? (

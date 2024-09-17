@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     },
     viewAllButton: {
         backgroundColor: colors.primary,
-        padding: spacing.small,
+        padding: spacing.medium,
         borderRadius: borderRadius.medium,
         alignItems: 'center',
         marginBottom: spacing.medium,

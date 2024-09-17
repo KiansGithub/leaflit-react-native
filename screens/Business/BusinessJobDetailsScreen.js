@@ -40,6 +40,19 @@ export default function BusinessJobDetailsScreen() {
         }
     };
 
+    // Confirmation dialog for accepting a bid 
+    const confirmAcceptBid = (bidId) => {
+        Alert.alert(
+            "Accept Bid", 
+            "Are you sure you want to accept this bid?", 
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Yes", onPress: () => handleAcceptBid(bidId) }
+            ],
+            { cancelable: true }
+        );
+    };
+
     const handleAcceptBid = async (bidId) => {
         if (isAcceptingBid) return; 
 
@@ -91,6 +104,19 @@ export default function BusinessJobDetailsScreen() {
         }
     };
 
+    // Confirmation dialog for rejecting a bid 
+    const confirmRejectBid = (bidId) => {
+        Alert.alert(
+            "Reject Bid", 
+            "Are you sure you want to reject this bid?", 
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Yes", onPress: () => handleRejectBid(bidId) }
+            ],
+            { cancelable: true }
+        );
+    };
+
     const handleRejectBid = async (bidId) => {
         try {;
             const response = await axios.post(`/bids/${bidId}/reject/`);
@@ -114,14 +140,14 @@ export default function BusinessJobDetailsScreen() {
             <Text style={styles.bidText}>£{item.bid_amount} from {item.leafleteer_user.first_name}</Text>
             <View style={styles.bidActions}>
                 <TouchableOpacity 
-                onPress={() => handleAcceptBid(item.id)}
+                onPress={() => confirmAcceptBid(item.id)}
                 disabled={isAcceptingBid}
                 style={isAcceptingBid ? styles.disabledButton : styles.acceptButton}
                 >
                     <Text style={styles.buttonText}>Accept</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                    onPress={() => handleRejectBid(item.id)}
+                    onPress={() => confirmRejectBid(item.id)}
                     style={styles.rejectButton}
                     >
                     <Text style={styles.buttonText}>Reject</Text>

@@ -60,6 +60,19 @@ export default function BusinessAddJobScreen({ navigation }) {
         }
     }
 
+    // New function to show confirmation before adding a job 
+    const confirmAddJob = () => {
+        Alert.alert(
+            "Add Job", 
+            "Are you sure you want to add this job?", 
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Yes", onPress: () => handleAddJob() }
+            ],
+            { cancelable: true }
+        );
+    };
+
     const handleAddJob = async () => {
         if (submitting) return; 
 
@@ -202,7 +215,7 @@ export default function BusinessAddJobScreen({ navigation }) {
                 placeholder="Enter number of Leaflets"
                 placehodlerTextColor={colors.textSecondary}
             />
-            <TouchableOpacity style={styles.addButton} onPress={handleAddJob}>
+            <TouchableOpacity style={styles.addButton} onPress={confirmAddJob}>
                 <Text style={styles.addButtonText}>Add Job</Text>
             </TouchableOpacity>
         </ScrollView>
@@ -280,7 +293,7 @@ const styles = StyleSheet.create({
     addButton: {
         backgroundColor: colors.primary,
         padding: spacing.medium,
-        borderRadius: borderRadius.small,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
         marginTop: spacing.medium,
     },

@@ -8,19 +8,7 @@ import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../sty
 
 export default function LeafleteerMyJobsScreen() {
     const [jobs, setJobs] = useState([]);
-    const [currentUserId, setCurrentUserId] = useState(null);
     const navigation = useNavigation();
-
-    useEffect(() => {
-        // Load the current user's ID when the component mounts 
-        const loadUserId = async () => {
-            const userId = await AsyncStorage.getItem('user_id');
-            if (userId) {
-                setCurrentUserId(userId);
-            }
-        };
-        loadUserId();
-    })
 
     useFocusEffect(
         useCallback(() => {
@@ -50,17 +38,18 @@ export default function LeafleteerMyJobsScreen() {
         }
     }, [navigation]);
 
-    // Function to navigate to the chat screen with the job's business user 
-    const navigateToChat = (job) => {
-        if (currentUserId) {
-            navigation.navigate('Chat', {
-                user_1: currentUserId, 
-                user_2: job.business_user 
-            });
-        } else {
-            Alert.alert('Error', 'Unable to retrieve current user information.');
-        }
-    }
+    // Confirmation dialog for starting a job 
+    const confirmStartJob = (job) => {
+        Alert.alert(
+            "Start Job",
+            "Are you sure you're ready to start this job?",
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Yes", onPress: () => startJob(job) } 
+            ],
+            { cancelable: true }
+        );
+    };
 
     const startJob = async (job) => {
         try {
@@ -77,6 +66,19 @@ export default function LeafleteerMyJobsScreen() {
         }
     };
 
+    // Confirmation dialog for completing a job 
+    const confirmCompleteJob = (jobId) => {
+        Alert.alert(
+            "Complete Job", 
+            "Are you sure you have completed this job?", 
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Yes", onPress: () => completeJob(jobId) }
+            ],
+            { cancelable: true }
+        );
+    };
+
     const completeJob = async(jobId) => {
         try {
             const response = await axios.post(`/leafleteerjobs/${jobId}/complete/`, { status: 'Completed' });
@@ -84,6 +86,19 @@ export default function LeafleteerMyJobsScreen() {
         } catch (error) {
             Alert.alert('Error', 'Failed to complete the job. Please try again.');
         }
+    };
+
+    // Confirmation dialog for canceling a job 
+    const confirmCancelJob = (jobId) => {
+        Alert.alert(
+            "Cancel Job", 
+            "Are you sure you want to cancel this job?", 
+            [
+                { text: "No", style: "cancel" }, 
+                { text: "Yes", onPress: () => cancelJob(jobId) }
+            ],
+            { cancelable: true }
+        );
     };
 
     const cancelJob = async (jobId) => {
@@ -96,6 +111,19 @@ export default function LeafleteerMyJobsScreen() {
         }
     };
 
+    // Confirmation dialog for removing a job 
+    const confirmRemoveJob = (jobId) => {
+        Alert.alert(
+            "Remove Job", 
+            "Are you sure you want to remove this job?", 
+            [
+                { text: "Cancel", style: "cancel" }, 
+                { text: "Yes", onPress: () => removeJob(jobId) }
+            ],
+            { cancelable: true }
+        );
+    };
+
     const removeJob = async (jobId) => {
         try {
             await axios.post(`/leafleteerjobs/${jobId}/remove/`);
@@ -106,6 +134,15 @@ export default function LeafleteerMyJobsScreen() {
         }
     };
 
+    // View contact details function 
+    const viewContactDetails = async (job) => {
+        try {
+            navigation.navigate('Contact Details', { userId: job.business_user });
+        } catch (error) {
+            Alert.alert('Error', 'Failed to retrieve contact details. Please try again.');
+        }
+    };
+
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
             <Text style={styles.jobDetails}>Number of Leaflets: {item.number_of_leaflets}</Text>
@@ -113,13 +150,17 @@ export default function LeafleteerMyJobsScreen() {
             <View style={styles.jobOptions}>
                 {item.status === 'Assigned' && (
                     <>
-                    <TouchableOpacity style={styles.startButton} onPress={() => startJob(item)}>
+                    <TouchableOpacity style={styles.startButton} onPress={() => confirmStartJob(item)}>
                         <Ionicons name="play-circle" size={24} color="white" /> 
                         <Text style={styles.buttonText}>Start</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.cancelButton} onPress={() => cancelJob(item.id)}>
+                    <TouchableOpacity style={styles.cancelButton} onPress={() => confirmCancelJob(item.id)}>
                         <Ionicons name="close-circle" size={24} color="white" />
                         <Text style={styles.buttonText}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.contactButton} onPress={() => viewContactDetails(item)}>
+                        <Ionicons name="person-circle" size={24} color="white" />
+                        <Text style={styles.buttonText}>Contact Details</Text>
                     </TouchableOpacity>
                 </>
                 )}
@@ -134,32 +175,24 @@ export default function LeafleteerMyJobsScreen() {
                         <Ionicons name="arrow-forward-circle" size={24} color='white' />
                         <Text style={styles.buttonText}>Continue</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.completeButton} onPress={() => completeJob(item.id)}>
+                    <TouchableOpacity style={styles.completeButton} onPress={() => confirmCompleteJob(item.id)}>
                         <Ionicons name="checkmark-circle" size={24} color='white' />
                         <Text style={styles.buttonText}>Complete</Text>
                     </TouchableOpacity>
                     </>
                 )}
                 {item.status === 'Cancelled' && (
-                    <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
+                    <TouchableOpacity style={styles.removeButton} onPress={() => confirmRemoveJob(item.id)}>
                         <Ionicons name="trash-bin" size={24} color="white" />
                         <Text style={styles.buttonText}>Remove</Text>
                     </TouchableOpacity>
                 )}
                 {item.status === 'Completed' && (
-                    <TouchableOpacity style={styles.removeButton} onPress={() => removeJob(item.id)}>
+                    <TouchableOpacity style={styles.removeButton} onPress={() => confirmRemoveJob(item.id)}>
                         <Ionicons name="trash-bin" size={24} color="white" />
                         <Text style={styles.buttonText}>Remove</Text>
                     </TouchableOpacity>
                 )}
-
-                <TouchableOpacity 
-                    style={styles.messageButton}
-                    onPress={() => navigateToChat(item)}
-                >
-                    <Ionicons name="chatbubbles-outline" size={24} color="white" />
-                    <Text style={styles.buttonText}>Message</Text>
-                </TouchableOpacity>
 
                 <TouchableOpacity style={styles.mapButton} onPress={() => navigation.navigate('Leafleteer Job Map', {
                     coordinates: { latitude: item.latitude, longitude: item.longitude },
@@ -284,6 +317,15 @@ const styles = StyleSheet.create({
         marginRight: spacing.small,
         marginBottom: spacing.small,
     },
+    contactButton: {
+        flexDirection: 'row', 
+        alignItems: 'center',
+        backgroundColor: colors.primary, 
+        padding: spacing.small, 
+        borderRadius: borderRadius.small, 
+        marginRight: spacing.small, 
+        marginBottom: spacing.small, 
+    },
     mapButton: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -292,14 +334,6 @@ const styles = StyleSheet.create({
         borderRadius: borderRadius.small,
         marginBottom: spacing.small,
     },
-    messageButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: colors.primary, 
-        padding: spacing.small, 
-        borderRadius: borderRadius.small, 
-        marignBottom: spacing.small, 
-    },
     optionText: {
         color: colors.secondary,
         fontWeight: fontWeights.bold,
@@ -307,7 +341,7 @@ const styles = StyleSheet.create({
     loadMoreButton: {
         backgroundColor: colors.primary,
         padding: spacing.medium,
-        borderRadius: borderRadius.small,
+        borderRadius: borderRadius.medium,
         alignItems: 'center',
     },
     loadMoreText: {

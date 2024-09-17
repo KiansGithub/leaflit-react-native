@@ -33,3 +33,17 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+.expo-shared/
+
+*.log
+
+.eas/
+ios/Pods/
+ios/build/
+android/app/build/
+
+.babelrc
+
+.idea/
+.vscode/
