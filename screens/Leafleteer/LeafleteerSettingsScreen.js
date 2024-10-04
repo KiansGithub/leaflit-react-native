@@ -8,45 +8,12 @@ export default function LeafleteerSettingsScreen({ navigation }) {
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.sectionHeader}>Account Settings</Text>
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Account Management')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Leafleteer Edit Profile')}>
                 <Ionicons name="person-outline" size={24} color="white" style={styles.icon} />
                 <Text style={styles.buttonText}>Account Management</Text>
                 <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Privacy Settings')}>
-                <Ionicons name="lock-closed-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Privacy</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
-
-            <Text style={styles.sectionHeader}>App Settings</Text>
-
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Notification Settings')}>
-                <Ionicons name="notifications-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Notifications</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('App Preferences')}>
-                <Ionicons name="settings-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>App Preferences</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
-
-            <Text style={styles.sectionHeader}>Support</Text>
-
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Help & Support')}>
-                <Ionicons name="help-circle-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Help & Support</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Legal')}>
-                <Ionicons name="document-text-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Legal</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
         </ScrollView>
     )
 }
