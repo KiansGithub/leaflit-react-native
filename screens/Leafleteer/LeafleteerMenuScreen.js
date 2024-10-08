@@ -30,10 +30,6 @@ export default function LeafleteerMenuScreen({ navigation }) {
                 <Ionicons name="settings-outline" size={24} color="white" style={styles.icon} />
                 <Text style={styles.buttonText}>Settings</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Leafleteer Help Support')}>
-                <Ionicons name="help-circle-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Help/Support</Text>
-            </TouchableOpacity>
             <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.navigate('Login')}>
                 <Ionicons name="log-out-outline" size={24} color="white" style={styles.icon} />
                 <Text style={styles.logoutButtonText}>Logout</Text>

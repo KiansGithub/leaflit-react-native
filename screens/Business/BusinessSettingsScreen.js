@@ -1,53 +1,69 @@
-import React from 'react';
-import { ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, Text, StyleSheet, TouchableOpacity, Alert, View, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
+import axios from '../../api';
 
 export default function BusinessSettingsScreen({ navigation }) {
+    const [loading, setLoading] = useState(false);
+
+    const handleDeleteAccount = () => {
+        Alert.alert(
+            "Delete Account",
+            "Are you sure you want to delete your business account? This action cannot be undone.",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    onPress: async () => {
+                        setLoading(true);
+                        try {
+                            // Fetch the profile first, when Delete is confirmed 
+                            const profileResponse = await axios.get('/profiles/');
+                            const profile = profileResponse.data;
+
+                            // Now, delete the user using the fetched profile id 
+                            const response = await axios.delete(`/profiles/${profile.id}/`);
+                            if (response.status === 200) {
+                                Alert.alert("Business account deleted successfully");
+                                navigation.navigate('Login');
+                            }
+                        } catch (error) {
+                            Alert.alert("Error", "There was an issue deleting your business account.");
+                        } finally {
+                            setLoading(false);
+                        }
+                    }                
+                }
+            ],
+            { cancelable: true }
+        );
+    };
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.sectionHeader}>Account Settings</Text>
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Account Management')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Edit Profile')}>
                 <Ionicons name="person-outline" size={24} color="white" style={styles.icon} />
                 <Text style={styles.buttonText}>Account Management</Text>
                 <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Information')}>
-                <Ionicons name="business-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Business Information</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
+            <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={handleDeleteAccount}>
+                {loading ? (
+                    <View>
+                    <ActivityIndicator size="small" color={colors.white} />
+                    </View>
+                ) : (
+                <>
+                <Ionicons name="trash-outline" size={24} color="white" style={styles.icon} />
+                <Text style={styles.buttonText}>Delete Account</Text>
+                </>
+                )}
             </TouchableOpacity>
-
-            <Text style={styles.sectionHeader}>App Settings</Text>
-
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Notification Settings')}>
-                <Ionicons name="notifications-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Notifications</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('App Preferences')}>
-                <Ionicons name="settings-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>App Preferences</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
-
-            <Text style={styles.sectionHeader}>Support</Text>
-
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Help & Support')}>
-                <Ionicons name="help-circle-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Help & Support</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Legal')}>
-                <Ionicons name="document-text-outline" size={24} color="white" style={styles.icon} />
-                <Text style={styles.buttonText}>Legal</Text>
-                <Ionicons name="chevron-forward-outline" size={24} color="white" style={styles.chevron} />
-            </TouchableOpacity>
-            
         </ScrollView>
     );
 }
@@ -74,6 +90,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: borderRadius.medium,
         justifyContent: 'space-between',
+    },
+    deleteButton: {
+        backgroundColor: 'red',
     },
     icon: {
         marginRight: spacing.small,

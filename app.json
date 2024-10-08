@@ -14,7 +14,10 @@
     "ios": {
       "buildNumber": "1.0.0",
       "supportsTablet": true,
-      "bundleIdentifier": "com.leaflit.kian"
+      "bundleIdentifier": "com.leaflit.kian",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Leaflit uses your location to help you select a job location and assign leafleting jobs based on your current location."
+      }
     },
     "android": {
       "versionCode": 1,

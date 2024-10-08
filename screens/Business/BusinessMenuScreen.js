@@ -32,10 +32,6 @@ export default function MenuScreen({ navigation }) {
                 <Ionicons name="settings-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.buttonText}>Settings</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Business Help Support')}>
-                <Ionicons name="help-circle-outline" size={24} color={colors.white} style={styles.icon} />
-                <Text style={styles.buttonText}>Help/Support</Text>
-            </TouchableOpacity>
             <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Ionicons name="log-out-outline" size={24} color={colors.white} style={styles.icon} />
                 <Text style={styles.logoutButtonText}>Logout</Text>
