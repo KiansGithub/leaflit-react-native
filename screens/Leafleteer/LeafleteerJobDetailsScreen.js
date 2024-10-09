@@ -63,9 +63,12 @@ export default function LeafleteerJobDetailsScreen() {
                 if (onboardingResponse.data && onboardingResponse.data.onboarding_url) {
                     setOnboardingUrl(onboardingResponse.data.onboarding_url);
                 } else {
+                    console.error('Onboarding URL is undefined.');
+                    Alert.alert('Error', 'Unable to check payment setup. Please try again later.');
                 }
             }
         } catch (error) {
+            console.error('Error checking Stripe account setup:', error);
             Alert.alert('Error', 'unable to check payment setup. Please try again later.');
         }
     };

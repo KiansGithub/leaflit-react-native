@@ -3,7 +3,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const instance = axios.create({
     baseURL: 'https://leaflit-api-f4f7ada6a8f6.herokuapp.com/api',
-    timeout: 10000,
 });
 
 instance.interceptors.request.use(async config => {
