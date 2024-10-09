@@ -20,6 +20,7 @@
       }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -30,7 +31,12 @@
         "INTERNET",
         "VIBRATE"
       ],
-      "package": "com.leaflit.kian"
+      "package": "com.leaflit.kian",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBOaSEr6ei6WrozkQMoABpV5Yd9mUeuKf8"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
