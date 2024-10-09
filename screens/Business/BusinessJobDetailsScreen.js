@@ -76,6 +76,7 @@ export default function BusinessJobDetailsScreen() {
                     customerId: customer_id,
                     customerEphemeralKeySecret: ephemeral_key,
                     paymentIntentClientSecret: client_secret,
+                    merchantCountryCode: 'UK',
                 });
 
                 if (initError) {

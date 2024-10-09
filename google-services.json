@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "41253373399",
+    "project_id": "leaflit-31c8b",
+    "storage_bucket": "leaflit-31c8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41253373399:android:dc7342aa41a86d86d0b792",
+        "android_client_info": {
+          "package_name": "com.leaflit.kian"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLuemUzdOnIWhV_AXeRdRoK0c7_kM2L3o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
