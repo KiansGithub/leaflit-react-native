@@ -32,7 +32,15 @@ export default function LeafleteerMyBidsScreen() {
             const response = await axios.get('bids/', {
                 params: { status: 'Pending', offset: bids.length }
             });
-            setBids(prevBids => [...prevBids, ...response.data]);
+
+            const newBids = response.data;
+
+            // Filter out duplicate bids 
+            const uniqueBids = newBids.filter(newBid =>
+                !bids.some(existingBid => existingBid.id === newBid.id)
+            );
+
+            setBids(prevBids => [...prevBids, ...uniqueBids]);
         } catch (error) {
             Alert.alert('Error', 'Failed to load more bids. Please try again later.');
         } finally {

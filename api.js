@@ -23,6 +23,7 @@ instance.interceptors.response.use(response => {
 }, async error => {
     const originalRequest = error.config;
 if (error.response) {
+    console.error("Response error", JSON.stringify(error.toJSON(), null, 2));
     if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         const refreshToken = await AsyncStorage.getItem('refresh_token');
