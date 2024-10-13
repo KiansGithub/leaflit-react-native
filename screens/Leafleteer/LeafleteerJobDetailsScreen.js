@@ -16,6 +16,8 @@ export default function LeafleteerJobDetailsScreen() {
     const route = useRoute();
     const navigation = useNavigation();
     const { jobId } = route.params;
+    const minimumBidAmount = 10; // Minimum bid amount for a job
+    const maximumBidAmount = 500; // Maximum bid amount for a job
 
     useEffect(() => {
         fetchJobDetails();
@@ -89,6 +91,20 @@ export default function LeafleteerJobDetailsScreen() {
     const handleBid = async () => {
         if (isSubmitting) return; // Prevent further submissions 
         setIsSubmitting(true);
+
+        // Minimum Bid Validation 
+        if (parseFloat(bidAmount) < minimumBidAmount) {
+            alert(`The bid must be at least £${minimumBidAmount}`);
+            setIsSubmitting(false);
+            return;
+        }
+
+        // Maximum Bid Validation
+        if (parseFloat(bidAmount) > maximumBidAmount) {
+            alert(`The bid must be at most £${maximumBidAmount}`);
+            setIsSubmitting(false);
+            return;
+        }
 
         if (!isStripeAccountSetup) {
             Alert.alert(
