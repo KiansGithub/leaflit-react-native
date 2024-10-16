@@ -17,6 +17,7 @@ export default function LeafleteerMyBidsScreen() {
                 params: { status: 'Pending' }
             });
             const bidData = response.data;
+            console.log(bidData);
             setBids(bidData);
             setLoading(false);
         } catch (error) {
@@ -64,14 +65,31 @@ export default function LeafleteerMyBidsScreen() {
         }
     }
 
-    const renderBidItem = ({ item }) => {
+    const renderBidItem = ({ item }) => { 
+
+        // Convert the created_at date to a readable format 
+        const formattedDate = new Date(item.job_details.created_at).toLocaleDateString('en-GB', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+    });
 
         return (
         <View style={styles.bidCard}>
-            <Text style={styles.amount}>£{item.bid_amount}</Text>
+            <View style={styles.jobInfo}>
+                <Text style={styles.bidDetails}>Job ID: {item.job_details.job_id}</Text>
+                <Text style={styles.bidDetails}>Business: {item.job_details.business_user}</Text>
+                <Text style={styles.bidDetails}>Leaflets: {item.job_details.number_of_leaflets}</Text>
+                <Text style={styles.bidDetails}>Created: {formattedDate}</Text>
+
+                <Text style={styles.amount}>£{item.bid_amount}</Text>
+            </View>
+
+            <View style={styles.bidOptions}>
             <TouchableOpacity style={styles.cancelButton} onPress={() => handleCancelBid(item.id)}>
                 <Ionicons name="trash-bin" size={18} color="white" />
             </TouchableOpacity>
+            </View>
         </View>
         );
     };
@@ -131,7 +149,8 @@ const styles = StyleSheet.create({
     },
     bidCard: {
         backgroundColor: colors.cardBackground,
-        padding: spacing.medium,
+        paddingVertical: spacing.medium,
+        paddingHorizontal: spacing.large,
         marginBottom: spacing.medium,
         borderRadius: borderRadius.large,
         borderWidth: 1,
@@ -143,7 +162,7 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-start',
     },
     jobInfo: {
         flex: 1,
@@ -159,18 +178,19 @@ const styles = StyleSheet.create({
         fontSize: fontSizes.large,
         color: colors.success,
         fontWeigjht: fontWeights.bold,
-        marginBottom: spacing.large,
+        marginTop: spacing.small,
     },
     bidInfo: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: spacing.small,
+        marginTop: spacing.small,
     },
     bidAmount: {
         fontSize: fontSizes.large,
         fontWeight: fontWeights.bold,
         color: colors.textSecondary,
+        marginTop: spacing.small,
     },
     bidStatus: {
         fontSize: fontSizes.small,
@@ -188,6 +208,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: 40,
         height: 40,
+        marginTop: spacing.small,
     },
     emptyContainer: {
         alignItems:'center',
