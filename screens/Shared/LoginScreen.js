@@ -132,19 +132,14 @@ export default function LoginScreen({ navigation }) {
             {error && <Text style={styles.errorText}>{error}</Text>}
 
             {/* Login Button */}
-            <Button 
-                title="Login" 
-                onPress={handleLogin} 
-                color={colors.primary} // Dark blue color
-            />
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
 
-            {/* Register Button */}
-            <Button 
-                title="Register" 
-                onPress={() => navigation.navigate('Register')} 
-                color={colors.primary} // Dark blue color
-                style={styles.registerButton}
-                />
+            {/* Register Button */} 
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.buttonText}>Register</Text>
+            </TouchableOpacity>
 
                 {/* Forgot Password Link */}
             <TouchableOpacity onPress={() => navigation.navigate('Password Reset Request')} style={styles.forgotPasswordContainer}>
@@ -196,12 +191,24 @@ const styles = StyleSheet.create({
         marginTop: spacing.small,
         textAlign: 'center',
     },
-    registerButton: {
+    button: {
+        backgroundColor: colors.primary, // Same background color
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%', // Ensure both buttons take the full width available (or you can use a fixed width like 250)
         marginTop: spacing.medium,
-    },
+      },
     errorText: {
         color: colors.danger,
         marginBottom: spacing.small,
         textAlign: 'center',
-    }
+    },
+    buttonText: {
+        color: colors.white,
+        fontSize: fontSizes.medium,
+        fontWeight: 'bold',
+    },
 });
