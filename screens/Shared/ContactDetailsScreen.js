@@ -4,7 +4,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from '../../api';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
 
-export default function ContactDetailsScreen({ route }) {
+export default function DetailsScreen({ route }) {
     const { userId } = route.params;
     const [user, setUser ] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -51,19 +51,11 @@ export default function ContactDetailsScreen({ route }) {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.headerText}>Contact Details</Text>
+                <Text style={styles.headerText}>Leaflit Profile</Text>
             </View>
             <View style={styles.detailsContainer}>
                 <Text style={styles.label}>First Name</Text>
                 <Text style={styles.detailText}>{user.first_name}</Text>
-            </View>
-            <View style={styles.detailsContainer}>
-                <Text style={styles.label}>Email</Text>
-                <Text style={styles.detailText}>{user.email}</Text>
-            </View>
-            <View style={styles.detailsContainer}>
-                <Text style={styles.label}>Phone Number</Text>
-                <Text style={styles.detailText}>{user.phone_number}</Text>
             </View>
         </ScrollView>
     )

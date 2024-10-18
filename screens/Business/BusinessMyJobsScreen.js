@@ -57,11 +57,36 @@ export default function BusinessMyJobsScreen() {
             "Are you sure you want to approve this job?",
             [
                 { text: "Cancel",  style: "cancel"},
-                { text: "Yes", onPress: () => confirmApproveJob(jobId)}
+                { text: "Yes", onPress: () => reviewJob(jobId, 'approve') }
             ],
             { cancelable: true }
         );
     };
+
+
+    // Confirmation dialog to flag the job for review 
+    const confirmFlagJobForReview = (jobId) => {
+        Alert.alert(
+            "Flag Job for Review",
+            "Are you sure you want to flag this job for review?",
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Yes", onPress: () => reviewJob(jobId, 'flag') }
+            ],
+            { cancelable: true }
+        )
+    }
+
+    // Review job function for approving or flagging a job 
+    const reviewJob = async (jobId, action) => {
+        try {
+            await axios.post(`/business-jobs/${jobId}/review/`, { action });
+            Alert.alert('Success', `Job ${action === 'approve' ? 'approved' : 'flagged for review'} successfully.`);
+            fetchJobs();
+        } catch (error) {
+            Alert.alert('Error', `Failed to ${action === 'approve' ? 'approve' : 'flag'} the job. Please try again.`);
+        }
+    }
 
     // Confirmation dialog for removing a job 
     const confirmRemoveJob = (jobId) => {
@@ -114,6 +139,48 @@ export default function BusinessMyJobsScreen() {
                 <TouchableOpacity style={styles.cancelButton} onPress={() => confirmCancelJob(item.id)}>
                     <Text style={styles.buttonText}>Cancel Job</Text>
                 </TouchableOpacity>
+                </>
+            )}
+
+            {item.status === 'Under Review' && (
+                <>
+                    {item.review_status === 'pending' && (
+                        <>
+                            <TouchableOpacity
+                                style={styles.underReviewRoutesButton}
+                                onPress={() => navigation.navigate('Business Job View Routes', {
+                                    jobId: item.id, 
+                                    coordinates: { latitude: item.latitude, longitude: item.longitude },
+                                    radius: item.radius,
+                                    businessUserId: item.business_user, 
+                                        })}
+                            >
+                                <Text style={styles.buttonText}>View Routes</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity 
+                                style={styles.approveButton}
+                                onPress={() => confirmApproveJob(item.id)}
+                            >
+                                <Ionicons name="checkmark-circle" size={24} color={colors.success} />
+                                <Text style={styles.buttonText}>Approve</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.flagButton}
+                                onPress={() => confirmFlagJobForReview(item.id)}
+                            >
+                                <Ionicons name="alert-circle" size={24} color={colors.warning} />
+                                <Text style={styles.buttonText}>Flag for Review</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+
+                    {item.review_status === 'flagged' && (
+                        <>
+                            <Text style={styles.flaggedText}>This job has been flagged for review.</Text>
+                        </>
+                    )}
                 </>
             )}
     
@@ -210,6 +277,30 @@ const styles = StyleSheet.create({
     cancelButtonText: {
         color: '#fff',
         fontWeight: 'bold',
+    },
+    approveButton: {
+        backgroundColor: colors.success,
+        padding: 10,
+        borderRadius: 5,
+        marginVertical: 5,
+    },
+    flagButton: {
+        backgroundColor: colors.warning,
+        padding: 10,
+        borderRadius: 5,
+        marginVertical: 5,
+    },
+    underReviewRoutesButton: {
+        backgroundColor: colors.primary,
+        padding: 10,
+        borderRadius: 5,
+        marginVertical: 5,
+    },
+    flaggedText: {
+        color: colors.warning,
+        fontWeight: 'bold',
+        marginVertical: 10,
+        textAlgin: 'center',
     },
     removeButton: {
         backgroundColor: colors.textSecondary,
