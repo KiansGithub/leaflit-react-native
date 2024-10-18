@@ -66,28 +66,6 @@ export default function LeafleteerMyJobsScreen() {
         }
     };
 
-    // Confirmation dialog for completing a job 
-    const confirmCompleteJob = (jobId) => {
-        Alert.alert(
-            "Complete Job", 
-            "Are you sure you have completed this job?", 
-            [
-                { text: "Cancel", style: "cancel" },
-                { text: "Yes", onPress: () => completeJob(jobId) }
-            ],
-            { cancelable: true }
-        );
-    };
-
-    const completeJob = async(jobId) => {
-        try {
-            const response = await axios.post(`/leafleteerjobs/${jobId}/complete/`, { status: 'Completed' });
-            setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'Completed' } : job));
-        } catch (error) {
-            Alert.alert('Error', 'Failed to complete the job. Please try again.');
-        }
-    };
-
     // Confirmation dialog for canceling a job 
     const confirmCancelJob = (jobId) => {
         Alert.alert(

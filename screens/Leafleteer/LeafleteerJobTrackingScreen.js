@@ -16,6 +16,7 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
     const [watcher, setWatcher] = useState(null);
     const [recentRoutes, setRecentRoutes] = useState([]);
     const [mapLoading, setMapLoading] = useState(true);
+    const [sessionStartTime, setSessionStartTime] = useState(null);
     const mapRef = useRef(null);
 
     useEffect(() => {
@@ -60,6 +61,8 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
     const startTracking = async () => {
         setCurrentCoordinates([]);
         setTracking(true);
+        setSessionStartTime(new Date().toISOString());
+
         const locationWatcher = await Location.watchPositionAsync(
             { accuracy: Location.Accuracy.High, timeInterval: 5000, distanceInterval: 5 },
             (location) => {
@@ -92,6 +95,18 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
         setWatcher(locationWatcher);
     };
 
+    // Log the active session to the backend 
+    const logActiveSession = async (start_time, end_time) => {
+        try {
+            await axios.post(`/leafleteerjobs/${jobId}/log-session/`, {
+                start_time, 
+                end_time,
+            });
+        } catch (error) {
+            Alert.alert('Error', 'Failed to log the session. Please try again.');
+        }
+    };
+
     const stopTracking = async () => {
         if (watcher) {
             watcher.remove(); // Stop watching location 
@@ -99,38 +114,36 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
         }
         setTracking(false);
         if (currentCoordinates.length > 0) {
-            try {
-                // Save the route to the server 
-                await saveRoute();
-            } catch (error) {
-                Alert.alert('Error', 'Failed to save the route. It will be saved locally and retried later.');
-                // Save the route locally for retry 
-                await saveRouteLocally(currentCoordinates);
-            }
+            const end_time = new Date().toISOString();
+            await logActiveSession(sessionStartTime, end_time); // Log the entire session 
+            await saveRouteOrStoreOffline(currentCoordinates, sessionStartTime, end_time);
+            setSessionStartTime(null);
         }
     };
 
-    const saveRoute = async () => {
-        const formattedCoordinates = currentCoordinates.map(coord => ({
-            ...coord,
-            timestamp: new Date(coord.timestamp).toISOString(),
-        }));
-
-        await axios.post('/routes/', {
-            job_id: jobId,
-            coordinates: formattedCoordinates,
-            start_time: formattedCoordinates[0].timestamp,
-            end_time: formattedCoordinates[formattedCoordinates.length - 1].timestamp,
-        });
-
-        setCurrentCoordinates([]);
+    const saveRouteOrStoreOffline = async (coordinates, start_time, end_time) => {
+        try {
+            await axios.post('/routes/', {
+                job_id: jobId, 
+                coordinates: coordinates.map(coord => ({
+                    ...coord, 
+                    timestamp: new Date(coord.timestamp).toISOString(),
+                })),
+                start_time,
+                end_time,
+            });
+            setCurrentCoordinates([]);
+        } catch (error) {
+            // Save route locally if unable to save to server 
+            await saveRouteLocally(coordinates, start_time, end_time);
+        }
     };
 
     const saveRouteLocally = async (coordinates) => {
         try {
             const storedRoutes = await AsyncStorage.getItem('unsavedRoutes');
             const unsavedRoutes = storedRoutes ? JSON.parse(storedRoutes) : [];
-            unsavedRoutes.push({ jobId, coordinates });
+            unsavedRoutes.push({ jobId, coordinates, start_time, end_time });
             await AsyncStorage.setItem('unsavedRoutes', JSON.stringify(unsavedRoutes));
         } catch (error) {
         }
@@ -149,8 +162,8 @@ export default function LeafleteerJobTrackingScreen({ route, navigation }) {
                             ...coord,
                             timestamp: new Date(coord.timestamp).toISOString(),
                         })),
-                        start_time: route.coordinates[0].timestamp,
-                        end_time: route.coordinates[route.coordinates.length - 1].timestamp,
+                        start_time: route.start_time,
+                        end_time: route.end_time,
                     });
                 } catch (error) {
                     return;

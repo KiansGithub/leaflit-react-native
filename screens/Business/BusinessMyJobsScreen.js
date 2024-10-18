@@ -50,6 +50,19 @@ export default function BusinessMyJobsScreen() {
         }
     };
 
+    // Confirmation dialog to approve the job 
+    const confirmApproveJob = (jobId) => {
+        Alert.alert(
+            "Approve Job",
+            "Are you sure you want to approve this job?",
+            [
+                { text: "Cancel",  style: "cancel"},
+                { text: "Yes", onPress: () => confirmApproveJob(jobId)}
+            ],
+            { cancelable: true }
+        );
+    };
+
     // Confirmation dialog for removing a job 
     const confirmRemoveJob = (jobId) => {
         Alert.alert(
