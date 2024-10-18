@@ -134,6 +134,29 @@ export default function LeafleteerMyJobsScreen() {
         }
     };
 
+    // Confirmation dialog for posting a job for review 
+    const confirmPostForReview = (jobId) => {
+        Alert.alert(
+            "Post Job for Review",
+            "Are you sure you have completed this job and want to post it for review?",
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Yes", onPress: () => postJobForReview(jobId) }
+            ],
+            { cancelable: true }
+        );
+    };
+
+    const postJobForReview = async (jobId) => {
+        try {
+            const response = await axios.post(`/leafleteerjobs/${jobId}/complete/`, { status: 'Under Review' });
+            setJobs(jobs.map(job => job.id === jobId ? { ...job, status: 'Under Review', review_status: 'pending' } : job));
+            Alert.alert('Success', 'Job posted for review.');
+        } catch (error) {
+            Alert.alert('Error', 'Failed to post the job for review. Please try again.');
+        }
+    }
+
     // View contact details function 
     const viewContactDetails = async (job) => {
         try {
@@ -147,6 +170,12 @@ export default function LeafleteerMyJobsScreen() {
         <View style={styles.jobCard}>
             <Text style={styles.jobDetails}>Number of Leaflets: {item.number_of_leaflets}</Text>
             <Text style={styles.jobDetails}>Status: {item.status}</Text>
+
+            {/* Conditionally show the review status only if the job is 'Under Review' */}
+            {item.status === 'Under Review' && (
+                <Text style={styles.reviewStatus}>Review Status: {item.review_status}</Text>
+            )}
+
             <View style={styles.jobOptions}>
                 {item.status === 'Assigned' && (
                     <>
@@ -175,9 +204,9 @@ export default function LeafleteerMyJobsScreen() {
                         <Ionicons name="arrow-forward-circle" size={24} color='white' />
                         <Text style={styles.buttonText}>Continue</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.completeButton} onPress={() => confirmCompleteJob(item.id)}>
+                    <TouchableOpacity style={styles.completeButton} onPress={() => confirmPostForReview(item.id)}>
                         <Ionicons name="checkmark-circle" size={24} color='white' />
-                        <Text style={styles.buttonText}>Complete</Text>
+                        <Text style={styles.buttonText}>Post for Review</Text>
                     </TouchableOpacity>
                     </>
                 )}
@@ -286,6 +315,13 @@ const styles = StyleSheet.create({
         borderRadius: borderRadius.small,
         marginRight: spacing.small,
         marginBottom: spacing.small,
+    },
+    reviewStatus: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#FFA500',
+        marginTop: 10,
+        textAlign: 'center',
     },
     completeButton: {
         flexDirection: 'row',
