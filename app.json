@@ -43,15 +43,21 @@
     },
     "jsEngine": "hermes",
     "scheme": "leaflit",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "extra": {
       "eas": {
         "projectId": "cbfc8d44-0270-413a-9195-d16843a5dbaf"
       }
-    }, 
+    },
     "assetBundlePatterns": [
       "assets/*"
     ],
-    "sdkVersion": "51.0.0"
+    "sdkVersion": "51.0.0",
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }

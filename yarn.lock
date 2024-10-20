@@ -4950,6 +4950,13 @@ expo-linking@~6.3.1:
     expo-constants "~16.0.0"
     invariant "^2.2.4"
 
+expo-local-authentication@~14.0.1:
+  version "14.0.1"
+  resolved "https://registry.yarnpkg.com/expo-local-authentication/-/expo-local-authentication-14.0.1.tgz#0cad7f419d4694e1c205f589cdf355f2f2b3a2b4"
+  integrity sha512-kAwUD1wEqj1fhwQgIHlP4H/JV9AcX+NO3BJwhPM2HuCFS0kgx2wvcHisnKBSTRyl8u5Jt4odzMyQkDJystwUTg==
+  dependencies:
+    invariant "^2.2.4"
+
 expo-location@~17.0.1:
   version "17.0.1"
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-17.0.1.tgz#3bdbf91066f1a40ec3468dc1807f3e106473f74c"
@@ -4988,6 +4995,11 @@ expo-notifications@~0.28.16:
     expo-application "~5.9.0"
     expo-constants "~16.0.0"
     fs-extra "^9.1.0"
+
+expo-secure-store@~13.0.2:
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-13.0.2.tgz#ba8f6076fc38062a28bb2ce5edab9cd28ef88598"
+  integrity sha512-3QYgoneo8p8yeeBPBiAfokNNc2xq6+n8+Ob4fAlErEcf4H7Y72LH+K/dx0nQyWau2ZKZUXBxyyfuHFyVKrEVLg==
 
 expo-status-bar@~1.12.1:
   version "1.12.1"
