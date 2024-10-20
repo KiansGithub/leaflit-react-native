@@ -1,18 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import axios from '../../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
+import { Ionicons } from '@expo/vector-icons'; // Import icon library 
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const [isBiometricSupported, setIsBiometricSupported] = useState(false);
 
     // Email validation regex 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    useEffect(() => {
+        checkBiometricSupport();
+        checkSavedCredentials();
+    }, []);
+
+    const checkBiometricSupport = async () => {
+        const compatible = await LocalAuthentication.hasHardwareAsync();
+        setIsBiometricSupported(compatible);
+    }
+
+    const checkSavedCredentials = async () => {
+        const savedEmail = await SecureStore.getItemAsync('userEmail');
+        if (savedEmail) {
+            setEmail(savedEmail);
+            authenticateUser();
+        }
+    };
+
+    const authenticateUser = async () => {
+        const result = await LocalAuthentication.authenticateAsync({
+            promptMessage: 'Authenticate to login',
+            fallbackLabel: 'Enter passcode',
+        });
+
+        if (result.success) {
+            const savedPassword = await SecureStore.getItemAsync('userPassword');
+            if (savedPassword) {
+                setPassword(savedPassword);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (email && password) {
+            handleLogin();
+        }
+    })
 
     const handleLogin = async() => {
         try {
@@ -50,6 +92,10 @@ export default function LoginScreen({ navigation }) {
 
             const userId = profileResponse.data.id; 
             await AsyncStorage.setItem('user_id', userId.toString());
+
+            // Save credentials securely 
+            await SecureStore.setItemAsync('userEmail', email);
+            await SecureStore.setItemAsync('userPassword', password);
 
             await registerForPushNotificationsAsync();
 
@@ -131,15 +177,23 @@ export default function LoginScreen({ navigation }) {
             {/* Display Error Message */}
             {error && <Text style={styles.errorText}>{error}</Text>}
 
-            {/* Login Button */}
+            {isBiometricSupported && (
+                <TouchableOpacity style={styles.iconButton} onPress={authenticateUser}>
+                    <Ionicons name="finger-print" size={40} color={colors.primary} />
+                    <Text style={styles.iconText}>Use Fingerprint</Text>
+                </TouchableOpacity>
+            )}
+
+            <View style={styles.buttonRow}>
+                {/* Login Button */}
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
 
-            {/* Register Button */} 
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Register')}>
                 <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
+            </View>
 
                 {/* Forgot Password Link */}
             <TouchableOpacity onPress={() => navigation.navigate('Password Reset Request')} style={styles.forgotPasswordContainer}>
@@ -154,6 +208,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1, 
         backgroundColor: colors.background,
+        padding: spacing.large,
     },
     scrollContainer: {
         justifyContent: 'center',
@@ -161,10 +216,11 @@ const styles = StyleSheet.create({
         padding: spacing.medium,
     },
     logo: {
-        width: 150,
-        height: 150,
+        width: 180,
+        height: 180,
         marginBottom: spacing.large,
         resizeMode: 'contain',
+        alignSelf: 'center', // Center the logo
     },
     label: {
         alignSelf: 'flex-start',
@@ -172,16 +228,29 @@ const styles = StyleSheet.create({
         marginBottom: spacing.small / 2,
         color: colors.primary, // Dark blue text color
         fontSize: fontSizes.medium,
+        fontWeight: 'bold',
     },
     input: {
         width: '100%',
-        height: 40,
+        height: 50,
         borderColor: colors.textSecondary, // Light gray border color
         borderWidth: 1,
-        borderRadius: borderRadius.medium,
+        borderRadius: borderRadius.large,
         marginBottom: spacing.medium,
         paddingHorizontal: spacing.small,
         backgroundColor: colors.white,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        marginTop: spacing.medium,
     },
     forgotPasswordContainer: {
         marginTop: spacing.medium,
@@ -192,14 +261,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     button: {
+        flex: 1,
         backgroundColor: colors.primary, // Same background color
-        paddingVertical: 12,
+        paddingVertical: 14,
         paddingHorizontal: 24,
-        borderRadius: 8,
+        borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '100%', // Ensure both buttons take the full width available (or you can use a fixed width like 250)
-        marginTop: spacing.medium,
+        marginHorizontal: spacing.small,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
       },
     errorText: {
         color: colors.danger,
@@ -211,4 +285,16 @@ const styles = StyleSheet.create({
         fontSize: fontSizes.medium,
         fontWeight: 'bold',
     },
+    iconButton: {
+        marginTop: spacing.medium,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: spacing.medium,
+    },
+    iconText: {
+        color: colors.primary,
+        fontSize: fontSizes.small, 
+        marginTop: spacing.small / 2,
+        textAlign: 'center', 
+    }
 });
