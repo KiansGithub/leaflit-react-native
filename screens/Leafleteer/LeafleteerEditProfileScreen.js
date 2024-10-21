@@ -118,7 +118,7 @@ export default function LeafleteerEditProfileScreen() {
                         keyboardType="phone-pad"
                     />
                 </View>
-                <View style={styles.formGroup}>
+                {/* <View style={styles.formGroup}>
                     <Text style={styles.label}>Address</Text>
                     <TextInput 
                         style={styles.input}
@@ -126,7 +126,7 @@ export default function LeafleteerEditProfileScreen() {
                         onChangeText={setAddress}
                         multiline 
                     />
-                </View>
+                </View> */}
                 <TouchableOpacity 
                     style={styles.saveButton}
                     onPress={handleSave} 

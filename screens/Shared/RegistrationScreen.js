@@ -101,11 +101,11 @@ export default function RegistrationScreen({ navigation }) {
                 password,
                 phone_number: phoneNumber,
                 user_type: userType,
-                business_name: businessName,
-                business_address: businessAddress,
+                business_name: userType === 'business' ? businessName: null,
+                business_address: userType === 'business' ? businessAddress : null,
                 business_latitude: userType === 'business' ? coordinates.lat : null,
                 business_longitude: userType === 'business' ? coordinates.lng : null,
-                home_address: homeAddress,
+                home_address: userType === 'leafleteer' ? homeAddress : null,
                 home_latitude: userType === 'leafleteer' ? coordinates.lat : null,
                 home_longitude: userType === 'leafleteer' ? coordinates.lng : null,
             }, {
@@ -233,9 +233,10 @@ export default function RegistrationScreen({ navigation }) {
                             </TouchableOpacity>
                         </View>
 
+                        <View style={{ width: '100%', marginBottom: spacing.large }}>
                         {/* Conditional Fields Based on User Type */}
                         {userType === 'business' && (
-                            <>
+                            <View style={{ width: '100%' }}>
                                 <Text style={styles.label}>Business Name:</Text>
                                 <TextInput 
                                     style={styles.input}
@@ -244,8 +245,10 @@ export default function RegistrationScreen({ navigation }) {
                                     placeholder="Enter your business name"
                                     placeholderTextColor={colors.textSecondary}
                                 />
-
                                 <Text style={styles.label}>Business Address:</Text>
+
+                                {/* Wrap the GooglePlacesAUtocomplete and Register Button in a Row */}
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <GooglePlacesAutocomplete
                                     placeholder="Enter your business address"
                                     onPress={(data, details = null) => {
@@ -265,9 +268,7 @@ export default function RegistrationScreen({ navigation }) {
                                             width: '100%',
                                         },
                                         listView: {
-                                            position: 'absolute',
-                                            top: 44,
-                                            zIndex: 999,
+                                            zIndex: 3,
                                             elevation: 3,
                                             maxHeight: 150,
                                         },
@@ -277,12 +278,23 @@ export default function RegistrationScreen({ navigation }) {
                                         },
                                     }}
                                 />
-                            </>
+
+                                {/* Register Button */}
+                                <TouchableOpacity 
+                                    onPress={handleRegister}
+                                    style={[styles.customButton, { marginLeft: spacing.small, paddingHorizontal: spacing.small }]}>
+                                    <Text style={styles.customButtonText}>Register</Text>
+                                </TouchableOpacity>
+                                </View>
+                            </View>
                         )}
 
                         {userType === 'leafleteer' && (
-                            <>
+                            <View style={{ width: '100%' }}>
                                 <Text style={styles.label}>Home Address:</Text>
+
+                                {/* Google Places Autocomplete and register button in a row */}
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <GooglePlacesAutocomplete
                                     placeholder="Enter your home address"
                                     onPress={(data, details = null) => {
@@ -302,9 +314,7 @@ export default function RegistrationScreen({ navigation }) {
                                             width: '100%',
                                         },
                                         listView: {
-                                            position: 'absolute',
-                                            top: 44,
-                                            zIndex: 10,
+                                            zIndex: 3,
                                             elevation: 3,
                                             maxHeight: 150,
                                         },
@@ -317,25 +327,34 @@ export default function RegistrationScreen({ navigation }) {
                                     onNotFound={() => console.log('No results found')}
                                     onTimeout={() => console.log('Timeout')}
                                 />
-                            </>
+
+                                {/* Register Button */}
+                                <TouchableOpacity 
+                                    onPress={handleRegister}
+                                    style={[styles.customButton, { marginLeft: spacing.small, paddingHorizontal: spacing.small }]}>
+                                    <Text style={styles.customButtonText}>Register</Text>
+                                </TouchableOpacity>
+                                </View>
+                            </View>
                         )}
+                        </View>
 
                         {/* Error Message */}
                         {error && <Text style={styles.errorText}>{error}</Text>}
 
                         {/* Register Button */}
-                        <View style={[styles.buttonContainer, { marginTop: isDropdownVisible ? 150 : 0 }]}>
+                        {/* <View style={[styles.buttonContainer, { marginTop: 140 }]}>
                             <TouchableOpacity onPress={handleRegister} style={[styles.customButton, { backgroundColor: colors.primary }]}>
                                 <Text style={styles.customButtonText}>Register</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
 
                         {/* Back to Login Button */}
-                        <View style={styles.buttonContainer}>
+                        {/* <View style={styles.buttonContainer}>
                             <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.customButton, { backgroundColor: colors.primary }]}>
                                 <Text style={styles.customButtonText}>Back to Login</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
                 )}
                 keyExtractor={item => item.key}
@@ -406,17 +425,15 @@ const styles = StyleSheet.create({
    },
     buttonContainer: {
         width: '100%',
-        marginBottom: spacing.medium,
-        paddingBottom: spacing.large,
     },
     customButton: {
         backgroundColor: colors.primary,
-        paddingVertical: spacing.medium,
-        borderRadius: borderRadius.medium,
+        paddingVertical: spacing.small,
+        borderRadius: borderRadius.large,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: spacing.medium,
-        paddingBottom: spacing.large,
+        paddingBottom: spacing.small,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2},
         shadowOpacity: 0.2,

@@ -10,7 +10,6 @@ export default function BusinessEditProfileScreen() {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [homeAddress, setHomeAddress] = useState('');
     const [businessName, setBusinessName] = useState('');
     const [businessAddress, setBusinessAddress] = useState('');
     const [loading, setLoading] = useState(true);
@@ -33,7 +32,7 @@ export default function BusinessEditProfileScreen() {
             setLastName(profileData.last_name);
             setEmail(profileData.email);
             setPhoneNumber(profileData.phone_number);
-            setHomeAddress(profileData.home_address || '');
+            // setHomeAddress(profileData.home_address || '');
             setBusinessName(profileData.business_name || '');
             setBusinessAddress(profileData.business_address || '');
         } catch (error) {
@@ -53,7 +52,6 @@ export default function BusinessEditProfileScreen() {
                 last_name: lastName, 
                 email: email, 
                 phone_number: phoneNumber, 
-                home_address: homeAddress, 
                 business_name: businessName, 
                 business_address: businessAddress,
             });
@@ -124,7 +122,7 @@ export default function BusinessEditProfileScreen() {
                         keyboardType="phone-pad"
                     />
                 </View>
-                <View style={styles.formGroup}>
+                {/* <View style={styles.formGroup}>
                     <Text style={styles.label}>Home Address</Text>
                     <TextInput 
                         style={styles.input}
@@ -132,7 +130,7 @@ export default function BusinessEditProfileScreen() {
                         onChangeText={setHomeAddress}
                         multiline 
                     />
-                </View>
+                </View> */}
                 <View style={styles.formGroup}>
                     <Text style={styles.label}>Business Name</Text>
                     <TextInput 
@@ -141,7 +139,7 @@ export default function BusinessEditProfileScreen() {
                         onChangeText={setBusinessName}
                     />
                 </View>
-                <View style={styles.formGroup}>
+                {/* <View style={styles.formGroup}>
                     <Text style={styles.label}>Business Address</Text>
                     <TextInput 
                         style={styles.input}
@@ -149,7 +147,7 @@ export default function BusinessEditProfileScreen() {
                         onChangeText={setBusinessAddress}
                         multiline
                     />
-                </View>
+                </View> */}
                 <TouchableOpacity 
                     style={styles.saveButton}
                     onPress={handleSave}

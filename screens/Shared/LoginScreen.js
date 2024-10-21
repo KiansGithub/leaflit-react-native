@@ -50,11 +50,11 @@ export default function LoginScreen({ navigation }) {
         }
     };
 
-    useEffect(() => {
-        if (email && password) {
-            handleLogin();
-        }
-    })
+    // useEffect(() => {
+    //     if (email && password) {
+    //         handleLogin();
+    //     }
+    // }, [email, password]);
 
     const handleLogin = async() => {
         try {
@@ -185,13 +185,14 @@ export default function LoginScreen({ navigation }) {
             )}
 
             <View style={styles.buttonRow}>
-                {/* Login Button */}
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
 
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Register')}>
                 <Text style={styles.buttonText}>Register</Text>
+            </TouchableOpacity>
+
+            {/* Login Button */}
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
             </View>
 

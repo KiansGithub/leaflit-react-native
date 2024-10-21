@@ -74,10 +74,6 @@ export default function BusinessProfileScreen() {
                 <Text style={styles.detailText}>{profile.phone_number}</Text>
             </View>
             <View style={styles.detailsContainer}>
-                <Text style={styles.label}>Home Address</Text>
-                <Text style={styles.detailText}>{profile.home_address || 'N/A'}</Text>
-            </View>
-            <View style={styles.detailsContainer}>
                 <Text style={styles.label}>Business Name</Text>
                 <Text style={styles.detailText}>{profile.business_name || 'N/A'}</Text>
             </View>
