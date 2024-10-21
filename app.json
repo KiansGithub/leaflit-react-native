@@ -50,7 +50,8 @@
     "extra": {
       "eas": {
         "projectId": "cbfc8d44-0270-413a-9195-d16843a5dbaf"
-      }
+      },
+      "googleMapsApiKey": "AIzaSyBOaSEr6ei6WrozkQMoABpV5Yd9mUeuKf8"
     },
     "assetBundlePatterns": [
       "assets/*"

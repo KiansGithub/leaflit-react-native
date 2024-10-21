@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Modal, TouchableOpacity, Image, KeyboardAvoidingView, Platform, FlatList } from 'react-native';
 import axios from '../../api';
 import { colors, spacing, fontSizes, borderRadius, fontWeights } from '../../styles/theme';
+import Constants from 'expo-constants';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 export default function RegistrationScreen({ navigation }) {
     const [firstName, setFirstName] = useState('');
@@ -11,13 +13,40 @@ export default function RegistrationScreen({ navigation }) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [userType, setUserType] = useState('business');
+    const [businessName, setBusinessName] = useState('');
+    const [businessAddress, setBusinessAddress] = useState('');
+    const [homeAddress, setHomeAddress] = useState('');
     const [error, setError] = useState(null);
+    const googleMapsApiKey = Constants.expoConfig?.extra?.googleMapsApiKey;
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
     // Email validation regex 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Phone number validation regex (same as backend)
     const phoneRegex = /^\+?1?\d{9,15}$/;
+
+    // Get coordinates 
+    const getCoordinates = async(address) => {
+        try {
+            console.log(Constants.expoConfig?.extra?.googleMapsApiKey);
+            const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+                params: {
+                    address: address,
+                    key: googleMapsApiKey
+                }
+            });
+            if (response.data.results.length > 0) {
+                const location = response.data.results[0].geometry.location;
+                return location;
+            } else {
+                throw new Error('No results found');
+            }
+        } catch (error) {
+            console.error('Error fetching coordinates:', error);
+            throw error;
+        }
+    };
 
     const handleRegister = async() => {
         setError(null);
@@ -44,14 +73,41 @@ export default function RegistrationScreen({ navigation }) {
             setError('Passwords do not match');
             return;
         }
+
+        // Additional validation based on user type 
+        if (userType === 'business') {
+            if (!businessName || !businessAddress) {
+                setError('Please fill in all business fields');
+                return;
+        }
+        } else if (userType === 'leafleteer') {
+            if (!homeAddress) {
+                setError('Please fill in the home address');
+                return;
+            }
+        }
         try {
+            let coordinates = { lat: null, lng: null };
+            if (userType === 'business') {
+                coordinates = await getCoordinates(businessAddress);
+            } else if (userType === 'leafleteer') {
+                coordinates = await getCoordinates(homeAddress);
+            }
+
             const response = await axios.post('/register/', { 
                 first_name: firstName,
                 last_name: lastName,
                 email,
                 password,
                 phone_number: phoneNumber,
-                user_type: userType
+                user_type: userType,
+                business_name: businessName,
+                business_address: businessAddress,
+                business_latitude: userType === 'business' ? coordinates.lat : null,
+                business_longitude: userType === 'business' ? coordinates.lng : null,
+                home_address: homeAddress,
+                home_latitude: userType === 'leafleteer' ? coordinates.lat : null,
+                home_longitude: userType === 'leafleteer' ? coordinates.lng : null,
             }, {
                 headers: {
                     'No-Auth': true
@@ -92,105 +148,200 @@ export default function RegistrationScreen({ navigation }) {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={100}
         >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-            {/* Logo */}
-            <Image source={require('../../assets/icon.png')} style={styles.logo} />
+            <FlatList
+                data={[{ key: 'form' }]} // Dummy data to render the form
+                renderItem={() => (
+                    <View style={styles.formContainer}>
+                        {/* Logo */}
+                        <Image source={require('../../assets/icon.png')} style={styles.logo} />
 
-            {/* First Name Input */}
-            <Text style={styles.label}>First Name:</Text>
-            <TextInput 
-                style={styles.input} 
-                value={firstName} 
-                onChangeText={setFirstName}
-                placeholder="Enter your first name"
-                placeholderTextColor={colors.textSecondary}  
+                        {/* First Name Input */}
+                        <Text style={styles.label}>First Name:</Text>
+                        <TextInput 
+                            style={styles.input} 
+                            value={firstName} 
+                            onChangeText={setFirstName}
+                            placeholder="Enter your first name"
+                            placeholderTextColor={colors.textSecondary}  
+                        />
+
+                        {/* Last Name Input */}
+                        <Text style={styles.label}>Last Name:</Text>
+                        <TextInput 
+                            style={styles.input}
+                            value={lastName}
+                            onChangeText={setLastName}
+                            placeholder="Enter your last name"
+                            placeholderTextColor={colors.textSecondary}
+                        />
+
+                        {/* Email Input */}
+                        <Text style={styles.label}>Email:</Text>
+                        <TextInput 
+                            style={styles.input} 
+                            value={email} 
+                            onChangeText={setEmail} 
+                            autoCapitalize='none'
+                            placeholder="Enter your email"
+                            placeholderTextColor={colors.textSecondary} 
+                        />
+
+                        {/* Password Input */}
+                        <Text style={styles.label}>Password:</Text>
+                        <TextInput 
+                            style={styles.input} 
+                            value={password} 
+                            onChangeText={setPassword} 
+                            secureTextEntry 
+                            placeholder="Enter your password"
+                            placeholderTextColor={colors.textSecondary} 
+                        />
+
+                        {/* Confirm Password Input */}
+                        <Text style={styles.label}>Confirm Password:</Text>
+                        <TextInput 
+                            style={styles.input} 
+                            value={confirmPassword} 
+                            onChangeText={setConfirmPassword} 
+                            secureTextEntry 
+                            placeholder="Confirm your password"
+                            placeholderTextColor={colors.textSecondary} 
+                        />
+
+                        {/* Phone Number Input */}
+                        <Text style={styles.label}>Phone Number:</Text>
+                        <TextInput 
+                            style={styles.input} 
+                            value={phoneNumber} 
+                            onChangeText={setPhoneNumber} 
+                            placeholder="Enter your phone number"
+                            placeholderTextColor={colors.textSecondary} 
+                        />
+
+                        {/* User Type Toggle */}
+                        <Text style={styles.label}>User Type:</Text>
+                        <View style={styles.toggleContainer}>
+                            <TouchableOpacity
+                                style={[styles.toggleButton, userType === 'business' && styles.selectedToggleButton]}
+                                onPress={() => setUserType('business')}>
+                                <Text style={[styles.toggleButtonText, userType === 'business' && styles.selectedToggleButtonText]}>Business</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.toggleButton, userType === 'leafleteer' && styles.selectedToggleButton]}
+                                onPress={() => setUserType('leafleteer')}>
+                                <Text style={[styles.toggleButtonText, userType === 'leafleteer' && styles.selectedToggleButtonText]}>Leafleteer</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Conditional Fields Based on User Type */}
+                        {userType === 'business' && (
+                            <>
+                                <Text style={styles.label}>Business Name:</Text>
+                                <TextInput 
+                                    style={styles.input}
+                                    value={businessName}
+                                    onChangeText={setBusinessName}
+                                    placeholder="Enter your business name"
+                                    placeholderTextColor={colors.textSecondary}
+                                />
+
+                                <Text style={styles.label}>Business Address:</Text>
+                                <GooglePlacesAutocomplete
+                                    placeholder="Enter your business address"
+                                    onPress={(data, details = null) => {
+                                        const address = data.description; 
+                                        setBusinessAddress(address);
+                                    }}
+                                    query={{
+                                        key: googleMapsApiKey,
+                                        language: 'en',
+                                        components: 'country:uk',
+                                    }}
+                                    onFocus={() => setIsDropdownVisible(true)}
+                                    onBlur={() => setIsDropdownVisible(false)}
+                                    styles={{
+                                        textInput: {
+                                            ...styles.input,
+                                            width: '100%',
+                                        },
+                                        listView: {
+                                            position: 'absolute',
+                                            top: 44,
+                                            zIndex: 999,
+                                            elevation: 3,
+                                            maxHeight: 150,
+                                        },
+                                        container: {
+                                            flex: 1,
+                                            width: '100%',
+                                        },
+                                    }}
+                                />
+                            </>
+                        )}
+
+                        {userType === 'leafleteer' && (
+                            <>
+                                <Text style={styles.label}>Home Address:</Text>
+                                <GooglePlacesAutocomplete
+                                    placeholder="Enter your home address"
+                                    onPress={(data, details = null) => {
+                                        const address = data.description;
+                                        setHomeAddress(address);
+                                    }}
+                                    query={{
+                                        key: googleMapsApiKey,
+                                        language: 'en',
+                                        components: 'country:uk',
+                                    }}
+                                    onFocus={() => setIsDropdownVisible(true)}
+                                    onBlur={() => setIsDropdownVisible(false)}
+                                    styles={{
+                                        textInput: {
+                                            ...styles.input,
+                                            width: '100%',
+                                        },
+                                        listView: {
+                                            position: 'absolute',
+                                            top: 44,
+                                            zIndex: 10,
+                                            elevation: 3,
+                                            maxHeight: 150,
+                                        },
+                                        container: {
+                                            flex: 1,
+                                            width: '100%',
+                                        },
+                                    }}
+                                    onFail={(error) => console.error('Error:', error)}
+                                    onNotFound={() => console.log('No results found')}
+                                    onTimeout={() => console.log('Timeout')}
+                                />
+                            </>
+                        )}
+
+                        {/* Error Message */}
+                        {error && <Text style={styles.errorText}>{error}</Text>}
+
+                        {/* Register Button */}
+                        <View style={[styles.buttonContainer, { marginTop: isDropdownVisible ? 150 : 0 }]}>
+                            <TouchableOpacity onPress={handleRegister} style={[styles.customButton, { backgroundColor: colors.primary }]}>
+                                <Text style={styles.customButtonText}>Register</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Back to Login Button */}
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.customButton, { backgroundColor: colors.primary }]}>
+                                <Text style={styles.customButtonText}>Back to Login</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
+                keyExtractor={item => item.key}
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps='handled'
             />
-
-            {/* Last Name Input */}
-            <Text style={styles.label}>Last Name:</Text>
-            <TextInput 
-                style={styles.input}
-                value={lastName}
-                onChangeText={setLastName}
-                placeholder="Enter your last name"
-                placeholderTextColor={colors.textSecondary}
-            />
-
-            {/* Email Input */}
-            <Text style={styles.label}>Email:</Text>
-            <TextInput 
-                style={styles.input} 
-                value={email} 
-                onChangeText={setEmail} 
-                autoCapitalize='none'
-                placeholder="Enter your email"
-                placeholderTextColor={colors.textSecondary} 
-            />
-
-            {/* Password Input */}
-            <Text style={styles.label}>Password:</Text>
-            <TextInput 
-                style={styles.input} 
-                value={password} 
-                onChangeText={setPassword} 
-                secureTextEntry 
-                placeholder="Enter your password"
-                placeholderTextColor={colors.textSecondary} 
-            />
-
-            {/* Confirm Password Input */}
-            <Text style={styles.label}>Confirm Password:</Text>
-            <TextInput 
-                style={styles.input} 
-                value={confirmPassword} 
-                onChangeText={setConfirmPassword} 
-                secureTextEntry 
-                placeholder="Confirm your password"
-                placeholderTextColor={colors.textSecondary} 
-            />
-
-            {/* Phone Number Input */}
-            <Text style={styles.label}>Phone Number:</Text>
-            <TextInput 
-                style={styles.input} 
-                value={phoneNumber} 
-                onChangeText={setPhoneNumber} 
-                placeholder="Enter your phone number"
-                placeholderTextColor={colors.textSecondary} 
-            />
-
-            {/* User Type Toggle */}
-            <Text style={styles.label}>User Type:</Text>
-            <View style={styles.toggleContainer}>
-                <TouchableOpacity
-                    style={[styles.toggleButton, userType === 'business' && styles.selectedToggleButton]}
-                    onPress={() => setUserType('business')}>
-                    <Text style={[styles.toggleButtonText, userType === 'business' && styles.selectedToggleButtonText]}>Business</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.toggleButton, userType === 'leafleteer' && styles.selectedToggleButton]}
-                    onPress={() => setUserType('leafleteer')}>
-                    <Text style={[styles.toggleButtonText, userType === 'leafleteer' && styles.selectedToggleButtonText]}>Leafleteer</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Error Message */}
-            {error && <Text style={styles.errorText}>{error}</Text>}
-
-            {/* Register Button */}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={handleRegister} style={[styles.customButton, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.customButtonText}>Register</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Back to Login Button */}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.customButton, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.customButtonText}>Back to Login</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
         </KeyboardAvoidingView>
     );
 }
@@ -200,11 +351,12 @@ const styles = StyleSheet.create({
         flex: 1, 
         backgroundColor: colors.background, 
     },
-    scrollContainer: {
+    formContainer: {
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: spacing.medium,
+        width: '100%',
     },
     logo: {
         width: 150, 
@@ -255,6 +407,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '100%',
         marginBottom: spacing.medium,
+        paddingBottom: spacing.large,
     },
     customButton: {
         backgroundColor: colors.primary,
@@ -262,6 +415,8 @@ const styles = StyleSheet.create({
         borderRadius: borderRadius.medium,
         alignItems: 'center',
         justifyContent: 'center',
+        marginBottom: spacing.medium,
+        paddingBottom: spacing.large,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2},
         shadowOpacity: 0.2,
