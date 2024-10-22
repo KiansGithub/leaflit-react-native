@@ -2,7 +2,7 @@
   "expo": {
     "name": "leaflit",
     "slug": "leaflit",
-    "version": "1.0.3",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,16 +12,17 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "1.0.10",
+      "buildNumber": "1.0.20",
       "supportsTablet": true,
       "bundleIdentifier": "com.leaflit.kian",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Leaflit uses your location to help you select a job location and assign leafleting jobs based on your current location."
+        "NSLocationWhenInUseUsageDescription": "Leaflit uses your location to help you select a job location and assign leafleting jobs based on your current location.",
+        "NSCameraUsageDescription": "Leaflit requires camera access to allow you to take photos for job verification and completion.",
       }
     },
     "android": {
       "googleServicesFile": "./google-services.json",
-      "versionCode": 15,
+      "versionCode": 17,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
