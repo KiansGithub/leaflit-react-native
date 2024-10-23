@@ -101,13 +101,15 @@ export default function RegistrationScreen({ navigation }) {
                 password,
                 phone_number: phoneNumber,
                 user_type: userType,
-                business_name: userType === 'business' ? businessName: null,
-                business_address: userType === 'business' ? businessAddress : null,
-                business_latitude: userType === 'business' ? coordinates.lat : null,
-                business_longitude: userType === 'business' ? coordinates.lng : null,
-                home_address: userType === 'leafleteer' ? homeAddress : null,
-                home_latitude: userType === 'leafleteer' ? coordinates.lat : null,
-                home_longitude: userType === 'leafleteer' ? coordinates.lng : null,
+                // For business users, set fake values for leafleteer fields
+                business_name: userType === 'business' ? businessName : 'N/A',
+                business_address: userType === 'business' ? businessAddress : 'N/A',
+                business_latitude: userType === 'business' ? coordinates.lat : 0.0,
+                business_longitude: userType === 'business' ? coordinates.lng : 0.0,
+                // For leafleteers, set fake values for business fields
+                home_address: userType === 'leafleteer' ? homeAddress : 'N/A',
+                home_latitude: userType === 'leafleteer' ? coordinates.lat : 0.0,
+                home_longitude: userType === 'leafleteer' ? coordinates.lng : 0.0,
             }, {
                 headers: {
                     'No-Auth': true
