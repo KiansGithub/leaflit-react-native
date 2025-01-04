@@ -57,7 +57,8 @@
     "assetBundlePatterns": [
       "assets/*"
     ],
-    "sdkVersion": "51.0.0",
+    "sdkVersion": "52.0.0",
+    "newArchEnabled": true,
     "plugins": [
       "expo-secure-store"
     ]
